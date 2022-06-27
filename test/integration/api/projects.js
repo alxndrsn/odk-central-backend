@@ -1227,7 +1227,7 @@ describe('api: /projects', () => {
 
 
 describe('api: /projects?forms=true', () => {
-  describe('GET', () => {
+  describe.only('GET', () => {
     it('should return projects with verbs and nested extended forms', testService((service) =>
       service.login('alice', (asAlice) => asAlice.get('/v1/projects?forms=true')
         .expect(200)
@@ -1329,5 +1329,21 @@ describe('api: /projects?forms=true', () => {
             form.name.should.equal('Simple');
             form.reviewStates.received.should.equal(2);
           })))));
+
+    it('should return verbs for multiple roles', testService((service) =>
+      service.login('dave', (asDave) => asDave.get('/v1/projects?forms=true')
+        .expect(200)
+        .then(({ body }) => {
+          body.length.should.equal(1);
+          const { formList, verbs } = body[0];
+          require('chai').assert.deepEqual(verbs, [
+            'project.read',
+            'form.list',
+            'form.read',
+            'submission.read',
+            'submission.list',
+            'submission.create',
+          ]);
+        }))));
   });
 });
