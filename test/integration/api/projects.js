@@ -352,7 +352,14 @@ describe('api: /projects', () => {
           .set('X-Extended-Metadata', 'true')
           .expect(200)
           .then(({ body }) => {
-            require('chai').assert.deepEqual(body, {});
+            require('chai').assert.deepEqual(body.verbs, [
+              'project.read',      // from role(s): formfill, viewer
+              'form.list',         // from role(s): formfill, viewer
+              'form.read',         // from role(s): formfill, viewer
+              'submission.read',   // from role(s): viewer
+              'submission.list',   // from role(s): viewer
+              'submission.create', // from role(s): formfill
+            ]);
           }))));
   });
 

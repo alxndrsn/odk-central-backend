@@ -22,7 +22,8 @@ module.exports = ({ Assignments, Users, Projects, bcrypt }) => {
     .then(([ alice, bob, chelsea, dave ]) => Promise.all([
       Assignments.grantSystem(alice.actor, 'admin', '*'),
       Projects.getById(1).then((project) => Assignments.grantSystem(bob.actor, 'manager', project.get())),
-      Projects.getById(1).then((project) => Assignments.grantSystem(dave.actor, 'manager', project.get())),
+      Projects.getById(1).then((project) => Assignments.grantSystem(dave.actor, 'formfill', project.get())),
+      Projects.getById(1).then((project) => Assignments.grantSystem(dave.actor, 'viewer', project.get())),
     ]));
 };
 
