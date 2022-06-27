@@ -272,7 +272,7 @@ describe('analytics task queries', () => {
         projects[id][row.system] = {recent: row.recent, total: row.total};
       }
 
-      projects['1'].formfill.total.should.equal(2);
+      projects['1'].formfill.total.should.equal(3);
       projects['1'].formfill.recent.should.equal(1);
     }));
 

@@ -1337,12 +1337,12 @@ describe('api: /projects?forms=true', () => {
           body.length.should.equal(1);
           const { formList, verbs } = body[0];
           require('chai').assert.deepEqual(verbs, [
-            'form.list',
-            'form.read',
-            'project.read',
-            'submission.create',
-            'submission.list',
-            'submission.read',
+            'form.list',         // from role(s): formfill, viewer
+            'form.read',         // from role(s): formfill, viewer
+            'project.read',      // from role(s): formfill, viewer
+            'submission.create', // from role(s): formfill
+            'submission.list',   // from role(s): viewer
+            'submission.read',   // from role(s): viewer
           ]);
         }))));
   });
