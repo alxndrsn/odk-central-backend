@@ -175,8 +175,8 @@ describe('analytics task queries', () => {
       const viewers = await container.Analytics.countUniqueViewers();
       const collectors = await container.Analytics.countUniqueDataCollectors();
       managers.should.equal(1);
-      viewers.should.equal(2);
-      collectors.should.equal(1);
+      viewers.should.equal(3);
+      collectors.should.equal(2);
     }));
 
     it('should count the number archived projects', testService(async (service, { Analytics }) => {

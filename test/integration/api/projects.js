@@ -1300,7 +1300,7 @@ describe('api: /projects?forms=true', () => {
             body.length.should.equal(2);
             // First project
             body[0].formList.length.should.equal(2);
-            body[0].verbs.length.should.be.greaterThan(25); // 26 for manager
+            body[0].verbs.length.should.be.greaterThan(25); // 26 for manager // TODO check what changed
             // Second project
             body[1].formList.length.should.equal(1);
             body[1].verbs.length.should.be.lessThan(5); // 4 for data collector
