@@ -1227,7 +1227,7 @@ describe('api: /projects', () => {
 
 
 describe('api: /projects?forms=true', () => {
-  describe.only('GET', () => {
+  describe('GET', () => {
     it('should return projects with verbs and nested extended forms', testService((service) =>
       service.login('alice', (asAlice) => asAlice.get('/v1/projects?forms=true')
         .expect(200)
@@ -1330,7 +1330,7 @@ describe('api: /projects?forms=true', () => {
             form.reviewStates.received.should.equal(2);
           })))));
 
-    it.only('should return verbs for multiple roles', testService((service) =>
+    it('should return verbs for multiple roles', testService((service) =>
       service.login('dave', (asDave) => asDave.get('/v1/projects?forms=true')
         .expect(200)
         .then(({ body }) => {
