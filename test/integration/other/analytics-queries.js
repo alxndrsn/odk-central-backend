@@ -252,7 +252,7 @@ describe('analytics task queries', () => {
         projects[id][row.system] = {recent: row.recent, total: row.total};
       }
 
-      projects['1'].viewer.total.should.equal(2);
+      projects['1'].viewer.total.should.equal(3);
       projects['1'].viewer.recent.should.equal(1);
     }));
 
