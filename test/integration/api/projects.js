@@ -244,7 +244,7 @@ describe('api: /projects', () => {
             })))));
   });
 
-  describe('/:id GET', () => {
+  describe.only('/:id GET', () => {
     it('should return notfound if the project does not exist', testService((service) =>
       service.get('/v1/projects/99').expect(404)));
 
@@ -344,6 +344,15 @@ describe('api: /projects', () => {
             body.verbs.length.should.be.lessThan(26);
             body.verbs.should.containDeep([ 'assignment.create', 'project.delete' ]);
             body.verbs.should.not.containDeep([ 'project.create' ]);
+          }))));
+
+    it('should return verb information with extended metadata (dave)', testService((service) =>
+      service.login('dave', (asDave) =>
+        asDave.get('/v1/projects/1')
+          .set('X-Extended-Metadata', 'true')
+          .expect(200)
+          .then(({ body }) => {
+            require('chai').assert.deepEqual(body, {});
           }))));
   });
 
