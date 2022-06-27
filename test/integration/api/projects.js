@@ -244,7 +244,7 @@ describe('api: /projects', () => {
             })))));
   });
 
-  describe.only('/:id GET', () => {
+  describe('/:id GET', () => {
     it('should return notfound if the project does not exist', testService((service) =>
       service.get('/v1/projects/99').expect(404)));
 
@@ -1330,7 +1330,7 @@ describe('api: /projects?forms=true', () => {
             form.reviewStates.received.should.equal(2);
           })))));
 
-    it('should return verbs for multiple roles', testService((service) =>
+    it.only('should return verbs for multiple roles', testService((service) =>
       service.login('dave', (asDave) => asDave.get('/v1/projects?forms=true')
         .expect(200)
         .then(({ body }) => {
