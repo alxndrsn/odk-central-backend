@@ -6,7 +6,7 @@ const testData = require('../../data/xml');
 const { QueryOptions } = require('../../../lib/util/db');
 const { exhaust } = require(appRoot + '/lib/worker/worker');
 
-describe('api: /projects', () => {
+describe.only('api: /projects', () => {
   describe('GET', () => {
     it('should return an empty array if not logged in', testService((service) =>
       service.get('/v1/projects')
@@ -46,7 +46,7 @@ describe('api: /projects', () => {
                 body[0].name.should.equal('Default Project');
               }))))));
 
-    it.only('should only return each project once even if multiply assigned', testService((service) =>
+    it('should only return each project once even if multiply assigned', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.get('/v1/users/current').expect(200).then(({ body }) => body.id)
           .then((aliceId) => asAlice.post('/v1/projects/1/assignments/manager/' + aliceId)
@@ -1300,7 +1300,7 @@ describe('api: /projects?forms=true', () => {
             body.length.should.equal(2);
             // First project
             body[0].formList.length.should.equal(2);
-            body[0].verbs.length.should.be.greaterThan(25); // 26 for manager // TODO check what changed
+            body[0].verbs.length.should.be.greaterThan(25); // 26 for manager // REVIEWER: master currently returns duplicate of 'submission.update' // FIXME should this be equal 25?
             // Second project
             body[1].formList.length.should.equal(1);
             body[1].verbs.length.should.be.lessThan(5); // 4 for data collector
