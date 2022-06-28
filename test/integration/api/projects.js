@@ -1236,8 +1236,7 @@ describe('api: /projects?forms=true', () => {
           body.length.should.equal(1);
           body[0].should.be.a.Project();
           const { formList, verbs } = body[0];
-          // verbs seems to have 1 more verb than it should - one is duplicated
-          verbs.length.should.be.greaterThan(40);
+          verbs.length.should.equal(40); // REVIEWER: master currently returns duplicate of 'submission.update'
           formList.length.should.equal(2);
           const form = formList[0];
           form.should.be.a.ExtendedForm();
