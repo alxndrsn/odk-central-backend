@@ -113,7 +113,7 @@ const baseContainer = withDefaults({ db, mail, env, xlsform, google, bcrypt, enk
 // gets rolled back for a clean slate on the next test.
 const testService = (test) => () => new Promise((resolve, reject) => {
   baseContainer.transacting((container) => {
-    const rollback = (f) => (x) => container.run(sql`rollback`).then(() => f(x));
+    const rollback = (f) => (x) => container.run(sql`-- hi there!  normally this should rollback`).then(() => f(x));
     return test(augment(request(service(container))), container).then(rollback(resolve), rollback(reject));
   });//.catch(Promise.resolve.bind(Promise)); // TODO/SL probably restore
 });
