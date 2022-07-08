@@ -65,15 +65,37 @@ describe('api: /submission', () => {
         .attach('xml_submission_file', Buffer.from(testData.instances.simple.one), { filename: 'data.xml' })
         .expect(401)));
 
-    it('should reject if the form is not taking submissions', testService((service) =>
-      service.login('alice', (asAlice) =>
-        asAlice.patch('/v1/projects/1/forms/simple')
-          .send({ state: 'closed' })
-          .expect(200)
-          .then(() => asAlice.post('/v1/projects/1/submission')
-            .set('X-OpenRosa-Version', '1.0')
-            .attach('xml_submission_file', Buffer.from(testData.instances.simple.one), { filename: 'data.xml' })
-            .expect(409)))));
+    describe('for a closed form', () => {
+      it('should reject a new submission if the User-Agent is not Enketo', testService((service) =>
+        service.login('alice', (asAlice) =>
+          asAlice.patch('/v1/projects/1/forms/simple')
+            .send({ state: 'closed' })
+            .expect(200)
+            .then(() => asAlice.post('/v1/projects/1/submission')
+              .set('X-OpenRosa-Version', '1.0')
+              .attach('xml_submission_file', Buffer.from(testData.instances.simple.one), { filename: 'data.xml' })
+              .expect(409)))));
+
+      it('should reject an update if the User-Agent is not Enketo', testService((service) =>
+      {})); // TODO
+
+      it('should reject a new submission if the User-Agent is Enketo', testService((service) =>
+      {})); // TODO
+
+      it('should accept an update if the User-Agent is Enketo', testService((service) =>
+        service.login('alice', (asAlice) =>
+          asAlice.patch('/v1/projects/1/forms/simple')
+            .send({ state: 'closed' })
+            .expect(200)
+            .then(() => asAlice.post('/v1/projects/1/submission')
+              .set('X-OpenRosa-Version', '1.0')
+              .set('User-Agent', 'Enketo/1.2.3')
+              .attach('xml_submission_file', Buffer.from(testData.instances.simple.one), { filename: 'data.xml' })
+              .expect(201)
+              .then(({ text }) => {
+                text.should.match(/upload was successful/);
+              })))));
+    });
 
     it('should reject if the submission version does not exist', testService((service) =>
       service.login('alice', (asAlice) =>
