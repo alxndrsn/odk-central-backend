@@ -246,22 +246,56 @@ describe('api: /projects/:id/forms (listing forms)', () => {
   </xforms>`);
               }))))));
 
-    it('should not include closing/closed forms', testService((service) =>
-      service.login('alice', (asAlice) =>
-        asAlice.patch('/v1/projects/1/forms/withrepeat')
-          .send({ state: 'closing' })
-          .expect(200)
-          .then(() => asAlice.patch('/v1/projects/1/forms/simple')
+    describe('closing/closed forms', () => {
+      it('should not be included by default', testService((service) =>
+        service.login('alice', (asAlice) =>
+          asAlice.patch('/v1/projects/1/forms/withrepeat')
             .send({ state: 'closing' })
             .expect(200)
-            .then(() => asAlice.get('/v1/projects/1/formList')
-              .set('X-OpenRosa-Version', '1.0')
+            .then(() => asAlice.patch('/v1/projects/1/forms/simple')
+              .send({ state: 'closing' })
               .expect(200)
-              .then(({ text }) => {
-                text.should.equal(`<?xml version="1.0" encoding="UTF-8"?>
+              .then(() => asAlice.get('/v1/projects/1/formList')
+                .set('X-OpenRosa-Version', '1.0')
+                .expect(200)
+                .then(({ text }) => {
+                  text.should.equal(`<?xml version="1.0" encoding="UTF-8"?>
   <xforms xmlns="http://openrosa.org/xforms/xformsList">
   </xforms>`);
-              }))))));
+                }))))));
+
+      it('should be included for enketo User-Agent', testService((service) =>
+        service.login('alice', (asAlice) =>
+          asAlice.patch('/v1/projects/1/forms/withrepeat')
+            .send({ state: 'closing' })
+            .expect(200)
+            .then(() => asAlice.patch('/v1/projects/1/forms/simple')
+              .send({ state: 'closing' })
+              .expect(200)
+              .then(() => asAlice.get('/v1/projects/1/formList')
+                .set('X-OpenRosa-Version', '1.0')
+                .set('User-Agent', 'Enketo/1.2.3')
+                .expect(200)
+                .then(({ text }) => {
+                  text.should.equal(`<?xml version="1.0" encoding="UTF-8"?>
+  <xforms xmlns="http://openrosa.org/xforms/xformsList">
+    <xform>
+      <formID>simple</formID>
+      <name>Simple</name>
+      <version></version>
+      <hash>md5:5c09c21d4c71f2f13f6aa26227b2d133</hash>
+      <downloadUrl>http://localhost:8989/v1/projects/1/forms/simple.xml</downloadUrl>
+    </xform>
+    <xform>
+      <formID>withrepeat</formID>
+      <name>withrepeat</name>
+      <version>1.0</version>
+      <hash>md5:e7e9e6b3f11fca713ff09742f4312029</hash>
+      <downloadUrl>http://localhost:8989/v1/projects/1/forms/withrepeat.xml</downloadUrl>
+    </xform>
+  </xforms>`);
+                }))))));
+    });
 
     it('should not include deleted forms', testService((service) =>
       service.login('alice', (asAlice) =>
