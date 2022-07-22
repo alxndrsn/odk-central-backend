@@ -154,7 +154,7 @@ function r() {
 }
 
 function nPromises(n, fn) {
-  return Promise.all(Array.from(Array(n)).map(fn));
+  return Promise.all(Array.from(Array(+n)).map(fn));
 }
 
 function exportZipWithDataAndMedia(projectId, formId) {
