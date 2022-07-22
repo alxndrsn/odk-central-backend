@@ -1,4 +1,5 @@
 import fetch, { fileFromSync } from 'node-fetch';
+import _ from 'lodash';
 import { v4 as uuid } from 'uuid';
 import { basename } from 'node:path';
 import { program } from 'commander';
@@ -11,19 +12,18 @@ log.report = (...args) => true  && log('REPORT', ...args);
 program
     .option('-s, --server-url <serverUrl>', 'URL of ODK Central server', 'http://localhost:8989')
     .option('-u, --user-email <serverUrl>', 'Email of central user', 'x@example.com')
-    .option('-p, --user-password <userPassword>', 'Password of central user', 'secret')
+    .option('-P, --user-password <userPassword>', 'Password of central user', 'secret')
     .option('-f, --form-path <formPath>', 'Path to form file (XML, XLS, XLSX etc.)', './250q-form.xml')
-    .option('-S, --test-in-series',   'Allow connecting to server in series', false)
-    .option('-P, --test-in-parallel', 'Allow connecting to server in parallel', true)
-    .option('-n, --submission-count <n>', 'Number of form submissions to generate', 5)
-    .option('-x, --export-count <x>',     'Number of exports', 5)
+    .option('-t, --throughput <throughput>', 'Target throughput (in samples per "throughput period")', 10)
+    .option('-p, --throughput-period <throughput-period>', 'Throughput period (in milliseconds)', 1_000)
+    .option('-d, --test-duration <test-duration>', 'Test duration (in milliseconds)', 30_000)
+//    .option('-S, --test-in-series',   'Allow connecting to server in series', false)
+//    .option('-P, --test-in-parallel', 'Allow connecting to server in parallel', true)
+//    .option('-n, --submission-count <n>', 'Number of form submissions to generate', 5)
+//    .option('-x, --export-count <x>',     'Number of exports', 5)
     ;
 program.parse();
-const { serverUrl, userEmail, userPassword, formPath, testInParallel, testInSeries, submissionCount, exportCount } = program.opts();
-
-if(!testInSeries && !testInParallel) {
-  throw new Error('Please choose at least one of --test-in-series and --test-in-parallel');
-}
+const { serverUrl, userEmail, userPassword, formPath, throughput, throughputPeriod, testDuration } = program.opts();
 
 log(`Using form: ${formPath}`);
 log(`Connecting to ${serverUrl} with user ${userEmail}...`);
@@ -31,6 +31,8 @@ log(`Connecting to ${serverUrl} with user ${userEmail}...`);
 benchmark();
 
 async function benchmark() {
+  log.debug('Setting up...');
+
   log.debug('Creating project...');
   const { id:projectId } = await apiPostJson('projects', { name:`benchmark-${new Date().toISOString().replace(/\..*/, '')}` });
 
@@ -40,22 +42,55 @@ async function benchmark() {
   log.debug('Publishing form...');
   await apiPost(`projects/${projectId}/forms/${formId}/draft/publish`);
 
-  if(testInSeries) await time(`${submissionCount} form submissions (serial)`, async () => {
-    for(let i=0; i<submissionCount; ++i) {
-      await randomSubmission(projectId, formId);
-    }
-  });
-  if(testInParallel) await time(`${submissionCount} form submissions (parallel)`, async () => {
-    await nPromises(submissionCount, () => randomSubmission(projectId, formId));
-  });
+  log.debug('Setup complete.  Starting benchmarks...');
 
-  if(testInSeries) await time(`${exportCount} all data and media ZIP export (serial)`, async () => {
-    for(let i=0; i<exportCount; ++i) {
-      await exportZipWithDataAndMedia(projectId, formId);
+  await doBenchmark(throughput, throughputPeriod, testDuration, () => randomSubmission(projectId, formId));
+
+  await doBenchmark(5, 5_000, 30_000, () => exportZipWithDataAndMedia(projectId, formId));
+}
+
+function doBenchmark(throughput, throughputPeriod, testDuration, fn) {
+  return new Promise((resolve, reject) => {
+    try {
+      const successes = [];
+      const fails = [];
+      const sleepyTime = +throughputPeriod / +throughput;
+
+      const iterate = async () => {
+        try {
+          const start = Date.now();
+          await fn();
+          const time = Date.now() - start;
+          successes.push(time);
+        } catch(err) {
+          fails.push(err);
+        }
+      };
+
+      iterate();
+      const timerId = setInterval(iterate, sleepyTime);
+
+      setTimeout(async () => {
+        clearTimeout(timerId);
+
+        await new Promise(resolve => setTimeout(resolve, 10000)); // TODO should be same length as HTTP timeout
+
+        log.report('--------------------------');
+        log.report(' Test duration:', testDuration);
+        log.report('Total requests:', successes.length + fails.length);
+        log.report('     Successes:', successes.length);
+        log.report('      Failures:', fails.length);
+        log.report('Response times:');
+        log.report('          mean:', _.mean(successes), 'ms');
+        log.report('           min:', _. min(successes), 'ms');
+        log.report('           max:', _. max(successes), 'ms');
+        log.report('--------------------------');
+
+        resolve();
+      }, +testDuration);
+    } catch(err) {
+      reject(err);
     }
-  });
-  if(testInParallel) await time(`${exportCount} CSV exports (parallel)`, async () => {
-    await nPromises(exportCount, () => exportZipWithDataAndMedia(projectId, formId));
   });
 }
 
