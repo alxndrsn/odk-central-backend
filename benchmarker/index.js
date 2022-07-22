@@ -13,12 +13,17 @@ program
     .option('-u, --user-email <serverUrl>', 'Email of central user', 'x@example.com')
     .option('-p, --user-password <userPassword>', 'Password of central user', 'secret')
     .option('-f, --form-path <formPath>', 'Path to form file (XML, XLS, XLSX etc.)', './250q-form.xml')
-    .option('-P, --test-parallels', 'Allow connecting to server in parallel', false)
+    .option('-S, --test-in-series',   'Allow connecting to server in series', false)
+    .option('-P, --test-in-parallel', 'Allow connecting to server in parallel', true)
     .option('-n, --submission-count <n>', 'Number of form submissions to generate', 5)
-    .option('-x, --export-count <x>', 'Number of exports', 5)
+    .option('-x, --export-count <x>',     'Number of exports', 5)
     ;
 program.parse();
-const { serverUrl, userEmail, userPassword, formPath, testParallels, submissionCount, exportCount } = program.opts();
+const { serverUrl, userEmail, userPassword, formPath, testInParallel, testInSeries, submissionCount, exportCount } = program.opts();
+
+if(!testInSeries && !testInParallel) {
+  throw new Error('Please choose at least one of --test-in-series and --test-in-parallel');
+}
 
 log(`Using form: ${formPath}`);
 log(`Connecting to ${serverUrl} with user ${userEmail}...`);
@@ -35,21 +40,21 @@ async function benchmark() {
   log.debug('Publishing form...');
   await apiPost(`projects/${projectId}/forms/${formId}/draft/publish`);
 
-  await time(`${submissionCount} form submissions (serial)`, async () => {
+  if(testInSeries) await time(`${submissionCount} form submissions (serial)`, async () => {
     for(let i=0; i<submissionCount; ++i) {
       await randomSubmission(projectId, formId);
     }
   });
-  if(testParallels) await time(`${submissionCount} form submissions (parallel)`, async () => {
+  if(testInParallel) await time(`${submissionCount} form submissions (parallel)`, async () => {
     await nPromises(submissionCount, () => randomSubmission(projectId, formId));
   });
 
-  await time(`${exportCount} all data and media ZIP export (serial)`, async () => {
+  if(testInSeries) await time(`${exportCount} all data and media ZIP export (serial)`, async () => {
     for(let i=0; i<exportCount; ++i) {
       await exportZipWithDataAndMedia(projectId, formId);
     }
   });
-  if(testParallels) await time(`${exportCount} CSV exports (parallel)`, async () => {
+  if(testInParallel) await time(`${exportCount} CSV exports (parallel)`, async () => {
     await nPromises(exportCount, () => exportZipWithDataAndMedia(projectId, formId));
   });
 }
