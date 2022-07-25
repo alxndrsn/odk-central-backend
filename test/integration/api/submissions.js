@@ -5,7 +5,7 @@ const { sql } = require('slonik');
 const { createReadStream, readFileSync } = require('fs');
 const { testService } = require('../setup');
 const testData = require('../../data/xml');
-const { zipStreamToFiles } = require('../../util/zip');
+const { zipStreamToFiles, pZipStreamToFiles } = require('../../util/zip');
 const { Form } = require(appRoot + '/lib/model/frames');
 const { exhaust } = require(appRoot + '/lib/worker/worker');
 
@@ -1480,8 +1480,8 @@ describe('api: /forms/:id/submissions', () => {
               .attach('xml_submission_file', Buffer.from(testData.instances.binaryType.both), { filename: 'data.xml' })
               .attach('here_is_file2.jpg', Buffer.from('this is test file two'), { filename: 'here_is_file2.jpg' })
               .expect(201))
-            .then(() => new Promise((done) =>
-              zipStreamToFiles(asAlice.get('/v1/projects/1/forms/binaryType/submissions.csv.zip'), (result) => {
+            .then(() => pZipStreamToFiles(asAlice.get('/v1/projects/1/forms/binaryType/submissions.csv.zip'))
+              .then((result) => {
                 result.filenames.should.containDeep([
                   'binaryType.csv',
                   'media/my_file1.mp4',
@@ -1498,7 +1498,7 @@ describe('api: /forms/:id/submissions', () => {
                 csv.length.should.equal(3); // newline at end
 
                 done();
-              })))))));
+              }))))));
 
     it.only('should filter attachments by the query', testService((service) =>
       service.login('alice', (asAlice) =>
