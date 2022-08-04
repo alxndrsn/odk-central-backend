@@ -44,12 +44,12 @@ async function benchmark() {
 
   log.debug('Setup complete.  Starting benchmarks...');
 
-  await doBenchmark(throughput, throughputPeriod, testDuration, () => randomSubmission(projectId, formId));
+  await doBenchmark('randomSubmission()', throughput, throughputPeriod, testDuration, () => randomSubmission(projectId, formId));
 
-  await doBenchmark(5, 5_000, 30_000, () => exportZipWithDataAndMedia(projectId, formId));
+  await doBenchmark('exportZipWithDataAndMedia()', 5, 5_000, 30_000, () => exportZipWithDataAndMedia(projectId, formId));
 }
 
-function doBenchmark(throughput, throughputPeriod, testDuration, fn) {
+function doBenchmark(name, throughput, throughputPeriod, testDuration, fn) {
   return new Promise((resolve, reject) => {
     try {
       const successes = [];
@@ -76,6 +76,7 @@ function doBenchmark(throughput, throughputPeriod, testDuration, fn) {
         await new Promise(resolve => setTimeout(resolve, 10000)); // TODO should be same length as HTTP timeout
 
         log.report('--------------------------');
+        log.report('          Test:', name);
         log.report(' Test duration:', testDuration);
         log.report('Total requests:', successes.length + fails.length);
         log.report('     Successes:', successes.length);
