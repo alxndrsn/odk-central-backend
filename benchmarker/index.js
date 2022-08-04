@@ -46,6 +46,11 @@ async function benchmark() {
 
   await doBenchmark('randomSubmission()', throughput, throughputPeriod, testDuration, () => randomSubmission(projectId, formId));
 
+  // TODO should work out a more scientific sleep duration
+  log.debug('Sleeping to allow central-backend to complete background jobs...');
+  await new Promise(resolve => setTimeout(resolve, 10_000));
+  log.debug('Woke up.');
+
   await doBenchmark('exportZipWithDataAndMedia()', 10, 5_000, 30_000, () => exportZipWithDataAndMedia(projectId, formId));
 }
 
