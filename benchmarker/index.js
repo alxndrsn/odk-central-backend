@@ -46,7 +46,7 @@ async function benchmark() {
 
   await doBenchmark('randomSubmission()', throughput, throughputPeriod, testDuration, () => randomSubmission(projectId, formId));
 
-  await doBenchmark('exportZipWithDataAndMedia()', 5, 5_000, 30_000, () => exportZipWithDataAndMedia(projectId, formId));
+  await doBenchmark('exportZipWithDataAndMedia()', 10, 5_000, 30_000, () => exportZipWithDataAndMedia(projectId, formId));
 }
 
 function doBenchmark(name, throughput, throughputPeriod, testDuration, fn) {
