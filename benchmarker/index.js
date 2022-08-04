@@ -14,7 +14,7 @@ program
     .option('-u, --user-email <serverUrl>', 'Email of central user', 'x@example.com')
     .option('-P, --user-password <userPassword>', 'Password of central user', 'secret')
     .option('-f, --form-path <formPath>', 'Path to form file (XML, XLS, XLSX etc.)', './250q-form.xml')
-    .option('-t, --throughput <throughput>', 'Target throughput (in samples per "throughput period")', 10)
+    .option('-t, --throughput <throughput>', 'Target throughput (in samples per "throughput period")', 50)
     .option('-p, --throughput-period <throughput-period>', 'Throughput period (in milliseconds)', 1_000)
     .option('-d, --test-duration <test-duration>', 'Test duration (in milliseconds)', 30_000)
 //    .option('-S, --test-in-series',   'Allow connecting to server in series', false)
