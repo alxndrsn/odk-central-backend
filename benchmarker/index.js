@@ -195,5 +195,5 @@ function nPromises(n, fn) {
 }
 
 function exportZipWithDataAndMedia(projectId, formId) {
-  return apiGet(`projects/${projectId}/forms/${formId}/submissions.csv.zip?splitSelectMultiples=false&groupPaths=true&deletedFields=false`);
+  return apiGet(`projects/${projectId}/forms/${formId}/submissions.csv.zip?splitSelectMultiples=true&groupPaths=true&deletedFields=true`);
 }
