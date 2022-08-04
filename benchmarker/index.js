@@ -115,19 +115,18 @@ function apiPostJson(path, body) {
 }
 
 async function apiGet(path, headers) {
-  return apiFetch('GET', path, undefined, headers);
+  const res = await apiFetch('GET', path, undefined, headers);
+  return res.text();
 }
 
 async function apiPost(path, body, headers) {
   const res = await apiFetch('POST', path, body, headers);
-  log.debug('POST', res.url, '->', res.status);
-  if(!res.ok) throw new Error(`${res.status}: ${await res.text()}`);
   return res.json();
 }
 
 async function apiFetch(method, path, body, headers) {
   const url = `${serverUrl}/v1/${path}`;
-  return fetch(url, {
+  const res = await fetch(url, {
     method,
     body,
     headers: {
@@ -135,6 +134,9 @@ async function apiFetch(method, path, body, headers) {
       ...headers,
     },
   });
+  log.debug(method, res.url, '->', res.status);
+  if(!res.ok) throw new Error(`${res.status}: ${await res.text()}`);
+  return res;
 }
 
 function base64(s) {
