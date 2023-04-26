@@ -14,6 +14,7 @@ const { Form, Key, Submission } = require(appRoot + '/lib/model/frames');
 const { mapSequential } = require(appRoot + '/test/util/util');
 // eslint-disable-next-line import/no-dynamic-require
 const { exhaust } = require(appRoot + '/lib/worker/worker');
+const authenticateUser = require('../../util/authenticate-user');
 
 describe('managed encryption', () => {
   describe('lock management', () => {
@@ -286,14 +287,11 @@ describe('managed encryption', () => {
             asAlice.get('/v1/projects/1/forms/simple/submissions/keys')
               .expect(200)
               .then(({ body }) => body[0].id),
-            service.post('/v1/sessions')
-              .send({ email: 'alice@getodk.org', password: 'alice' })
-              .expect(200)
-              .then(({ body }) => body)
+            authenticateUser(service, 'alice', 'include-csrf'),
           ]))
           .then(([ keyId, session ]) => pZipStreamToFiles(service.post('/v1/projects/1/forms/simple/submissions.csv.zip')
             .send(`${keyId}=supersecret&__csrf=${session.csrf}`)
-            .set('Cookie', `__Host-session=${session.token}`)
+            .set('Cookie', `session=${session.token}`)
             .set('X-Forwarded-Proto', 'https')
             .set('Content-Type', 'application/x-www-form-urlencoded'))
             .then((result) => {
