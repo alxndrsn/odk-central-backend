@@ -36,12 +36,12 @@ describe('api: /sessions', () => {
           // i don't know how this becomes an array but i think superagent does it.
           const cookie = headers['set-cookie'];
 
-          const session = /__Host-session=([^;]+); Path=\/; Expires=([^;]+); HttpOnly; Secure; SameSite=Strict/.exec(cookie[0]);
+          const session = /^session=([^;]+); Path=\/; Expires=([^;]+); HttpOnly; SameSite=Strict$/.exec(cookie[0]);
           should.exist(session);
           decodeURIComponent(session[1]).should.equal(body.token);
           session[2].should.equal(DateTime.fromISO(body.expiresAt).toHTTP());
 
-          const csrf = /__csrf=([^;]+); Path=\/; Expires=([^;]+); Secure; SameSite=Strict/.exec(cookie[1]);
+          const csrf = /^__csrf=([^;]+); Path=\/; Expires=([^;]+); SameSite=Strict$/.exec(cookie[1]);
           should.exist(csrf);
           decodeURIComponent(csrf[1]).should.equal(body.csrf);
           csrf[2].should.equal(DateTime.fromISO(body.expiresAt).toHTTP());
@@ -86,7 +86,7 @@ describe('api: /sessions', () => {
     it('should fail if no valid session exists', testService((service) =>
       service.get('/v1/sessions/restore')
         .set('X-Forwarded-Proto', 'https')
-        .set('Cookie', '__Host-session: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa')
+        .set('Cookie', 'session: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa')
         .expect(404)));
 
     it('should return the active session if it exists', testService((service) =>
@@ -95,7 +95,7 @@ describe('api: /sessions', () => {
         .expect(200)
         .then(({ body }) => service.get('/v1/sessions/restore')
           .set('X-Forwarded-Proto', 'https')
-          .set('Cookie', '__Host-session=' + body.token)
+          .set('Cookie', 'session=' + body.token)
           .expect(200)
           .then((restore) => {
             restore.body.should.be.a.Session();
@@ -206,7 +206,7 @@ describe('api: /sessions', () => {
             .expect(200)
             .then(({ headers }) => {
               const cookie = headers['set-cookie'][0];
-              cookie.should.match(/__Host-session=null/);
+              cookie.should.match(/session=null/);
             });
         })));
 
@@ -278,7 +278,7 @@ describe('api: /sessions', () => {
         .then(({ body }) => service.post('/v1/projects')
           .send({ name: 'my project' })
           .set('X-Forwarded-Proto', 'https')
-          .set('Cookie', '__Host-session=' + body.token)
+          .set('Cookie', 'session=' + body.token)
           .expect(401))));
 
     it('should reject if the CSRF token is wrong', testService((service) =>
@@ -288,7 +288,7 @@ describe('api: /sessions', () => {
         .then(({ body }) => service.post('/v1/projects')
           .send({ name: 'my project', __csrf: 'nope' })
           .set('X-Forwarded-Proto', 'https')
-          .set('Cookie', '__Host-session=' + body.token)
+          .set('Cookie', 'session=' + body.token)
           .expect(401))));
 
     it('should succeed if the CSRF token is correct', testService((service) =>
@@ -298,7 +298,7 @@ describe('api: /sessions', () => {
         .then(({ body }) => service.post('/v1/projects')
           .send({ name: 'my project', __csrf: body.csrf })
           .set('X-Forwarded-Proto', 'https')
-          .set('Cookie', '__Host-session=' + body.token)
+          .set('Cookie', 'session=' + body.token)
           .expect(200))));
   });
 });

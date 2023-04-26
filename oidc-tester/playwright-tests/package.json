@@ -1,0 +1,14 @@
+{
+  "name": "playwright-tests",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {},
+  "dependencies": {
+    "@playwright/test": "^1.33.0",
+    "http-proxy-middleware": "^2.0.6"
+  },
+  "volta": {
+    "node": "18.16.0"
+  },
+  "license": "SEE LICENSE IN ../../LICENSE"
+}

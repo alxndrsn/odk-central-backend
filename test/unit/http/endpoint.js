@@ -498,18 +498,26 @@ describe('endpoints', () => {
     it('should fail semigracefully on PartialPipe stream error', (done) => {
       let trailers;
       const requestTest = streamTest.fromChunks();
-      // eslint-disable-next-line no-shadow
-      const responseTest = streamTest.toText((_, result) => {
-        trailers.should.eql({ Status: 'Error' });
-        // eslint-disable-next-line no-multi-spaces
-        should.not.exist(result);                  // node v14
-        (result === undefined).should.equal(true); // post node v14.??
-        done();
+      let responseTest;
+
+      const testStarted = new Promise(startTest => {
+        // eslint-disable-next-line no-shadow
+        responseTest = streamTest.toText(async (_, result) => {
+          await testStarted;
+
+          trailers.should.eql({ Status: 'Error' });
+          // eslint-disable-next-line no-multi-spaces
+          should.not.exist(result);                  // node v14
+          (result === undefined).should.equal(true); // post node v14.??
+          done();
+        });
+        // eslint-disable-next-line space-before-function-paren, func-names
+        responseTest.addTrailers = function(t) { trailers = t; };
+        // eslint-disable-next-line space-before-function-paren, func-names
+        responseTest.hasHeader = function() { return true; };
+
+        startTest();
       });
-      // eslint-disable-next-line space-before-function-paren, func-names
-      responseTest.addTrailers = function(t) { trailers = t; };
-      // eslint-disable-next-line space-before-function-paren, func-names
-      responseTest.hasHeader = function() { return true; };
 
       const resourceResult = PartialPipe.of(
         streamTest.fromChunks([ 'a', 'test', 'stream' ]),

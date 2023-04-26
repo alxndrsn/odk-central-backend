@@ -153,7 +153,7 @@ describe('preprocessors', () => {
         Promise.resolve(authHandler(
           { Auth, Sessions: mockSessions('alohomora') },
           new Context(
-            createRequest({ method: 'GET', headers: { Cookie: '__Host-session=alohomora' } }),
+            createRequest({ method: 'GET', headers: { Cookie: 'session=alohomora' }, cookies: { session: 'alohomora' } }),
             { fieldKey: Option.none() }
           )
         )).then((context) => {
@@ -168,7 +168,7 @@ describe('preprocessors', () => {
             createRequest({ method: 'GET', headers: {
               'X-Forwarded-Proto': 'https',
               Cookie: 'please just let me in'
-            } }),
+            }, cookies: {} }),
             { fieldKey: Option.none() }
           )
         )).then((context) => {
@@ -182,8 +182,8 @@ describe('preprocessors', () => {
           new Context(
             createRequest({ method: 'GET', headers: {
               'X-Forwarded-Proto': 'https',
-              Cookie: '__Host-session=letmein'
-            } }),
+              Cookie: 'session=letmein'
+            }, cookies: { session: 'letmein' } }),
             { fieldKey: Option.none() }
           )
         )).then((context) => {
@@ -200,8 +200,8 @@ describe('preprocessors', () => {
               // eslint-disable-next-line quote-props
               'Authorization': 'Bearer abc',
               'X-Forwarded-Proto': 'https',
-              Cookie: '__Host-session=alohomora'
-            } }),
+              Cookie: 'session=alohomora'
+            }, cookies: { session: 'alohomora' } }),
             { auth: { isAuthenticated() { return false; } }, fieldKey: Option.none() }
           )
         )).catch((err) => {
@@ -223,8 +223,9 @@ describe('preprocessors', () => {
                 // eslint-disable-next-line quote-props
                 'Authorization': 'Bearer abc',
                 'X-Forwarded-Proto': 'https',
-                Cookie: '__Host-session=alohomora'
+                Cookie: 'session=alohomora'
               },
+              cookies: { session: 'alohomora' },
               url: '/key/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
             }),
             { auth: { isAuthenticated() { return false; } }, fieldKey: Option.none() }
@@ -243,8 +244,8 @@ describe('preprocessors', () => {
           new Context(
             createRequest({ method: 'GET', headers: {
               'X-Forwarded-Proto': 'https',
-              Cookie: '__Host-session=alohomora'
-            } }),
+              Cookie: 'session=alohomora'
+            }, cookies: { session: 'alohomora' } }),
             { fieldKey: Option.none() }
           )
         )).then((context) => {
@@ -257,8 +258,8 @@ describe('preprocessors', () => {
           new Context(
             createRequest({ method: 'HEAD', headers: {
               'X-Forwarded-Proto': 'https',
-              Cookie: '__Host-session=alohomora'
-            } }),
+              Cookie: 'session=alohomora'
+            }, cookies: { session: 'alohomora' } }),
             { fieldKey: Option.none() }
           )
         )).then((context) => {
@@ -271,8 +272,8 @@ describe('preprocessors', () => {
           new Context(
             createRequest({ method: 'GET', headers: {
               'X-Forwarded-Proto': 'https',
-              Cookie: '__Host-session=aloho%24mora'
-            } }),
+              Cookie: 'session=aloho%24mora'
+            }, cookies: { session: 'aloho$mora' } }),
             { fieldKey: Option.none() }
           )
         )).then((context) => {
@@ -292,8 +293,8 @@ describe('preprocessors', () => {
             new Context(
               createRequest({ method: 'POST', headers: {
                 'X-Forwarded-Proto': 'https',
-                Cookie: '__Host-session=alohomora'
-              } }),
+                Cookie: 'session=alohomora'
+              }, cookies: { session: 'alohomora' } }),
               { fieldKey: Option.none() }
             )
           )).should.be.rejectedWith(Problem, { problemCode: 401.2 }));
@@ -304,8 +305,8 @@ describe('preprocessors', () => {
             new Context(
               createRequest({ method: 'POST', headers: {
                 'X-Forwarded-Proto': 'https',
-                Cookie: '__Host-session=alohomora'
-              }, body: { __csrf: 'notsecretcsrf' } }),
+                Cookie: 'session=alohomora'
+              }, body: { __csrf: 'notsecretcsrf' }, cookies: { session: 'alohomora' } }),
               { fieldKey: Option.none() }
             )
           )).should.be.rejectedWith(Problem, { problemCode: 401.2 }));
@@ -316,8 +317,8 @@ describe('preprocessors', () => {
             new Context(
               createRequest({ method: 'POST', headers: {
                 'X-Forwarded-Proto': 'https',
-                Cookie: '__Host-session=notalohomora'
-              }, body: { __csrf: 'secretcsrf' } }),
+                Cookie: 'session=notalohomora'
+              }, body: { __csrf: 'secretcsrf' }, cookies: { session: 'notalohomora' } }),
               { fieldKey: Option.none() }
             )
           )).then((context) => {
@@ -331,8 +332,8 @@ describe('preprocessors', () => {
             new Context(
               createRequest({ method: 'POST', headers: {
                 'X-Forwarded-Proto': 'https',
-                Cookie: '__Host-session=alohomora'
-              }, body: { __csrf: 'secretcsrf' } }),
+                Cookie: 'session=alohomora'
+              }, body: { __csrf: 'secretcsrf' }, cookies: { session: 'alohomora' } }),
               { fieldKey: Option.none() }
             )
           )).should.be.fulfilled());
@@ -343,8 +344,8 @@ describe('preprocessors', () => {
             new Context(
               createRequest({ method: 'POST', headers: {
                 'X-Forwarded-Proto': 'https',
-                Cookie: '__Host-session=alohomora'
-              }, body: { __csrf: 'secret%24csrf' } }),
+                Cookie: 'session=alohomora'
+              }, body: { __csrf: 'secret%24csrf' }, cookies: { session: 'alohomora' } }),
               { fieldKey: Option.none() }
             )
           )).should.be.fulfilled());
@@ -355,8 +356,8 @@ describe('preprocessors', () => {
             new Context(
               createRequest({ method: 'POST', headers: {
                 'X-Forwarded-Proto': 'https',
-                Cookie: '__Host-session=alohomora'
-              }, body: { __csrf: 'secretcsrf', other: 'data' } }),
+                Cookie: 'session=alohomora'
+              }, body: { __csrf: 'secretcsrf', other: 'data' }, cookies: { session: 'alohomora' } }),
               { fieldKey: Option.none() }
             )
           )).then((context) => {

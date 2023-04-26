@@ -3,10 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "engines": {
-    "node": "16"
+    "node": "18"
   },
   "volta": {
-    "node": "16.19.1"
+    "node": "18.16.0"
   },
   "dependencies": {
     "@sentry/node": "~7",
@@ -16,6 +16,7 @@
     "cli": "~1",
     "cloneable-readable": "~2",
     "config": "~1.31",
+    "cookie-parser": "^1.4.6",
     "csv-parse": "~4",
     "csv-stringify": "~5",
     "digest-stream": "~2",
@@ -32,6 +33,7 @@
     "mustache": "~2.3",
     "nodemailer": "~6",
     "odata-v4-parser": "~0.1",
+    "openid-client": "^5.4.2",
     "pg": "~8",
     "pg-query-stream": "~4",
     "pm2": "^5.2.2",

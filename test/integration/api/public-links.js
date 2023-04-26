@@ -204,7 +204,7 @@ describe('api: /key/:key', () => {
           .send({ displayName: 'linktest' })
           .then(({ body }) => body.token)
           .then((linkToken) => service.get(`/v1/key/${linkToken}/projects/1/forms/simple.xml`)
-            .set('Cookie', `__Host-session=${aliceToken}`)
+            .set('Cookie', `session=${aliceToken}`)
             .set('X-Forwarded-Proto', 'https')
             .expect(200))))));
 

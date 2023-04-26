@@ -1,8 +1,27 @@
 default: base
 
 node_modules: package.json
-	npm install --legacy-peer-deps
+	npm clean-install --legacy-peer-deps
 	touch node_modules
+
+.PHONY: test-oidc
+test-oidc: node_modules
+	# TODO remove shellcheck call - not available/useful/etc. outside dev(?)
+	shellcheck ./oidc-tester/scripts/docker-start.sh
+	cd oidc-tester && \
+	docker compose down && \
+	docker compose build --build-arg CACHEBUST=$$RANDOM$$(date +%s) && \
+	docker compose up --exit-code-from odk-central-oidc-tester
+
+.PHONY: dev-oidc
+dev-oidc: base
+	NODE_CONFIG_ENV=oidc-development npx nodemon --watch lib --watch config lib/bin/run-server.js
+
+.PHONY: fake-oidc-server
+fake-oidc-server:
+	cd oidc-tester/fake-oidc-server && \
+	npm clean-install && \
+	FAKE_OIDC_ROOT_URL=http://localhost:9898 npx nodemon index.js
 
 .PHONY: node_version
 node_version: node_modules

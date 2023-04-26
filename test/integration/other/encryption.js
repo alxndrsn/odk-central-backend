@@ -293,7 +293,7 @@ describe('managed encryption', () => {
           ]))
           .then(([ keyId, session ]) => pZipStreamToFiles(service.post('/v1/projects/1/forms/simple/submissions.csv.zip')
             .send(`${keyId}=supersecret&__csrf=${session.csrf}`)
-            .set('Cookie', `__Host-session=${session.token}`)
+            .set('Cookie', `session=${session.token}`)
             .set('X-Forwarded-Proto', 'https')
             .set('Content-Type', 'application/x-www-form-urlencoded'))
             .then((result) => {
