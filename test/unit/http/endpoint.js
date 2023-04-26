@@ -506,10 +506,6 @@ describe('endpoints', () => {
         (result === undefined).should.equal(true); // post node v14.??
         done();
       });
-      // eslint-disable-next-line space-before-function-paren, func-names
-      responseTest.addTrailers = function(t) { trailers = t; };
-      // eslint-disable-next-line space-before-function-paren, func-names
-      responseTest.hasHeader = function() { return true; };
 
       const resourceResult = PartialPipe.of(
         streamTest.fromChunks([ 'a', 'test', 'stream' ]),
