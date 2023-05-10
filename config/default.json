@@ -45,6 +45,12 @@
       "clientSecret": "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",
       "allowUnverifiedEmail": false,
 
+      "_description": "broken config: fiddle with this config to test out different init failure modes",
+      "discoveryUrl": "http://example.com",
+      "clientId": "this is required; should be reported during client init if this line commented out",
+      "clientSecret": "this is required; should be reported during client init if this line commented out TODO should it?  or should come from env var?",
+      "allowUnverifiedEmail": "whatever",
+
       "_description": "auth0: https://manage.auth0.com/dashboard/us/odk-oidc-dev/",
       "discoveryUrl": "https://odk-oidc-dev.us.auth0.com",
       "clientId": "ZKKpcW8TpKymVLbD1dbDVExj7SU4Zxbn",
@@ -52,12 +58,6 @@
       "clientSecret": "7tuVT7OsjRHfmUiwYYyWNT8YArMNlmvvv70tqlChkjtVHW0Xsp0mvVAyKIfCgUn5",
       "_TODO": " personal setting in dev - a bit inconvenient at the moment to verify emails:",
       "allowUnverifiedEmail": true,
-
-      "_description": "broken config: fiddle with this config to test out different init failure modes",
-      "discoveryUrl": "http://example.com",
-      "clientId": "this is required; should be reported during client init if this line commented out",
-      "clientSecret": "this is required; should be reported during client init if this line commented out TODO should it?  or should come from env var?",
-      "allowUnverifiedEmail": "whatever",
 
       "_FIXME": "only enabled while developing the feature!",
       "enabled": true,
