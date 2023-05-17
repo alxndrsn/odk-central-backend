@@ -38,13 +38,6 @@
       "_description": "in testing, move the config you want to last-place",
       "enabled": false,
 
-      "_description": "google: from https://console.cloud.google.com/apis/credentials",
-      "discoveryUrl": "https://accounts.google.com",
-      "clientId": "564021877275-o5q3i8j44190d93d9mldd3rti1fncn3u.apps.googleusercontent.com",
-      "_TODO":  "this should come from env var!",
-      "clientSecret": "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",
-      "allowUnverifiedEmail": false,
-
       "_description": "broken config: fiddle with this config to test out different init failure modes",
       "discoveryUrl": "http://example.com",
       "clientId": "this is required; should be reported during client init if this line commented out",
@@ -58,6 +51,18 @@
       "clientSecret": "7tuVT7OsjRHfmUiwYYyWNT8YArMNlmvvv70tqlChkjtVHW0Xsp0mvVAyKIfCgUn5",
       "_TODO": " personal setting in dev - a bit inconvenient at the moment to verify emails:",
       "allowUnverifiedEmail": true,
+
+      "_description": "google: from https://console.cloud.google.com/apis/credentials",
+      "discoveryUrl": "https://accounts.google.com",
+      "clientId": "564021877275-o5q3i8j44190d93d9mldd3rti1fncn3u.apps.googleusercontent.com",
+      "_TODO":  "this should come from env var!",
+      "clientSecret": "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",
+      "allowUnverifiedEmail": false,
+
+      "_description": "local test server: from https://www.npmjs.com/package/oidc-provider",
+      "discoveryUrl": "http://localhost:9898",
+      "clientId": "odk-central-backend-dev",
+      "clientSecret": "super-top-secret",
 
       "_FIXME": "only enabled while developing the feature!",
       "enabled": true,
