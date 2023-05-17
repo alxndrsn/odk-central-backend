@@ -4,6 +4,10 @@ node_modules: package.json
 	npm install --legacy-peer-deps
 	touch node_modules
 
+.PHONY: test-oidc
+test-oidc: node_modules
+	npx playwright test oidc.spec.js
+
 .PHONY: node_version
 node_version: node_modules
 	node lib/bin/enforce-node-version.js
