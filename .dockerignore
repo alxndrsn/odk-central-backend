@@ -1,0 +1,11 @@
+# Ignore everything
+*
+
+# Explicitly whitelist _necessary_ **source files**
+!/package.json
+!/package-lock.json
+!/lib/
+!/config/
+
+!/oidc-tester/package.json
+!/oidc-tester/package-lock.json
