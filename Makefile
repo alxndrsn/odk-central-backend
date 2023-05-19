@@ -8,6 +8,10 @@ node_modules: package.json
 test-oidc: node_modules
 	npx playwright test oidc.spec.js
 
+.PHONY: test-oidc-debug
+test-oidc-debug: node_modules
+	npx playwright test --debug oidc.spec.js
+
 .PHONY: node_version
 node_version: node_modules
 	node lib/bin/enforce-node-version.js
