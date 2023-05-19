@@ -30,8 +30,16 @@ test('can log in with OIDC', async ({ page }) => {
     const requestCookies = JSON.parse(await page.locator(`div[id=request-cookies]`).textContent());
 
     console.log(JSON.stringify(requestCookies, null, 2));
-    if(!Object.keys(requestCookies).includes('session')) throw new Error('No session cookie found!');
-    if(!Object.keys(requestCookies).includes('__csrf'))  throw new Error('No CSRF cookie found!');
+
+    if(!requestCookies.session) throw new Error('No session cookie found!');
+    if(!requestCookies.__csrf)  throw new Error('No CSRF cookie found!');
+
+    // TODO there are limitations to this test - some of the most fiddly stuff
+    // WRT cookie settings are around Secure, SameSite, __Host, __Secure, but
+    // we may not be able to fully test this without both HTTPS and a non-
+    // localhost domain.  Perhaps testable in docker with a self-signed cert
+    // and host-file remapping?
+    // See: https://web.dev/when-to-use-local-https/#when-to-use-https-for-local-development
   } finally {
     try { fakeFrontend?.close(); } catch(err) { /* :shrug: */ }
   }
