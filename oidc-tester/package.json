@@ -1,0 +1,16 @@
+{
+  "name": "oidc-tester",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+  },
+  "dependencies": {
+  },
+  "devDependencies": {
+  },
+  "volta": {
+    "node": "16.19.1"
+  },
+  "license": "SEE LICENSE IN ../LICENSE"
+}
