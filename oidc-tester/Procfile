@@ -1,0 +1,2 @@
+test-oidc-server: node 
+odk-central-backend: cd .. && pwd && ls && make run

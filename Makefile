@@ -1,12 +1,12 @@
 default: base
 
 node_modules: package.json
-	npm install --legacy-peer-deps
+	npm clean-install --legacy-peer-deps
 	touch node_modules
 
 .PHONY: test-oidc
 test-oidc: node_modules
-	npx playwright test oidc.spec.js
+	docker run -it $$(docker build --quiet --rm -f oidc-tester.dockerfile --build-arg CACHEBUST=$$RANDOM$$(date +%s) .)
 
 .PHONY: test-oidc-debug
 test-oidc-debug: node_modules

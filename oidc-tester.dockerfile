@@ -16,10 +16,15 @@ RUN wget -O mkcert "https://dl.filippo.io/mkcert/v${mkcert_version}?for=linux/am
 
 FROM node:${node_version}
 
-# Copy main project dependencies - this layer is slow, but should be cached most of the time.
+# Set up main project dependencies - this layer is slow, but should be cached most of the time.
 WORKDIR /odk-central-backend
 COPY package.json package-lock.json /
 RUN npm clean-install --legacy-peer-deps
+
+# Set up oidc-tester dependencies - this layer is slow, but should be cached most of the time.
+WORKDIR /odk-central-backend/oidc-tester
+COPY oidc-tester/package.json oidc-tester/package-lock.json /
+RUN npm clean-install
 
 # Set up HTTPS.  mkcert is fast, but Docker doesn't seem to cache it.  So this
 # step is run just prior to CMD
@@ -32,8 +37,13 @@ RUN mkcert -install && \
 # isolation at the Docker level between code or dependencies of the various
 # servers that will run.  This is very convenient and probably allows for faster
 # builds, but care should be taken to avoid interdependencies.
+
+# TODO decision time!  We need to run postgres!  Can we just run with the normal script?  Or do we have to get into docker compose...?
+
 WORKDIR /odk-central-backend
-COPY / /
+# TODO remove this... maybe?  really handy in dev to make sure we're getting up-to-date files
+ARG CACHEBUST=1
+COPY / .
 
 # Start background services
 # TODO maybe use foreman - need to start:
@@ -42,14 +52,19 @@ COPY / /
 # fake-odk-frontend (https://odk-central.example.org)
 
 # TODO push some JSON config for odk-central-backend itself
+RUN echo '{"default":{"database":{"host":"odk-postgres14"}}}' > config/local.json
 
 # Run the tests, e.g.
 # CMD npx playwright test oidc.spec.js
-WORKDIR /odk-central-backend/oidc-tester 
-CMD echo '[oidc-tester] Configuring DNS...' && \
-		# N.B. configuring DNS is done at runtime because Docker prevents write access before then.
-		echo '127.0.0.1 fake-oidc-server.example.net' >> /etc/hosts && \
-		echo '127.0.0.1      odk-central.example.org' >> /etc/hosts && \
-		npx nf start & \
-		./wait-for-it.sh localhost:8383 --strict npm run test && \
-		echo '[oidc-tester] Tests completed OK!'
+WORKDIR /odk-central-backend/oidc-tester
+CMD ls && \
+    echo '[oidc-tester] Configuring DNS...' && \
+    # N.B. configuring DNS is done at runtime because Docker prevents write access before then.
+    echo '127.0.0.1 fake-oidc-server.example.net' >> /etc/hosts && \
+    echo '127.0.0.1      odk-central.example.org' >> /etc/hosts && \
+	( \
+      npx nf start & \
+	  echo hi && \
+      ./scripts/wait-for-it.sh localhost:8383 --strict --timeout=60 -- npm run test && \
+      echo '[oidc-tester] Tests completed OK!' \
+	)
