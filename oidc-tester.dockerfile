@@ -1,25 +1,7 @@
 # N.B. cannot use 16.19.1 because of playwright dependency install issues
 # We also need node 18 for oidc-provider(?... or TODO does it just need to be an ESM module?)
 # TODO check node version support - the whole repo will prob update to 18 soon
-ARG node_version=18
-
-# ---------- #
-
-FROM alpine AS mkcertBuild
-
-# Check for more recent mkcert versions at https://github.com/FiloSottile/mkcert/releases
-ENV mkcert_version=1.4.4
-
-WORKDIR /working
-
-# TODO try running without mkcert - we had to disable cert validation in a bunch of places anyway,
-# so perhaps we can get away with some static certificates just saved in this repo.
-RUN wget -O mkcert "https://dl.filippo.io/mkcert/v${mkcert_version}?for=linux/amd64" && \
-    chmod +x ./mkcert
-
-# ---------- #
-
-FROM node:${node_version}
+FROM node:18
 
 # Set up main project dependencies - this layer is slow, but should be cached most of the time.
 WORKDIR /odk-central-backend
