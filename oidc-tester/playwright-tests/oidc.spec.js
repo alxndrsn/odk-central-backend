@@ -7,6 +7,7 @@ const backendUrl = 'http://localhost:8383';
 const port = 8989;
 //const frontendUrl = `http//localhost:${port}`;
 const frontendUrl = `https://odk-central.example.org:${port}`;
+const SESSION_COOKIE = (frontendUrl.startsWith('https://') ? '__Host-' : '') + 'session';
 
 test.use({
   ignoreHTTPSErrors: true,
@@ -33,8 +34,8 @@ test('can log in with OIDC', async ({ page }) => {
 
     console.log('requestCookies:', JSON.stringify(requestCookies, null, 2));
 
-    if(!requestCookies.session) throw new Error('No session cookie found!');
-    if(!requestCookies.__csrf)  throw new Error('No CSRF cookie found!');
+    if(!requestCookies[SESSION_COOKIE]) throw new Error('No session cookie found!');
+    if(!requestCookies['__csrf'])         throw new Error('No CSRF cookie found!');
 
     // TODO there are limitations to this test - some of the most fiddly stuff
     // WRT cookie settings are around Secure, SameSite, __Host, __Secure, but
