@@ -5,11 +5,7 @@
   "type": "module",
   "scripts": {},
   "dependencies": {
-    "@playwright/test": "^1.33.0",
-    "foreman": "^3.0.1",
-    "http-proxy-middleware": "^2.0.6",
-    "oidc-provider": "^8.2.1",
-    "playwright": "^1.33.0"
+    "oidc-provider": "^8.2.1"
   },
   "volta": {
     "node": "16.19.1"

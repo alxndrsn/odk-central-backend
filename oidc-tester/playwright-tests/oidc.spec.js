@@ -25,7 +25,12 @@ test('can log in with OIDC', async ({ page }) => {
     await page.locator(`button[type=submit]`).click();
     await page.getByRole('button', { name:'Continue' }).click();
 
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    console.log('Page content:', (await page.locator('html').innerText()).valueOf());
+
+    //console.log('Link content:', (await page.locator('#cl').innerText()).valueOf());
+    //await page.locator('#cl').click();
+
+    //await new Promise(resolve => setTimeout(resolve, 1000));
     console.log('Page content:', (await page.locator('html').innerText()).valueOf());
 
     await expect(page.locator('h1')).toHaveText('Success!');
@@ -35,7 +40,7 @@ test('can log in with OIDC', async ({ page }) => {
     console.log('requestCookies:', JSON.stringify(requestCookies, null, 2));
 
     if(!requestCookies[SESSION_COOKIE]) throw new Error('No session cookie found!');
-    if(!requestCookies['__csrf'])         throw new Error('No CSRF cookie found!');
+    if(!requestCookies['__csrf'])       throw new Error('No CSRF cookie found!');
 
     // TODO there are limitations to this test - some of the most fiddly stuff
     // WRT cookie settings are around Secure, SameSite, __Host, __Secure, but

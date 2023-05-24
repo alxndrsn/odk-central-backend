@@ -15,23 +15,23 @@ echo '127.0.0.1      odk-central.example.org' >> /etc/hosts
 
 log "DNS configured."
 
+log "Waiting for postgres to start..."
+./scripts/wait-for-it.sh odk-central-oidc-tester-postgres:5432 --strict --timeout=60 -- echo '[oidc-tester] postgres is UP!'
+
 log "Starting services..."
 #npx nf start
 npx nf start &
 
-# install playwright deps here, because it doesn't work at docker build-time
-log "Installing playwright deps..."
-#npx playwright install --with-deps
-log "Playwright deps installed."
-
+log "Waiting for odk-central-backend to start..."
 ./scripts/wait-for-it.sh localhost:8383 --strict --timeout=60 -- echo '[oidc-tester] odk-central-backend is UP!'
 
-log "Creating test users..."
+log "Creating test users..." # _after_ migrations have been run
 cd ..
 node lib/bin/cli.js --generate-password --email alex@example.com user-create
 cd -
 log "Test users created."
 
+cd playwright-tests
 log "Running playwright tests..."
 npx playwright test
 log "Tests completed OK!"
