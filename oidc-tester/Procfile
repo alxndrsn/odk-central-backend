@@ -1,2 +1,3 @@
 test-oidc-server: node 
-odk-central-backend: cd .. && pwd && ls && make run
+# cat config for debug; TODO remove
+odk-central-backend: cd .. && pwd && cat config/* && make run
