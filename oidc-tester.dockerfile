@@ -33,15 +33,7 @@ WORKDIR /odk-central-backend
 ARG CACHEBUST=1
 COPY / .
 
-# Start background services
-# TODO maybe use foreman - need to start:
-# odk-central-backend (http://localhost:8383)
-# fake-oidc-server  (https://fake-oidc-server.example.net)
-# fake-odk-frontend (https://odk-central.example.org)
-
 COPY oidc-tester/odk-central-backend-config.json config/local.json
 
-# Run the tests, e.g.
-# CMD npx playwright test oidc.spec.js
 WORKDIR /odk-central-backend/oidc-tester
 CMD ./scripts/docker-start.sh
