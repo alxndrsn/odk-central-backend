@@ -58,8 +58,8 @@ const oidc = new Provider(rootUrl, {
 
 (async () => {
   if(rootUrl.startsWith('https://')) {
-    const key  = fs.readFileSync('/odk-central-backend/certs/fake-oidc-server.example.net-key.pem', 'utf8');
-    const cert = fs.readFileSync('/odk-central-backend/certs/fake-oidc-server.example.net.pem', 'utf8');
+    const key  = fs.readFileSync('../certs/fake-oidc-server.example.net-key.pem', 'utf8');
+    const cert = fs.readFileSync('../certs/fake-oidc-server.example.net.pem', 'utf8');
     const httpsServer = https.createServer({ key, cert }, oidc.callback());
     await httpsServer.listen(port);
   } else {

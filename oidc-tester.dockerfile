@@ -39,14 +39,6 @@ WORKDIR /odk-central-backend/oidc-tester/playwright-tests
 COPY oidc-tester/playwright-tests/package.json oidc-tester/playwright-tests/package-lock.json .
 RUN npm clean-install && echo -n 'Playwright: ' && npx playwright --version && npx playwright install --with-deps
 
-# Set up HTTPS.  mkcert is fast, but Docker doesn't seem to cache it.  So this
-# step is run just prior to CMD
-COPY --from=mkcertBuild /working/mkcert /usr/bin/mkcert
-WORKDIR /odk-central-backend/certs
-RUN mkcert -install && \
-    mkcert fake-oidc-server.example.net && \
-    mkcert      odk-central.example.org
-
 # Copy ALL files whitelisted in .dockerignore.  Note that this means there is no
 # isolation at the Docker level between code or dependencies of the various
 # servers that will run.  This is very convenient and probably allows for faster

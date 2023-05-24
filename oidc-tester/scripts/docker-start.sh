@@ -4,10 +4,6 @@ log() {
   echo "[oidc-tester] $*"
 }
 
-log "---------- CERTS ---------"
-ls /odk-central-backend/certs
-log "--------------------------"
-
 log "Configuring DNS..."
 # N.B. configuring DNS is done at runtime because Docker prevents write access before then.
 echo '127.0.0.1 fake-oidc-server.example.net' >> /etc/hosts

@@ -82,8 +82,8 @@ async function startFrontendProxy() {
   } else {
     const fs = require('node:fs');
     const https = require('node:https');
-    const key  = fs.readFileSync('/odk-central-backend/certs/odk-central.example.org-key.pem', 'utf8');
-    const cert = fs.readFileSync('/odk-central-backend/certs/odk-central.example.org.pem', 'utf8');
+    const key  = fs.readFileSync('../certs/odk-central.example.org-key.pem', 'utf8');
+    const cert = fs.readFileSync('../certs/odk-central.example.org.pem', 'utf8');
     const httpsServer = https.createServer({ key, cert }, fakeFrontend);
     await httpsServer.listen(port);
     return httpsServer;
