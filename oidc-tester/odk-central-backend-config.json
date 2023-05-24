@@ -5,6 +5,12 @@
       "database": "oidc-tester",
       "user": "odk-central-backend",
       "password": "supertopsecret3000"
+    },
+    "oidc": {
+      "discoveryUrl": "https://fake-oidc-server.example.net:9898",
+      "clientId": "odk-central-backend-dev",
+      "clientSecret": "super-top-secret",
+      "enabled": true
     }
   }
 }

@@ -3,23 +3,18 @@ const express = require('express');
 const { createProxyMiddleware } = require('http-proxy-middleware');
 const cookieParser = require('cookie-parser');
 
+const backendUrl = 'http://localhost:8383';
+const port = 8989;
+//const frontendUrl = `http//localhost:${port}`;
+const frontendUrl = `https://odk-central.example.org:${port}`;
+
 test('can log in with OIDC', async ({ page }) => {
   let fakeFrontend;
   try {
-    console.log('Starting fake frontend proxy...');
-    fakeFrontend = express();
-    fakeFrontend.use(cookieParser());
-    fakeFrontend.get('/', (req, res) => {
-      res.send(html`
-        <h1>Success!</h1>
-        <div id="request-cookies">${JSON.stringify(req.cookies)}</div>
-      `);
-    });
-    fakeFrontend.use(createProxyMiddleware('/v1', { target:'http://localhost:8383' }));
-    await fakeFrontend.listen(8989);
+    fakeFrontend = await startFrontendProxy();
     console.log('Setup complete.');
 
-    await page.goto('http://localhost:8989/v1/oidc/login');
+    await page.goto(`${frontendUrl}/v1/oidc/login`);
     await page.locator('input[name=login]').fill('alex');
     await page.locator('input[name=password]').fill('topsecret!!!!');
     await page.locator(`button[type=submit]`).click();
@@ -53,4 +48,30 @@ function html([ first, ...rest ], ...vars) {
       </body>
     </html>
   `);
+}
+
+async function startFrontendProxy() {
+  console.log('Starting fake frontend proxy...');
+  const fakeFrontend = express();
+  fakeFrontend.use(cookieParser());
+  fakeFrontend.get('/', (req, res) => {
+    res.send(html`
+      <h1>Success!</h1>
+      <div id="request-cookies">${JSON.stringify(req.cookies)}</div>
+    `);
+  });
+  fakeFrontend.use(createProxyMiddleware('/v1', { target:backendUrl }));
+
+  if(frontendUrl.startsWith('http://')) {
+    await fakeFrontend.listen(port);
+    return fakeFrontend;
+  } else {
+    const fs = require('node:fs');
+    const https = require('node:https');
+    const key  = fs.readFileSync('/odk-central-backend/certs/odk-central.example.org-key.pem', 'utf8');
+    const cert = fs.readFileSync('/odk-central-backend/certs/odk-central.example.org.pem', 'utf8');
+    const httpsServer = https.createServer({ key, cert }, fakeFrontend);
+    await httpsServer.listen(port);
+    return httpsServer;
+  }
 }

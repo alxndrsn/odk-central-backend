@@ -1,14 +1,15 @@
 // Have to use modules :shrug:
 import Provider from 'oidc-provider';
+import fs from 'node:fs';
+import https from 'node:https';
 
 const port = 9898;
-const rootUrl = `http://localhost:${port}`;
+//const rootUrl = `http://localhost:${port}`;
+const rootUrl = 'https://fake-oidc-server.example.net:9898';
 
 const ACCOUNTS = {
   alex: { email:'alex@example.com', email_verified:true },
 };
-
-import fs from 'node:fs';
 
 const pkg = JSON.parse(fs.readFileSync('./package.json', { encoding:'utf8' }));
 const log = (...args) => console.error(pkg.name, new Date().toISOString(), 'INFO', ...args);
@@ -21,7 +22,7 @@ const oidc = new Provider(rootUrl, {
   clients: [{
     client_id: 'odk-central-backend-dev',
     client_secret: 'super-top-secret',
-    redirect_uris: ['http://localhost:8989/v1/oidc/callback'],
+    redirect_uris: ['http://localhost:8989/v1/oidc/callback', 'https://odk-central.example.org:8989/v1/oidc/callback'],
   }],
 
   features: {
@@ -54,6 +55,15 @@ const oidc = new Provider(rootUrl, {
   },
 });
 
-oidc.listen(port, () => {
+(async () => {
+  if(rootUrl.startsWith('https://')) {
+    const key  = fs.readFileSync('/odk-central-backend/certs/fake-oidc-server.example.net-key.pem', 'utf8');
+    const cert = fs.readFileSync('/odk-central-backend/certs/fake-oidc-server.example.net.pem', 'utf8');
+    const httpsServer = https.createServer({ key, cert }, oidc.callback());
+    await httpsServer.listen(port);
+  } else {
+    await oidc.listen(port);
+  }
   console.log(`oidc-provider listening on port ${port}, check ${rootUrl}/.well-known/openid-configuration`);
-});
+})();
+
