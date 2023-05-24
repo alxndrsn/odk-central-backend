@@ -8,11 +8,6 @@ WORKDIR /odk-central-backend
 COPY Makefile package.json package-lock.json .
 RUN npm clean-install --legacy-peer-deps
 
-# Set up oidc-tester dependencies - this layer is slow, but should be cached most of the time.
-WORKDIR /odk-central-backend/oidc-tester
-COPY oidc-tester/package.json oidc-tester/package-lock.json .
-RUN npm clean-install
-
 WORKDIR /odk-central-backend/oidc-tester/fake-oidc-server
 COPY oidc-tester/fake-oidc-server/package.json oidc-tester/fake-oidc-server/package-lock.json .
 RUN npm clean-install
