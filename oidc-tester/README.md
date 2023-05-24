@@ -10,4 +10,5 @@ To properly test HTTP flows between servers and proper cookie handling, we need 
 
 # TODO
 
+* add some way to run fake-oidc-server & reconfigure local.json to connect to it to allow for easy local dev (with frontend)
 * resolve all TODOs
