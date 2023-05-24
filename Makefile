@@ -6,8 +6,12 @@ node_modules: package.json
 
 .PHONY: test-oidc
 test-oidc: node_modules
-	# TODO consider removing temporary cache-busting
-	docker run --rm --name oidc-tester -it $$(docker build --quiet -f oidc-tester.dockerfile --build-arg CACHEBUST=$$RANDOM$$(date +%s) .)
+	# TODO remove shellcheck call - not available/useful/etc. outside dev(?)
+	shellcheck ./oidc-tester/scripts/docker-start.sh
+	cd oidc-tester && \
+	docker compose down && \
+	docker compose build --build-arg CACHEBUST=$$RANDOM$$(date +%s) && \
+	docker compose up --exit-code-from odk-central-oidc-tester
 
 .PHONY: test-oidc-debug
 test-oidc-debug: node_modules

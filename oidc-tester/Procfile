@@ -1,3 +1,3 @@
-test-oidc-server: node 
+fake-oidc-server: node fake-oidc-server.js
 # cat config for debug; TODO remove
 odk-central-backend: cd .. && pwd && cat config/* && make run

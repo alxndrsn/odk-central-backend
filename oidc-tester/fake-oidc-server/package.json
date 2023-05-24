@@ -1,7 +1,8 @@
 {
-  "name": "oidc-tester",
+  "name": "fake-oidc-server",
   "version": "1.0.0",
   "main": "index.js",
+  "type": "module",
   "scripts": {},
   "dependencies": {
     "@playwright/test": "^1.33.0",

@@ -1,4 +1,5 @@
-ARG node_version=16.19.1
+# N.B. cannot use 16.19.1 because of playwright dependency install issues
+ARG node_version=18
 
 # ---------- #
 
@@ -26,9 +27,18 @@ WORKDIR /odk-central-backend/oidc-tester
 COPY oidc-tester/package.json oidc-tester/package-lock.json /
 RUN npm clean-install
 
+WORKDIR /odk-central-backend/oidc-tester/fake-oidc-server
+COPY oidc-tester/fake-oidc-server/package.json oidc-tester/fake-oidc-server/package-lock.json /
+RUN npm clean-install
+
+WORKDIR /odk-central-backend/oidc-tester/playwright-tests
+COPY oidc-tester/playwright-tests/package.json oidc-tester/playwright-tests/package-lock.json /
+RUN npm clean-install && echo -n 'Playwright: ' && npx playwright --version && npx playwright install --with-deps
+
 # Set up HTTPS.  mkcert is fast, but Docker doesn't seem to cache it.  So this
 # step is run just prior to CMD
 COPY --from=mkcertBuild /working/mkcert /usr/bin/mkcert
+WORKDIR /odk-central-backend/certs
 RUN mkcert -install && \
     mkcert fake-oidc-server.example.net && \
     mkcert      odk-central.example.org
@@ -51,20 +61,9 @@ COPY / .
 # fake-oidc-server  (https://fake-oidc-server.example.net)
 # fake-odk-frontend (https://odk-central.example.org)
 
-# TODO push some JSON config for odk-central-backend itself
-RUN echo '{"default":{"database":{"host":"odk-postgres14"}}}' > config/local.json
+COPY oidc-tester/odk-central-backend-config.json config/local.json
 
 # Run the tests, e.g.
 # CMD npx playwright test oidc.spec.js
 WORKDIR /odk-central-backend/oidc-tester
-CMD ls && \
-    echo '[oidc-tester] Configuring DNS...' && \
-    # N.B. configuring DNS is done at runtime because Docker prevents write access before then.
-    echo '127.0.0.1 fake-oidc-server.example.net' >> /etc/hosts && \
-    echo '127.0.0.1      odk-central.example.org' >> /etc/hosts && \
-    ( \
-      npx nf start & \
-      echo hi && \
-      ./scripts/wait-for-it.sh localhost:8383 --strict --timeout=60 -- npm run test && \
-      echo '[oidc-tester] Tests completed OK!' \
-    )
+CMD ./scripts/docker-start.sh

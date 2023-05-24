@@ -1,5 +1,5 @@
 {
-  "name": "oidc-tester",
+  "name": "playwright-tests",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {},
@@ -13,5 +13,5 @@
   "volta": {
     "node": "16.19.1"
   },
-  "license": "SEE LICENSE IN ../LICENSE"
+  "license": "SEE LICENSE IN ../../LICENSE"
 }

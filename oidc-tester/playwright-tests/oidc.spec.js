@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+const { expect, test } = require('@playwright/test');
 const express = require('express');
 const { createProxyMiddleware } = require('http-proxy-middleware');
 const cookieParser = require('cookie-parser');
