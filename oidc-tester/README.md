@@ -12,3 +12,5 @@ To properly test HTTP flows between servers and proper cookie handling, we need 
 
 * add some way to run fake-oidc-server & reconfigure local.json to connect to it to allow for easy local dev (with frontend)
 * resolve all TODOs
+* now that we don't use mkcert, can we run all the services in different containers?
+* run on all different browsers, and maybe even mobile ones
