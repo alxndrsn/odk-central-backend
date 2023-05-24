@@ -65,7 +65,7 @@
       "clientSecret": "super-top-secret",
 
       "_FIXME": "only enabled while developing the feature!",
-      "enabled": true,
+      "enabled": false,
 
       "_TODO": "final line to prevent dangling comma issues when moving test config about"
     }
