@@ -13,11 +13,15 @@ test-oidc: node_modules
 	docker compose build --build-arg CACHEBUST=$$RANDOM$$(date +%s) && \
 	docker compose up --exit-code-from odk-central-oidc-tester
 
-.PHONY: oidc-dev-server
-oidc-dev-server:
+.PHONY: dev-oidc
+dev-oidc:
+	NODE_CONFIG_ENV=oidc-development npx nodemon --watch lib --watch config lib/bin/run-server.js
+
+.PHONY: fake-oidc-server
+fake-oidc-server:
 	cd oidc-tester/fake-oidc-server && \
 	npm clean-install && \
-	npx nodemon index.js
+	FAKE_OIDC_ROOT_URL=http://localhost:9898 npx nodemon index.js
 
 .PHONY: node_version
 node_version: node_modules

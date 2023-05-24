@@ -15,7 +15,7 @@ import https from 'node:https';
 
 const port = 9898;
 //const rootUrl = `http://localhost:${port}`;
-const rootUrl = 'https://fake-oidc-server.example.net:9898';
+const rootUrl = process.env.FAKE_OIDC_ROOT_URL || 'https://fake-oidc-server.example.net:9898';
 
 const ACCOUNTS = {
   alex: { email:'alex@example.com', email_verified:true },
