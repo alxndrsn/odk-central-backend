@@ -6,7 +6,8 @@ node_modules: package.json
 
 .PHONY: test-oidc
 test-oidc: node_modules
-	docker run -it $$(docker build --quiet --rm -f oidc-tester.dockerfile --build-arg CACHEBUST=$$RANDOM$$(date +%s) .)
+	# TODO consider removing temporary cache-busting
+	docker run --rm --name oidc-tester -it $$(docker build --quiet -f oidc-tester.dockerfile --build-arg CACHEBUST=$$RANDOM$$(date +%s) .)
 
 .PHONY: test-oidc-debug
 test-oidc-debug: node_modules
