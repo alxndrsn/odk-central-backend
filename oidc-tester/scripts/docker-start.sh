@@ -33,5 +33,5 @@ cd -
 log "Test users created."
 
 log "Running playwright tests..."
-npx playwright test oidc.spec.js
+npx playwright test
 log "Tests completed OK!"

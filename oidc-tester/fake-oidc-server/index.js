@@ -22,6 +22,7 @@ const oidc = new Provider(rootUrl, {
   clients: [{
     client_id: 'odk-central-backend-dev',
     client_secret: 'super-top-secret',
+    // TODO can we just always run these, on separate ports?
     redirect_uris: ['http://localhost:8989/v1/oidc/callback', 'https://odk-central.example.org:8989/v1/oidc/callback'],
   }],
 

@@ -31,7 +31,7 @@ test('can log in with OIDC', async ({ page }) => {
 
     const requestCookies = JSON.parse(await page.locator(`div[id=request-cookies]`).textContent());
 
-    console.log(JSON.stringify(requestCookies, null, 2));
+    console.log('requestCookies:', JSON.stringify(requestCookies, null, 2));
 
     if(!requestCookies.session) throw new Error('No session cookie found!');
     if(!requestCookies.__csrf)  throw new Error('No CSRF cookie found!');
@@ -62,6 +62,7 @@ async function startFrontendProxy() {
   const fakeFrontend = express();
   fakeFrontend.use(cookieParser());
   fakeFrontend.get('/', (req, res) => {
+    console.log('fakeFrontend :: request headers:', req.headers);
     res.send(html`
       <h1>Success!</h1>
       <div id="request-cookies">${JSON.stringify(req.cookies)}</div>
