@@ -15,5 +15,5 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-    - run: apt-get install -y docker
+    - run: sudo apt-get install -y docker
     - run: make test-oidc
