@@ -25,7 +25,7 @@ describe('external/enketo', () => {
           const base64Auth = Buffer.from('enketoApiKey:').toString('base64');
           const expectedQueryString = querystring.stringify({ server_url: openRosaUrl, form_id: xmlFormId });
           this.req.headers.authorization.should.equal(`Basic ${base64Auth}`);
-          this.req.headers.cookie.should.equal('__Host-session=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa');
+          this.req.headers.cookie.should.equal('session=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa');
           requestBody.should.equal(expectedQueryString);
           return JSON.stringify({ url: 'http://enke.to/::stuvwxyz', code: 201 });
         });
@@ -101,7 +101,7 @@ describe('external/enketo', () => {
             return_url: 'http://openRosaHost:5678/#/projects/1/forms/wellPumps/submissions/logical'
           });
           this.req.headers.authorization.should.equal(`Basic ${base64Auth}`);
-          this.req.headers.cookie.should.equal('__Host-session=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa');
+          this.req.headers.cookie.should.equal('session=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa');
           requestBody.should.equal(expectedQueryString);
           return JSON.stringify({ edit_url: 'http://enke.to/::editedit', code: 201 });
         });
