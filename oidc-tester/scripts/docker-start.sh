@@ -26,6 +26,12 @@ log "Playwright deps installed."
 
 ./scripts/wait-for-it.sh localhost:8383 --strict --timeout=60 -- echo '[oidc-tester] odk-central-backend is UP!'
 
+log "Creating test users..."
+cd ..
+node lib/bin/cli.js --generate-password --email alex@example.com user-create
+cd -
+log "Test users created."
+
 log "Running playwright tests..."
 npx playwright test oidc.spec.js
 log "Tests completed OK!"
