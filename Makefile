@@ -13,9 +13,11 @@ test-oidc: node_modules
 	docker compose build --build-arg CACHEBUST=$$RANDOM$$(date +%s) && \
 	docker compose up --exit-code-from odk-central-oidc-tester
 
-.PHONY: test-oidc-debug
-test-oidc-debug: node_modules
-	npx playwright test --debug oidc.spec.js
+.PHONY: oidc-dev-server
+oidc-dev-server:
+	cd oidc-tester/fake-oidc-server && \
+	npm clean-install && \
+	npx nodemon index.js
 
 .PHONY: node_version
 node_version: node_modules
