@@ -27,7 +27,8 @@ node lib/bin/cli.js --generate-password --email alex@example.com user-create
 cd -
 log "Test users created."
 
-cd playwright-tests
 log "Running playwright tests..."
+cd playwright-tests
 npx playwright test
+
 log "Tests completed OK!"
