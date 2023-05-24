@@ -1,3 +1,2 @@
 fake-oidc-server: cd fake-oidc-server && node index.js
-# cat config for debug; TODO remove
 odk-central-backend: cd .. && make base && NODE_TLS_REJECT_UNAUTHORIZED=0 node lib/bin/run-server.js
