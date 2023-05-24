@@ -8,6 +8,10 @@ const port = 8989;
 //const frontendUrl = `http//localhost:${port}`;
 const frontendUrl = `https://odk-central.example.org:${port}`;
 
+test.use({
+  ignoreHTTPSErrors: true,
+});
+
 test('can log in with OIDC', async ({ page }) => {
   let fakeFrontend;
   try {
