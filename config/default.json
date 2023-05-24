@@ -32,8 +32,6 @@
         "formId": "odk-analytics",
         "version": "2023.01.22.01"
       }
-    },
-    "oidc": {
     }
   },
   "test": {
