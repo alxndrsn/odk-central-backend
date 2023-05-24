@@ -62,9 +62,9 @@ CMD ls && \
     # N.B. configuring DNS is done at runtime because Docker prevents write access before then.
     echo '127.0.0.1 fake-oidc-server.example.net' >> /etc/hosts && \
     echo '127.0.0.1      odk-central.example.org' >> /etc/hosts && \
-	( \
+    ( \
       npx nf start & \
-	  echo hi && \
+      echo hi && \
       ./scripts/wait-for-it.sh localhost:8383 --strict --timeout=60 -- npm run test && \
       echo '[oidc-tester] Tests completed OK!' \
-	)
+    )
