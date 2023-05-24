@@ -24,6 +24,9 @@ test('can log in with OIDC', async ({ page }) => {
     await page.locator(`button[type=submit]`).click();
     await page.getByRole('button', { name:'Continue' }).click();
 
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    console.log('Page content:', (await page.locator('html').innerText()).valueOf());
+
     await expect(page.locator('h1')).toHaveText('Success!');
 
     const requestCookies = JSON.parse(await page.locator(`div[id=request-cookies]`).textContent());
