@@ -36,12 +36,12 @@ describe('api: /sessions', () => {
           // i don't know how this becomes an array but i think superagent does it.
           const cookie = headers['set-cookie'];
 
-          const session = /session=([^;]+); Path=\/; Expires=([^;]+); HttpOnly; Secure; SameSite=Strict/.exec(cookie[0]);
+          const session = /^session=([^;]+); Path=\/; Expires=([^;]+); HttpOnly; SameSite=Strict$/.exec(cookie[0]);
           should.exist(session);
           decodeURIComponent(session[1]).should.equal(body.token);
           session[2].should.equal(DateTime.fromISO(body.expiresAt).toHTTP());
 
-          const csrf = /__csrf=([^;]+); Path=\/; Expires=([^;]+); Secure; SameSite=Strict/.exec(cookie[1]);
+          const csrf = /^__csrf=([^;]+); Path=\/; Expires=([^;]+); SameSite=Strict$/.exec(cookie[1]);
           should.exist(csrf);
           decodeURIComponent(csrf[1]).should.equal(body.csrf);
           csrf[2].should.equal(DateTime.fromISO(body.expiresAt).toHTTP());
