@@ -10,18 +10,21 @@
 
 // Have to use modules :shrug:
 import Provider from 'oidc-provider';
+import Path from 'node:path';
 import fs from 'node:fs';
+import { fileURLToPath } from 'node:url';
 import https from 'node:https';
 
 const port = 9898;
 //const rootUrl = `http://localhost:${port}`;
 const rootUrl = process.env.FAKE_OIDC_ROOT_URL || 'https://fake-oidc-server.example.net:9898';
 
-const ACCOUNTS = {
-  alex: { email:'alex@example.com', email_verified:true },
-};
+const loadJson = path => JSON.parse(fs.readFileSync(path, { encoding:'utf8' }));
 
-const pkg = JSON.parse(fs.readFileSync('./package.json', { encoding:'utf8' }));
+const ACCOUNTS_JSON_PATH = Path.resolve('./accounts.json');
+const ACCOUNTS = loadJson(ACCOUNTS_JSON_PATH);
+
+const pkg = loadJson('./package.json');
 const log = (...args) => console.error(pkg.name, new Date().toISOString(), 'INFO', ...args);
 log.info = log;
 
@@ -47,10 +50,11 @@ const oidc = new Provider(rootUrl, {
   },
 
   async findAccount(ctx, id) {
-    log.info('findAccount()', { ctx, id });
-
     const account = ACCOUNTS[id];
-    if(!account) return log.info('findAccount() :: not found!');
+    if(!account) {
+      log.info(`findAccount() :: User account '${id}' not found!  Check ${ACCOUNTS_JSON_PATH}!`);
+      throw new Error(`User account '${id}' not found!  Check ${ACCOUNTS_JSON_PATH}!`);
+    }
 
     const ret = {
       accountId: id,
@@ -63,6 +67,38 @@ const oidc = new Provider(rootUrl, {
     };
     log.info('findAccount()', 'found:', ret);
     return ret;
+  },
+
+  async renderError(ctx, out, err) {
+    console.log('renderError()', err);
+    ctx.type = 'html';
+    const forHumans = o => o == null ? o : typeof o === 'object' ? JSON.stringify(o, null, 2) : o;
+    ctx.body = `
+      <html>
+        <head><title>Error</title></head>
+        <body>
+          <div>
+            <h1>Error</h1>
+            <code><pre>${err}</pre></code>
+            <h2>Stack</h2>
+            <code><pre>${err.stack}</pre></code>
+            <h2>Info</h2>
+            ${Object.entries(out).map(([key, value]) => `<pre><strong>${key}</strong>: ${forHumans(value)}</pre>`).join('')}
+            <h2>Configured Accounts</h2>
+            <code><pre>${forHumans(ACCOUNTS)}</pre></code>
+            <h2>Tips</h2>
+            <ul>
+              <li>If you restarted the fake-oidc-server while viewing the login page, you'll need to restart your auth flow.  Click "back to login" below.</li>
+              <li>To delete an auth session with fake-oidc-server, restart it!  If running with <code>nodemon</code>/<code>make dev-oidc</code> you can do this by typing <code>rs</code> and pressing <code>&lt;enter&gt;</code>.</li>
+              <li>Note that the login form expects the account's <i>username</i>, <b>not</b> email address.  This is to highlight that auth servers can choose their own authentication mechanisms, but will share the user's email back to the <code>odk-central-backend</code> server.</li>
+              <li>If your user exists in the OIDC server, but not in <code>odk-central-backend</code>'s database, try running <code>node lib/bin/cli.js --generate-password --email &lt;your email here&gt; user-create</code></li>
+            </ul>
+            <br/>
+            [ <a href="http://localhost:8989/">back to login</a> ]
+          </div>
+        </body>
+      </html>
+    `;
   },
 });
 
