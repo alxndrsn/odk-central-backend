@@ -14,7 +14,7 @@ test-oidc: node_modules
 	docker compose up --exit-code-from odk-central-oidc-tester
 
 .PHONY: dev-oidc
-dev-oidc:
+dev-oidc: base
 	NODE_CONFIG_ENV=oidc-development npx nodemon --watch lib --watch config lib/bin/run-server.js
 
 .PHONY: fake-oidc-server
