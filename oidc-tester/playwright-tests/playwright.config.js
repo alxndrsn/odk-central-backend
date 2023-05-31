@@ -8,6 +8,11 @@
 // except according to the terms contained in the LICENSE file.
 /* eslint-disable */
 
+// TODO
+// TODO THIS FILE ISN'T INCLUDED IN .dockerignore, SO IS NOT CURRENTLY USED.
+// ( FIXME it should be used )
+// TODO
+
 
 const { devices } = require('@playwright/test');
 
