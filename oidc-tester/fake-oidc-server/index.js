@@ -16,7 +16,6 @@ import { fileURLToPath } from 'node:url';
 import https from 'node:https';
 
 const port = 9898;
-//const rootUrl = `http://localhost:${port}`;
 const rootUrl = process.env.FAKE_OIDC_ROOT_URL || 'https://fake-oidc-server.example.net:9898';
 
 const loadJson = path => JSON.parse(fs.readFileSync(path, { encoding:'utf8' }));
