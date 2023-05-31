@@ -153,7 +153,7 @@ describe('preprocessors', () => {
         Promise.resolve(authHandler(
           { Auth, Sessions: mockSessions('alohomora') },
           new Context(
-            createRequest({ method: 'GET', headers: { Cookie: 'session=alohomora' }, cookies:{ session:'alohomora' } }),
+            createRequest({ method: 'GET', headers: { Cookie: 'session=alohomora' }, cookies: { session: 'alohomora' } }),
             { fieldKey: Option.none() }
           )
         )).then((context) => {
@@ -168,7 +168,7 @@ describe('preprocessors', () => {
             createRequest({ method: 'GET', headers: {
               'X-Forwarded-Proto': 'https',
               Cookie: 'please just let me in'
-            }, cookies:{} }),
+            }, cookies: {} }),
             { fieldKey: Option.none() }
           )
         )).then((context) => {
@@ -183,7 +183,7 @@ describe('preprocessors', () => {
             createRequest({ method: 'GET', headers: {
               'X-Forwarded-Proto': 'https',
               Cookie: 'session=letmein'
-            }, cookies:{ session: 'letmein' } }),
+            }, cookies: { session: 'letmein' } }),
             { fieldKey: Option.none() }
           )
         )).then((context) => {
@@ -345,7 +345,7 @@ describe('preprocessors', () => {
               createRequest({ method: 'POST', headers: {
                 'X-Forwarded-Proto': 'https',
                 Cookie: 'session=alohomora'
-              }, body: { __csrf: 'secret%24csrf' }, cookies:{ session:'hi!' } }),
+              }, body: { __csrf: 'secret%24csrf' }, cookies: { session: 'alohomora' } }),
               { fieldKey: Option.none() }
             )
           )).should.be.fulfilled());
@@ -357,7 +357,7 @@ describe('preprocessors', () => {
               createRequest({ method: 'POST', headers: {
                 'X-Forwarded-Proto': 'https',
                 Cookie: 'session=alohomora'
-              }, body: { __csrf: 'secretcsrf', other: 'data' }, cookies:{ session:'alohomora' } }),
+              }, body: { __csrf: 'secretcsrf', other: 'data' }, cookies: { session: 'alohomora' } }),
               { fieldKey: Option.none() }
             )
           )).then((context) => {
