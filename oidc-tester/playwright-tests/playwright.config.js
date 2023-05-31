@@ -55,13 +55,12 @@ const config = {
 
   /* Configure projects for major browsers */
   projects: [
-    //{
-    //  name: 'chromium',
-    //  use: {
-    //    ...devices['Desktop Chrome'],
-    //    viewport: { width: 1280, height: 2800 }, // make sure we can see everything in failure screenshots; maybe not a good change for long-term
-    //  },
-    //},
+    {
+      name: 'chromium',
+      use: {
+        ...devices['Desktop Chrome'],
+      },
+    },
 
     {
       name: 'firefox',
