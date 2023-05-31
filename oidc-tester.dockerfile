@@ -20,9 +20,6 @@ RUN npm clean-install && echo -n 'Playwright: ' && npx playwright --version && n
 # isolation at the Docker level between code or dependencies of the various
 # servers that will run.  This is very convenient and probably allows for faster
 # builds, but care should be taken to avoid interdependencies.
-
-# TODO decision time!  We need to run postgres!  Can we just run with the normal script?  Or do we have to get into docker compose...?
-
 WORKDIR /odk-central-backend
 # TODO remove this... maybe?  really handy in dev to make sure we're getting up-to-date files
 ARG CACHEBUST=1
