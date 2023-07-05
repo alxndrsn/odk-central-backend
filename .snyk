@@ -2,12 +2,13 @@ ignore:
   SNYK-JS-KNEX-3175610:
     - knex:
       reason: 'knex is only used for migrations'
-  SNYK-JS-SEMVER-3247795:
-    - pm2:
-      reason: 'knex is only used for migrations'
   SNYK-JS-UNSETVALUE-2400660:
     - knex:
       reason: 'knex is only used for migrations'
+
+  SNYK-JS-SEMVER-3247795:
+    - pm2:
+      reason: "pm2 doesn't have upgrade options"
   SNYK-JS-WORDWRAP-3149973:
     - pm2:
-      reason: 'knex is only used for migrations'
+      reason: "pm2 doesn't have upgrade options"
