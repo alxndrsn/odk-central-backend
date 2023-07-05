@@ -11,7 +11,7 @@
   "dependencies": {
     "@sentry/node": "~7",
     "archiver": "~5",
-    "bcrypt": "~5",
+    "bcrypt": "^5.1.0",
     "body-parser": "~1.20",
     "cli": "~1",
     "cloneable-readable": "~2",
