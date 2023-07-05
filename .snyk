@@ -1,13 +1,13 @@
 ignore:
   SNYK-JS-KNEX-3175610:
-    - 'odk-central > knex':
+    - knex:
       reason: 'knex is only used for migrations'
   SNYK-JS-SEMVER-3247795:
-    - 'knex':
+    - knex:
       reason: 'knex is only used for migrations'
   SNYK-JS-UNSETVALUE-2400660:
-    - '* > knex':
+    - knex:
       reason: 'knex is only used for migrations'
   SNYK-JS-WORDWRAP-3149973:
-    - '* > knex':
+    - knex:
       reason: 'knex is only used for migrations'
