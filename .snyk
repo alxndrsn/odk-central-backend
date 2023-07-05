@@ -1,39 +1,5 @@
 ignore:
   'SNYK-JS-KNEX-3175610':
-    - 'knex@0.21.21':
-      reason: 'knex is only used for migrations'
-      expires: '3000-01-01T00:00:00.000Z'
-    - '* > knex@0.21.21':
-      reason: 'knex is only used for migrations'
-      expires: '3000-01-01T00:00:00.000Z'
-    - 'odk-central@0.1.0 > knex@0.21.21':
-      reason: 'knex is only used for migrations'
-      expires: '3000-01-01T00:00:00.000Z'
-    - 'knex':
-      reason: 'knex is only used for migrations'
-      expires: '3000-01-01T00:00:00.000Z'
     - '* > knex':
-      reason: 'knex is only used for migrations'
-      expires: '3000-01-01T00:00:00.000Z'
-    - 'odk-central > knex':
-      reason: 'knex is only used for migrations'
-      expires: '3000-01-01T00:00:00.000Z'
-  '*':
-    - 'knex@0.21.21':
-      reason: 'knex is only used for migrations'
-      expires: '3000-01-01T00:00:00.000Z'
-    - '* > knex@0.21.21':
-      reason: 'knex is only used for migrations'
-      expires: '3000-01-01T00:00:00.000Z'
-    - 'odk-central@0.1.0 > knex@0.21.21':
-      reason: 'knex is only used for migrations'
-      expires: '3000-01-01T00:00:00.000Z'
-    - 'knex':
-      reason: 'knex is only used for migrations'
-      expires: '3000-01-01T00:00:00.000Z'
-    - '* > knex':
-      reason: 'knex is only used for migrations'
-      expires: '3000-01-01T00:00:00.000Z'
-    - 'odk-central > knex':
       reason: 'knex is only used for migrations'
       expires: '3000-01-01T00:00:00.000Z'
