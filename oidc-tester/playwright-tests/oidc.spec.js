@@ -24,6 +24,11 @@ test.use({
 });
 
 test('can log in with OIDC', async ({ page }) => {
+  // Some of the most fiddly stuff WRT cookie settings are around Secure,
+  // SameSite, __Host, __Secure.  This test aims to check with both HTTPS and a
+  // non-localhost domain.  
+  // See: https://web.dev/when-to-use-local-https/#when-to-use-https-for-local-development
+
   let fakeFrontend;
   try {
     fakeFrontend = await startFrontendProxy();
@@ -35,14 +40,6 @@ test('can log in with OIDC', async ({ page }) => {
     await page.locator(`button[type=submit]`).click();
     await page.getByRole('button', { name:'Continue' }).click();
 
-    console.log('Page content:', (await page.locator('html').innerText()).valueOf());
-
-    //console.log('Link content:', (await page.locator('#cl').innerText()).valueOf());
-    //await page.locator('#cl').click();
-
-    //await new Promise(resolve => setTimeout(resolve, 1000));
-    console.log('Page content:', (await page.locator('html').innerText()).valueOf());
-
     await expect(page.locator('h1')).toHaveText('Success!');
 
     const requestCookies = JSON.parse(await page.locator(`div[id=request-cookies]`).textContent());
@@ -51,13 +48,6 @@ test('can log in with OIDC', async ({ page }) => {
 
     if(!requestCookies[SESSION_COOKIE]) throw new Error('No session cookie found!');
     if(!requestCookies['__csrf'])       throw new Error('No CSRF cookie found!');
-
-    // TODO there are limitations to this test - some of the most fiddly stuff
-    // WRT cookie settings are around Secure, SameSite, __Host, __Secure, but
-    // we may not be able to fully test this without both HTTPS and a non-
-    // localhost domain.  Perhaps testable in docker with a self-signed cert
-    // and host-file remapping?
-    // See: https://web.dev/when-to-use-local-https/#when-to-use-https-for-local-development
   } finally {
     try { fakeFrontend?.close(); } catch(err) { /* :shrug: */ }
   }
