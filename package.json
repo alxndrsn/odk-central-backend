@@ -13,7 +13,7 @@
     "cli": "~1",
     "cloneable-readable": "~2",
     "config": "~1.26",
-    "csv-parse": "~4",
+    "csv-parse": "~4.16.3",
     "csv-stringify": "~5",
     "digest-stream": "~2",
     "entities": "~2",
