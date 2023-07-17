@@ -1,8 +1,12 @@
-#!/bin/bash -eu
+#!/bin/bash -eux
 
 log() {
   echo "[oidc-tester] $*"
 }
+
+log "------------- ls ---------------"
+ls -al
+log "--------------------------------"
 
 log "Configuring DNS..."
 # N.B. configuring DNS is done at runtime because Docker prevents write access before then.
