@@ -4,9 +4,9 @@ log() {
   echo "[oidc-tester] $*"
 }
 
-log "------------- ls ---------------"
+log "------------- ls1 ---------------"
 ls -al
-log "--------------------------------"
+log "---------------1-----------------"
 
 log "Configuring DNS..."
 # N.B. configuring DNS is done at runtime because Docker prevents write access before then.
@@ -33,6 +33,9 @@ log "Test users created."
 
 log "Running playwright tests..."
 cd playwright-tests
+log "------------- ls2 ---------------"
+ls -al
+log "---------------2-----------------"
 npx playwright test
 
 log "Tests completed OK!"
