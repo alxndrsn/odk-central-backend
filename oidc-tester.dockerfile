@@ -1,3 +1,8 @@
+# Some of the most fiddly stuff WRT cookie settings are around Secure, SameSite,
+# __Host, __Secure, and we cannot fully test this without both HTTPS and a non-
+# localhost domain.
+# See: https://web.dev/when-to-use-local-https/#when-to-use-https-for-local-development
+
 # N.B. cannot use 16.19.1 because of playwright dependency install issues
 # We also need node 18 for oidc-provider(?... or TODO does it just need to be an ESM module?)
 # TODO check node version support - the whole repo will prob update to 18 soon
