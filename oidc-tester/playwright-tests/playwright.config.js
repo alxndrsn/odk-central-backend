@@ -6,13 +6,9 @@
 // https://www.apache.org/licenses/LICENSE-2.0. No part of ODK Central,
 // including this file, may be copied, modified, propagated, or distributed
 // except according to the terms contained in the LICENSE file.
-/* eslint-disable */
+/* eslint-disable */ // FIXME re-enable lint
 
-// TODO
-// TODO THIS FILE ISN'T INCLUDED IN .dockerignore, SO IS NOT CURRENTLY USED.
-// ( FIXME it should be used )
-// TODO
-
+// FIXME remove this console.log
 console.log(`
   @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
   @                                       @
@@ -20,7 +16,6 @@ console.log(`
   @                                       @
   @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 `);
-process.exit(99);
 
 
 const { devices } = require('@playwright/test');
