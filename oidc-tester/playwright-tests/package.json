@@ -4,7 +4,7 @@
   "main": "index.js",
   "scripts": {},
   "dependencies": {
-    "@playwright/test": "^1.33.0",
+    "@playwright/test": "^1.36.1",
     "http-proxy-middleware": "^2.0.6"
   },
   "volta": {
