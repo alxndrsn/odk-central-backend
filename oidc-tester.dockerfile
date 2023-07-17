@@ -6,7 +6,7 @@
 # See: https://hub.docker.com/_/node
 # See: https://wiki.debian.org/DebianReleases#Codenames
 # See: https://en.wikipedia.org/wiki/Debian_version_history
-FROM node:18-bullseye
+FROM node:18-bullseye-slim
 
 # Set up main project dependencies - this layer is slow, but should be cached most of the time.
 WORKDIR /odk-central-backend
