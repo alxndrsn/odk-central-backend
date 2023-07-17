@@ -30,7 +30,7 @@ test('can log in with OIDC', async ({ page }) => {
     console.log('Setup complete.');
 
     await page.goto(`${frontendUrl}/v1/oidc/login`);
-    await page.locator('input[name=login]').fill('alex');
+    await page.locator('input[name=login]').fill('alice');
     await page.locator('input[name=password]').fill('topsecret!!!!');
     await page.locator(`button[type=submit]`).click();
     await page.getByRole('button', { name:'Continue' }).click();
