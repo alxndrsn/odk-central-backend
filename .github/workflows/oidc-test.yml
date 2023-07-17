@@ -4,7 +4,8 @@ on: push
 
 jobs:
   oidc-test:
-    runs-on: ubuntu-latest
+    # Be careful with ubuntu version - if it's too new, it might confuse playwright.
+    runs-on: ubuntu-22.04
     strategy:
       matrix:
         node-version: [18]
