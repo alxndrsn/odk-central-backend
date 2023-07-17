@@ -25,7 +25,7 @@ const { devices } = require('@playwright/test');
  * @type {import('@playwright/test').PlaywrightTestConfig}
  */
 const config = {
-  testDir: './',
+  testDir: 'src',
   /* Maximum time one test can run for. */
   timeout: 10 * 1000,
   expect: {
@@ -115,13 +115,7 @@ const config = {
   ],
 
   /* Folder for test artifacts such as screenshots, videos, traces, etc. */
-  // outputDir: 'test-results/',
-
-  /* Run your local dev server before starting the tests */
-  webServer: {
-    reuseExistingServer: true,
-    url: 'http://localhost:8383/',
-  },
+  outputDir: 'results/',
 };
 
 module.exports = config;
