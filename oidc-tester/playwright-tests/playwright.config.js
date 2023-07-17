@@ -13,6 +13,15 @@
 // ( FIXME it should be used )
 // TODO
 
+console.log(`
+  @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+  @                                       @
+  @ playwright.config.js IS BEING LOADED! @
+  @                                       @
+  @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+`);
+process.exit(99);
+
 
 const { devices } = require('@playwright/test');
 
