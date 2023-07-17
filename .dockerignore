@@ -17,4 +17,5 @@
 !/oidc-tester/playwright-tests/oidc.spec.js
 !/oidc-tester/playwright-tests/package.json
 !/oidc-tester/playwright-tests/package-lock.json
+!/oidc-tester/playwright-tests/playwright.config.json
 !/oidc-tester/scripts/*.sh
