@@ -11,5 +11,5 @@ services:
       dockerfile: oidc-tester.dockerfile
       context: ../
       # expose playwright results
-      volumes:
-        - ./oidc-tester/playwright-tests/results:/odk-central-backend/oidc-tester/playwright-tests/results
+    volumes:
+      - ./oidc-tester/playwright-tests/results:/odk-central-backend/oidc-tester/playwright-tests/results
