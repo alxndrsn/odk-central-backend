@@ -11,5 +11,7 @@ services:
       dockerfile: oidc-tester.dockerfile
       context: ../
       # expose playwright results
+    environment:
+      ODK_PLAYWRIGHT_BROWSERS="$ODK_PLAYWRIGHT_BROWSERS"
     volumes:
       - ./playwright-tests/results:/odk-central-backend/oidc-tester/playwright-tests/results
