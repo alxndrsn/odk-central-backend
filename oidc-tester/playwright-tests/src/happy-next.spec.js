@@ -20,7 +20,7 @@ const {
 
 test('can log in', async ({ page }) => {
   await initConsole(page);
-  await page.goto(`${frontendUrl}/v1/oidc/login?next=/some-other-path`); // FIXME deliberate failure
+  await page.goto(`${frontendUrl}/v1/oidc/login?next=/some/path`); // FIXME deliberate failure
   await fillLoginForm(page, { username:'alice', password:'topsecret!!!!!' });
   await assertLoginSuccessful(page);
   await assertLocation(page, frontendUrl + '/#/some/path');
