@@ -13,11 +13,6 @@ const { expect, test } = require('@playwright/test');
 const { frontendUrl } = require('./config');
 const SESSION_COOKIE = (frontendUrl.startsWith('https://') ? '__Host-' : '') + 'session';
 
-// TODO move this to top level playwright.config.js
-test.use({
-  ignoreHTTPSErrors: true,
-});
-
 test('can log in with OIDC', async ({ page }) => {
   await page.goto(`${frontendUrl}/v1/oidc/login`);
   await page.locator('input[name=login]').fill('alice');
