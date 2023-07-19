@@ -8,16 +8,6 @@
 // except according to the terms contained in the LICENSE file.
 /* eslint-disable */ // FIXME re-enable lint
 
-// FIXME remove this console.log
-console.log(`
-  @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-  @                                       @
-  @ playwright.config.js IS BEING LOADED! @
-  @                                       @
-  @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-`);
-
-
 const { devices } = require('@playwright/test');
 
 /**
