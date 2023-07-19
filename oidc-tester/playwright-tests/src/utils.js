@@ -36,6 +36,7 @@ function assertLocation(page, expectedLocation) {
   console.log('  assertLocation()');
   console.log(`   expected: '${expectedLocation}'`);
   return page.waitForFunction(expectedLocation => {
+    console.log(`\n      ...getting location...`);
     const actualLocation = window.location.href;
     console.log(`\n      actual: ${actualLocation}`);
     return actualLocation === expectedLocation;
