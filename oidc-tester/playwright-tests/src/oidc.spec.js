@@ -9,86 +9,28 @@
 /* eslint-disable */ // FIXME re-enable lint here
 
 const { expect, test } = require('@playwright/test');
-const express = require('express');
-const { createProxyMiddleware } = require('http-proxy-middleware');
-const cookieParser = require('cookie-parser');
 
-const backendUrl = 'http://localhost:8383';
-const port = 8989;
-//const frontendUrl = `http//localhost:${port}`;
-const frontendUrl = `https://odk-central.example.org:${port}`;
+const { frontendUrl } = require('./config');
 const SESSION_COOKIE = (frontendUrl.startsWith('https://') ? '__Host-' : '') + 'session';
 
+// TODO move this to top level playwright.config.js
 test.use({
   ignoreHTTPSErrors: true,
 });
 
 test('can log in with OIDC', async ({ page }) => {
-  let fakeFrontend;
-  try {
-    fakeFrontend = await startFrontendProxy();
-    console.log('Setup complete.');
+  await page.goto(`${frontendUrl}/v1/oidc/login`);
+  await page.locator('input[name=login]').fill('alice');
+  await page.locator('input[name=password]').fill('topsecret!!!!');
+  await page.locator(`button[type=submit]`).click();
+  await page.getByRole('button', { name:'Continue' }).click();
 
-    await page.goto(`${frontendUrl}/v1/oidc/login`);
-    await page.locator('input[name=login]').fill('alice');
-    await page.locator('input[name=password]').fill('topsecret!!!!');
-    await page.locator(`button[type=submit]`).click();
-    await page.getByRole('button', { name:'Continue' }).click();
+  await expect(page.locator('h1')).toHaveText('Success!');
 
-    console.log('Page content:', (await page.locator('html').innerText()).valueOf());
+  const requestCookies = JSON.parse(await page.locator(`div[id=request-cookies]`).textContent());
 
-    //console.log('Link content:', (await page.locator('#cl').innerText()).valueOf());
-    //await page.locator('#cl').click();
+  console.log('requestCookies:', JSON.stringify(requestCookies, null, 2));
 
-    //await new Promise(resolve => setTimeout(resolve, 1000));
-    console.log('Page content:', (await page.locator('html').innerText()).valueOf());
-
-    await expect(page.locator('h1')).toHaveText('Success!');
-
-    const requestCookies = JSON.parse(await page.locator(`div[id=request-cookies]`).textContent());
-
-    console.log('requestCookies:', JSON.stringify(requestCookies, null, 2));
-
-    if(!requestCookies[SESSION_COOKIE]) throw new Error('No session cookie found!');
-    if(!requestCookies['__csrf'])       throw new Error('No CSRF cookie found!');
-  } finally {
-    try { fakeFrontend?.close(); } catch(err) { /* :shrug: */ }
-  }
+  if(!requestCookies[SESSION_COOKIE]) throw new Error('No session cookie found!');
+  if(!requestCookies['__csrf'])       throw new Error('No CSRF cookie found!');
 });
-
-function html([ first, ...rest ], ...vars) {
-  return (`
-    <html>
-      <body>
-        ${first + vars.map((v, idx) => [ v, rest[idx] ]).flat().join('')}
-      </body>
-    </html>
-  `);
-}
-
-async function startFrontendProxy() {
-  console.log('Starting fake frontend proxy...');
-  const fakeFrontend = express();
-  fakeFrontend.use(cookieParser());
-  fakeFrontend.get('/', (req, res) => {
-    console.log('fakeFrontend :: request headers:', req.headers);
-    res.send(html`
-      <h1>Success!</h1>
-      <div id="request-cookies">${JSON.stringify(req.cookies)}</div>
-    `);
-  });
-  fakeFrontend.use(createProxyMiddleware('/v1', { target:backendUrl }));
-
-  if(frontendUrl.startsWith('http://')) {
-    await fakeFrontend.listen(port);
-    return fakeFrontend;
-  } else {
-    const fs = require('node:fs');
-    const https = require('node:https');
-    const key  = fs.readFileSync('../certs/odk-central.example.org-key.pem', 'utf8');
-    const cert = fs.readFileSync('../certs/odk-central.example.org.pem', 'utf8');
-    const httpsServer = https.createServer({ key, cert }, fakeFrontend);
-    await httpsServer.listen(port);
-    return httpsServer;
-  }
-}

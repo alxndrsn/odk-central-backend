@@ -106,6 +106,17 @@ const config = {
 
   /* Folder for test artifacts such as screenshots, videos, traces, etc. */
   outputDir: 'results/',
+
+  globalSetup: require.resolve('./src/global-setup-teardown'),
 };
 
 module.exports = config;
+
+let fakeFrontend;
+function globalTeardown() {
+  fakeFrontend?.close();
+}
+async function globalSetup() {
+  fakeFrontend = await require('./src/fake-frontend').start();
+  console.log('Setup complete.');
+}
