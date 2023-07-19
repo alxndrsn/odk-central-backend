@@ -12,20 +12,10 @@ const { expect, test } = require('@playwright/test');
 
 const { frontendUrl } = require('./config');
 
-test('can log in', async ({ page }) => {
+test('handles aborted login', async ({ page }) => {
   await page.goto(`${frontendUrl}/v1/oidc/login`);
-  await page.locator('input[name=login]').fill('alice');
-  await page.locator('input[name=password]').fill('topsecret!!!!');
-  await page.locator(`button[type=submit]`).click();
-  await page.getByRole('button', { name:'Continue' }).click();
+  await page.getByRole('button', { name:'Cancel' }).click();
 
-  await expect(page.locator('h1')).toHaveText('Success!');
-
-  const requestCookies = JSON.parse(await page.locator(`div[id=request-cookies]`).textContent());
-
-  console.log('requestCookies:', JSON.stringify(requestCookies, null, 2));
-
-  assert(requestCookies[ '__Host-session'], 'No session cookie found!');
-  assert(requestCookies['__csrf'],          'No CSRF cookie found!');
-  assert.equal(Object.keys(requestCookies).length, 2, 'Unexpected requestCookie count!');
+  await expect(page.locator('h1')).toHaveText('Error!');
+  await expect(page.locator('#content >> div')).toHaveText('access_denied (End-User aborted interaction');
 });
