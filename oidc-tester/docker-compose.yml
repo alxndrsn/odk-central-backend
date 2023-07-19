@@ -12,4 +12,4 @@ services:
       context: ../
       # expose playwright results
     volumes:
-      - ./oidc-tester/playwright-tests/results:/odk-central-backend/oidc-tester/playwright-tests/results
+      - ./playwright-tests/results:/odk-central-backend/oidc-tester/playwright-tests/results
