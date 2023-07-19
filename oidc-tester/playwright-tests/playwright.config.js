@@ -56,13 +56,14 @@ const config = {
   },
 
   /* Configure projects for major browsers */
+  // FIXME only use 1 browser unless env vars request others; request others in CI
   projects: [
-    {
-      name: 'chromium',
-      use: {
-        ...devices['Desktop Chrome'],
-      },
-    },
+    //{
+    //  name: 'chromium',
+    //  use: {
+    //    ...devices['Desktop Chrome'],
+    //  },
+    //},
 
     {
       name: 'firefox',
@@ -71,12 +72,12 @@ const config = {
       },
     },
 
-    {
-      name: 'webkit',
-      use: {
-        ...devices['Desktop Safari'],
-      },
-    },
+    //{
+    //  name: 'webkit',
+    //  use: {
+    //    ...devices['Desktop Safari'],
+    //  },
+    //},
 
     /* Test against mobile viewports. */
     // {
