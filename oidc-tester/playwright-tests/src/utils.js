@@ -23,8 +23,8 @@ const { frontendUrl } = require('./config');
 
 const SESSION_COOKIE = (frontendUrl.startsWith('https://') ? '__Host-' : '') + 'session';
 
-async function assertErrorMessage(page, expectedMessage) {
-  await expect(page.locator('#error-message')).toHaveText(expectedMessage);
+function assertErrorMessage(page, expectedMessage) {
+  return expect(page.locator('#error-message')).toHaveText(expectedMessage);
 }
 
 async function assertErrorPage(page, expectedMessage) {
@@ -56,7 +56,7 @@ async function assertLoginSuccessful(page) {
 }
 
 function assertTitle(page, expectedTitle) {
-  await expect(page.locator('h1')).toHaveText(expectedTitle);
+  return expect(page.locator('h1')).toHaveText(expectedTitle);
 }
 
 async function fillLoginForm(page, { username, password }) {
