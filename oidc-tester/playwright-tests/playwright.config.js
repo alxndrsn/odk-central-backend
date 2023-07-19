@@ -42,9 +42,6 @@ const config = {
     /* Base URL to use in actions like `await page.goto('/')`. */
     baseURL: 'https://odk-central.example.org:8989',
 
-    // TODO confirm if required
-    ignoreHTTPSErrors: true,
-
     /* Collect trace when test fails. See https://playwright.dev/docs/trace-viewer */
     trace: 'retain-on-failure',
 
