@@ -11,7 +11,6 @@
 const { expect, test } = require('@playwright/test');
 
 const { frontendUrl } = require('./config');
-const SESSION_COOKIE = (frontendUrl.startsWith('https://') ? '__Host-' : '') + 'session';
 
 test('can log in with OIDC', async ({ page }) => {
   await page.goto(`${frontendUrl}/v1/oidc/login`);
@@ -26,6 +25,7 @@ test('can log in with OIDC', async ({ page }) => {
 
   console.log('requestCookies:', JSON.stringify(requestCookies, null, 2));
 
-  if(!requestCookies[SESSION_COOKIE]) throw new Error('No session cookie found!');
-  if(!requestCookies['__csrf'])       throw new Error('No CSRF cookie found!');
+  assert(requestCookies[ '__Host-session'], 'No session cookie found!');
+  assert(requestCookies['__csrf'],          'No CSRF cookie found!');
+  assert.equal(Object.keys(requestCookies).length, 2, 'Unexpected requestCookie count!');
 });
