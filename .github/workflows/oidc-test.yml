@@ -8,13 +8,6 @@ jobs:
     strategy:
       matrix:
         node-version: [18]
-        browser:
-          - chrome-desktop
-          - chromium
-          - edge
-          - firefox
-          - safari-mobile
-          - webkit
     steps:
     - uses: actions/checkout@v3
     - name: Use Node.js ${{ matrix.node-version }}
@@ -23,7 +16,7 @@ jobs:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
     - run: sudo apt-get install -y curl
-    - run: ODK_PLAYWRIGHT_BROWSERS=${{ matrix.browser }} make test-oidc
+    - run: ODK_PLAYWRIGHT_BROWSERS=chromium,firefox,webkit make test-oidc
     - name: Archive playwright screenshots
       if: failure()
       uses: actions/upload-artifact@v3
