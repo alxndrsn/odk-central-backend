@@ -15,11 +15,11 @@ const {
   assertErrorPage,
   assertLoginSuccessful,
   fillLoginForm,
-  initConsole,
+  initTest,
 } = require('./utils');
 
-test(`successful authN, but no 'email' claim provided`, async ({ page }) => {
-  await initConsole(page);
+test(`successful authN, but no 'email' claim provided`, async ({ browserName, page }) => {
+  await initTest({ browserName, page });
   await page.goto(`${frontendUrl}/v1/oidc/login`);
   await fillLoginForm(page, { username:'dave', password:'topsecret!!!!!' });
   await assertErrorPage(page, `Required claim not provided in UserInfo Response: 'email'`);

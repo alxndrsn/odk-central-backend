@@ -15,11 +15,11 @@ const {
   assertLocation,
   assertLoginSuccessful,
   fillLoginForm,
-  initConsole,
+  initTest,
 } = require('./utils');
 
-test('can log in', async ({ page }) => {
-  await initConsole(page);
+test('can log in', async ({ browserName, page }) => {
+  await initTest({ browserName, page });
   await page.goto(`${frontendUrl}/v1/oidc/login?next=/some/path`); // FIXME deliberate failure
   await fillLoginForm(page, { username:'alice', password:'topsecret!!!!!' });
   await assertLoginSuccessful(page);

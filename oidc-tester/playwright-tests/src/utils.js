@@ -15,7 +15,7 @@ module.exports = {
   assertLoginSuccessful,
   assertTitle,
   fillLoginForm,
-  initConsole,
+  initTest,
 };
 
 const assert = require('node:assert');
@@ -67,7 +67,15 @@ async function fillLoginForm(page, { username, password }) {
   await page.getByRole('button', { name:'Continue' }).click();
 }
 
-function initConsole(page) {
+function initTest({ browserName, page }) {
+  console.log(`
+    @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    @
+    @ Starting test in browser: ${browserName}
+    @
+    @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+  `);
+
   page.on('console', msg => {
     const level = msg.type().toUpperCase();
     console.log(level, msg.text());

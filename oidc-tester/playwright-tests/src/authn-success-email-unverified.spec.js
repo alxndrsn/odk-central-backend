@@ -16,11 +16,11 @@ const {
   assertLoginSuccessful,
   assertTitle,
   fillLoginForm,
-  initConsole,
+  initTest,
 } = require('./utils');
 
-test(`successful authN, but claim 'email_verified' has value false`, async ({ page }) => {
-  await initConsole(page);
+test(`successful authN, but claim 'email_verified' has value false`, async ({ browserName, page }) => {
+  await initTest({ browserName, page });
   await page.goto(`${frontendUrl}/v1/oidc/login`);
   await fillLoginForm(page, { username:'charlie', password:'topsecret!!!!!' });
   await assertTitle(page, 'Hello, charlie@example.com!');
