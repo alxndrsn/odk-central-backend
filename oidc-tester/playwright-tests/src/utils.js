@@ -4,6 +4,8 @@ module.exports = {
   fillLoginForm,
 };
 
+const { expect } = require('@playwright/test');
+
 const { frontendUrl } = require('./config');
 
 const SESSION_COOKIE = (frontendUrl.startsWith('https://') ? '__Host-' : '') + 'session';

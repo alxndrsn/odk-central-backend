@@ -8,7 +8,7 @@
 // except according to the terms contained in the LICENSE file.
 /* eslint-disable */ // FIXME re-enable lint here
 
-const { expect, test } = require('@playwright/test');
+const { test } = require('@playwright/test');
 
 const { frontendUrl } = require('./config');
 const {
