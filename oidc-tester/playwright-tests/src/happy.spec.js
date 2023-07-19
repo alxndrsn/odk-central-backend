@@ -12,6 +12,7 @@ const { test } = require('@playwright/test');
 
 const { frontendUrl } = require('./config');
 const {
+  assertLocation,
   assertLoginSuccessful,
   fillLoginForm,
 } = require('./utils');
