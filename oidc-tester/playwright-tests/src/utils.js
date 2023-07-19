@@ -24,7 +24,7 @@ const SESSION_COOKIE = (frontendUrl.startsWith('https://') ? '__Host-' : '') + '
 
 async function assertErrorShown(page, expectedErrorMessage) {
   await expect(page.locator('h1')).toHaveText('Error!');
-  await expect(page.locator('#content >> div')).toHaveText(expectedErrorMessage);
+  await expect(page.locator('#error-message')).toHaveText(expectedErrorMessage);
 }
 
 function assertLocation(page, expectedLocation) {

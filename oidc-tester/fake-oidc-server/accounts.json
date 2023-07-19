@@ -1,4 +1,5 @@
 {
-  "alice": { "email":"alice@example.com", "email_verified":true },
-  "bob":   { "email":"bob@example.com",   "email_verified":true }
+  "alice":   { "email":"alice@example.com",   "email_verified":true },
+  "bob":     { "email":"bob@example.com",     "email_verified":true },
+  "charlie": { "email":"charlie@example.com", "email_verified":false }
 }
