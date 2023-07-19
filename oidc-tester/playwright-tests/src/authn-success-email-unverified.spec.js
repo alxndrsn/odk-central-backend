@@ -21,6 +21,6 @@ const {
 test('handles successful authN, failed authZ', async ({ page }) => {
   await page.goto(`${frontendUrl}/v1/oidc/login`);
   await fillLoginForm(page, { username:'charlie', password:'topsecret!!!!!' });
-  await assertTitle('Hello, charlie@example.com!');
-  await assertErrorMessage('Your email is not verified.');
+  await assertTitle(page, 'Hello, charlie@example.com!');
+  await assertErrorMessage(page, 'Your email is not verified.');
 });

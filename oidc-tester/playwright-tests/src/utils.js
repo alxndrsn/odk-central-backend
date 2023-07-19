@@ -29,7 +29,7 @@ function assertErrorMessage(page, expectedMessage) {
 
 async function assertErrorPage(page, expectedMessage) {
   await assertTitle(page, 'Error!');
-  await assertErrorMessage(expectedMessage);
+  await assertErrorMessage(page, expectedMessage);
 }
 
 function assertLocation(page, expectedLocation) {
