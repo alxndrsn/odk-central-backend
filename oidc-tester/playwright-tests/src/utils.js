@@ -9,6 +9,7 @@
 /* eslint-disable */ // FIXME re-enable lint here
 
 module.exports = {
+  assertErrorShown,
   assertLocation,
   assertLoginSuccessful,
   fillLoginForm,
@@ -19,6 +20,11 @@ const { expect } = require('@playwright/test');
 const { frontendUrl } = require('./config');
 
 const SESSION_COOKIE = (frontendUrl.startsWith('https://') ? '__Host-' : '') + 'session';
+
+async function assertErrorShown(page, expectedErrorMessage) {
+  await expect(page.locator('h1')).toHaveText('Error!');
+  await expect(page.locator('#content >> div')).toHaveText(expectedErrorMessage);
+}
 
 function assertLocation(page, expectedLocation) {
   console.log('  assertLocation()');

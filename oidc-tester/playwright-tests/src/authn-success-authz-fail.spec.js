@@ -8,13 +8,17 @@
 // except according to the terms contained in the LICENSE file.
 /* eslint-disable */ // FIXME re-enable lint here
 
-const { expect, test } = require('@playwright/test');
+const { test } = require('@playwright/test');
 
 const { frontendUrl } = require('./config');
-const { assertErrorShown } = require('./utils');
+const {
+  assertErrorShown,
+  assertLoginSuccessful,
+  fillLoginForm,
+} = require('./utils');
 
-test('handles aborted login', async ({ page }) => {
+test('handles successful authN, failed authZ', async ({ page }) => {
   await page.goto(`${frontendUrl}/v1/oidc/login`);
-  await page.getByRole('button', { name:'Cancel' }).click();
-  await assertErrorShown(page, 'access_denied (End-User aborted interaction');
+  await fillLoginForm(page, { username:'bob', password:'topsecret!!!!!' });
+  await assertErrorShown(page, 'User not known by server');
 });
