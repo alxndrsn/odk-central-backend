@@ -9,9 +9,10 @@
 /* eslint-disable */ // FIXME re-enable lint here
 
 module.exports = {
-  assertErrorShown,
+  assertErrorPage,
   assertLocation,
   assertLoginSuccessful,
+  assertTitle,
   fillLoginForm,
 };
 
@@ -22,9 +23,13 @@ const { frontendUrl } = require('./config');
 
 const SESSION_COOKIE = (frontendUrl.startsWith('https://') ? '__Host-' : '') + 'session';
 
-async function assertErrorShown(page, expectedErrorMessage) {
-  await expect(page.locator('h1')).toHaveText('Error!');
-  await expect(page.locator('#error-message')).toHaveText(expectedErrorMessage);
+async function assertErrorMessage(page, expectedMessage) {
+  await expect(page.locator('#error-message')).toHaveText(expectedMessage);
+}
+
+async function assertErrorPage(page, expectedMessage) {
+  await assertTitle(page, 'Error!');
+  await assertErrorMessage(expectedMessage);
 }
 
 function assertLocation(page, expectedLocation) {
@@ -47,6 +52,10 @@ async function assertLoginSuccessful(page) {
   assert(requestCookies[SESSION_COOKIE], 'No session cookie found!');
   assert(requestCookies['__csrf'],       'No CSRF cookie found!');
   assert.equal(Object.keys(requestCookies).length, 2, 'Unexpected requestCookie count!');
+}
+
+function assertTitle(page, expectedTitle) {
+  await expect(page.locator('h1')).toHaveText(expectedTitle);
 }
 
 async function fillLoginForm(page, { username, password }) {

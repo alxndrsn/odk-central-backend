@@ -12,13 +12,15 @@ const { test } = require('@playwright/test');
 
 const { frontendUrl } = require('./config');
 const {
-  assertErrorShown,
+  assertErrorMessage,
   assertLoginSuccessful,
+  assertTitle,
   fillLoginForm,
 } = require('./utils');
 
 test('handles successful authN, failed authZ', async ({ page }) => {
   await page.goto(`${frontendUrl}/v1/oidc/login`);
   await fillLoginForm(page, { username:'charlie', password:'topsecret!!!!!' });
-  await assertErrorShown(page, 'User email not verified');
+  await assertTitle('Hello, charlie@example.com!');
+  await assertErrorMessage('Your email is not verified.');
 });
