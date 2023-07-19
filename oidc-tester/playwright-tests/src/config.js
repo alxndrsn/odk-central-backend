@@ -1,5 +1,6 @@
 const port = 8989;
-const frontendUrl = `https://odk-central.example.org:${port}`;
+// FIXME default to localhost and set env var in CI
+const frontendUrl = process.env.ODK_CENTRAL_FRONTEND || `https://odk-central.example.org:${port}`;
 
 module.exports = {
   frontendUrl,

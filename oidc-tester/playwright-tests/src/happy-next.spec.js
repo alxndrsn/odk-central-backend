@@ -12,13 +12,14 @@ const { expect, test } = require('@playwright/test');
 
 const { frontendUrl } = require('./config');
 const {
+  assertLocation,
   assertLoginSuccessful,
   fillLoginForm,
 } = require('./utils');
 
 test('can log in', async ({ page }) => {
-  await page.goto(`${frontendUrl}/v1/oidc/login`);
+  await page.goto(`${frontendUrl}/v1/oidc/login?next=/some-other-path`); // FIXME deliberate failure
   await fillLoginForm(page, { username:'alice', password:'topsecret!!!!!' });
   await assertLoginSuccessful(page);
-  await assertLocation(page, frontendUrl + '/');
+  await assertLocation(page, frontendUrl + '/#/some/path');
 });
