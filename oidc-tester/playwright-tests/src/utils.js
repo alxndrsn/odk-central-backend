@@ -14,6 +14,7 @@ module.exports = {
   assertLoginSuccessful,
   assertTitle,
   fillLoginForm,
+  initConsole,
 };
 
 const assert = require('node:assert');
@@ -64,4 +65,8 @@ async function fillLoginForm(page, { username, password }) {
   await page.locator('input[name=password]').fill(password);
   await page.locator(`button[type=submit]`).click();
   await page.getByRole('button', { name:'Continue' }).click();
+}
+
+function initConsole(page) {
+  page.on('console', ({ type, location, text }) => console[type()](location(), text()));
 }

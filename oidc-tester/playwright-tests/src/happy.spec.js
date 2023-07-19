@@ -15,9 +15,11 @@ const {
   assertLocation,
   assertLoginSuccessful,
   fillLoginForm,
+  initConsole,
 } = require('./utils');
 
 test('can log in', async ({ page }) => {
+  await initConsole(page);
   await page.goto(`${frontendUrl}/v1/oidc/login`);
   await fillLoginForm(page, { username:'alice', password:'topsecret!!!!!' });
   await assertLoginSuccessful(page);

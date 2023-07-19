@@ -11,9 +11,13 @@
 const { expect, test } = require('@playwright/test');
 
 const { frontendUrl } = require('./config');
-const { assertErrorPage } = require('./utils');
+const {
+  assertErrorPage,
+  initConsole,
+} = require('./utils');
 
 test('handles aborted login', async ({ page }) => {
+  await initConsole(page);
   await page.goto(`${frontendUrl}/v1/oidc/login`);
   await page.getByText('Cancel').click();
   await assertErrorPage(page, 'access_denied (End-User aborted interaction)');

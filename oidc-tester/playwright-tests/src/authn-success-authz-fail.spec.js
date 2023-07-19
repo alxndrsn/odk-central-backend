@@ -15,9 +15,11 @@ const {
   assertErrorPage,
   assertLoginSuccessful,
   fillLoginForm,
+  initConsole,
 } = require('./utils');
 
 test('handles successful authN, failed authZ', async ({ page }) => {
+  await initConsole(page);
   await page.goto(`${frontendUrl}/v1/oidc/login`);
   await fillLoginForm(page, { username:'bob', password:'topsecret!!!!!' });
   await assertErrorPage(page, 'Authentication successful, but there is no user in the system with the supplied email address (bob@example.com).');
