@@ -39,7 +39,7 @@ function assertLocation(page, expectedLocation) {
   console.log(`      expected: '${expectedLocation}'`);
   return page.waitForFunction(expectedLocation => {
     const actualLocation = window.location.href;
-    console.log(`actual: ${actualLocation}`);
+    console.log(`actual: '${actualLocation}'`);
     return actualLocation === expectedLocation;
   }, expectedLocation);
 }
