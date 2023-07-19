@@ -19,3 +19,9 @@ jobs:
     - run: curl -fsSL https://get.docker.com -o get-docker.sh
     - run: sudo sh ./get-docker.sh
     - run: make test-oidc
+    - name: Archive playwright report
+      if: failure()
+      uses: actions/upload-artifact@v3
+      with:
+        name: Playwright Screenshots
+        path: oidc-tester/playwright-tests/results/**/*.png
