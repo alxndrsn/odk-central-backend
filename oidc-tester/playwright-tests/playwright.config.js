@@ -10,6 +10,26 @@
 
 const { devices } = require('@playwright/test');
 
+const availableProjects = {
+  'chrome-desktop', { channel:'chrome' },
+  'chrome-mobile':  { ...devices['Pixel 5'] },
+  'chromium':       { ...devices['Desktop Chrome'] },
+  'edge':           { channel:'msedge' },
+  'firefox':        { ...devices['Desktop Firefox'] },
+  'safari-mobile':  { ...devices['iPhone 12'] },
+  'webkit':         { ...devices['Desktop Safari'] },
+};
+const requestedBrowsers = process.env.ODK_PLAYWRIGHT_BROWSERS || 'firefox';
+const projects = requestedBrowsers
+    .split(',')
+    .map(name => {
+      if(!Object.prototype.hasOwnProperty.call(availableProjects, name)) {
+        throw new Error(`No project config available with name '${name}'!`);
+      }
+      const use = availableProjects[name];
+      return { name, use };
+    });
+
 /**
  * @see https://playwright.dev/docs/test-configuration
  * @type {import('@playwright/test').PlaywrightTestConfig}
@@ -55,58 +75,7 @@ const config = {
     headless: true,
   },
 
-  /* Configure projects for major browsers */
-  // FIXME only use 1 browser unless env vars request others; request others in CI
-  projects: [
-    //{
-    //  name: 'chromium',
-    //  use: {
-    //    ...devices['Desktop Chrome'],
-    //  },
-    //},
-
-    {
-      name: 'firefox',
-      use: {
-        ...devices['Desktop Firefox'],
-      },
-    },
-
-    //{
-    //  name: 'webkit',
-    //  use: {
-    //    ...devices['Desktop Safari'],
-    //  },
-    //},
-
-    /* Test against mobile viewports. */
-    // {
-    //   name: 'Mobile Chrome',
-    //   use: {
-    //     ...devices['Pixel 5'],
-    //   },
-    // },
-    // {
-    //   name: 'Mobile Safari',
-    //   use: {
-    //     ...devices['iPhone 12'],
-    //   },
-    // },
-
-    /* Test against branded browsers. */
-    // {
-    //   name: 'Microsoft Edge',
-    //   use: {
-    //     channel: 'msedge',
-    //   },
-    // },
-    // {
-    //   name: 'Google Chrome',
-    //   use: {
-    //     channel: 'chrome',
-    //   },
-    // },
-  ],
+  projects,
 
   /* Folder for test artifacts such as screenshots, videos, traces, etc. */
   outputDir: 'results/',
