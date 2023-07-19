@@ -23,5 +23,5 @@ test('can log in', async ({ page }) => {
   await page.goto(`${frontendUrl}/v1/oidc/login`);
   await fillLoginForm(page, { username:'alice', password:'topsecret!!!!!' });
   await assertLoginSuccessful(page);
-  await assertLocation(page, frontendUrl + '/');
+  await assertLocation(page, frontendUrl + '/#/');
 });
