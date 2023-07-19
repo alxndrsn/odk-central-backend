@@ -5,4 +5,4 @@ const frontendUrl = process.env.ODK_CENTRAL_FRONTEND || `https://odk-central.exa
 module.exports = {
   frontendUrl,
   port,
-}
+};
