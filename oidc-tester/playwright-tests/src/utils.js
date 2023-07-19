@@ -15,6 +15,7 @@ module.exports = {
   fillLoginForm,
 };
 
+const assert = require('node:assert');
 const { expect } = require('@playwright/test');
 
 const { frontendUrl } = require('./config');
