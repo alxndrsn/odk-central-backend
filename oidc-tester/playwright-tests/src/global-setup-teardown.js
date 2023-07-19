@@ -30,8 +30,7 @@ async function startFakeFrontend() {
   fakeFrontend.use(createProxyMiddleware('/v1', { target:backendUrl }));
 
   if(frontendUrl.startsWith('http://')) {
-    await fakeFrontend.listen(port);
-    return fakeFrontend;
+    return fakeFrontend.listen(port);
   } else {
     const fs = require('node:fs');
     const https = require('node:https');
