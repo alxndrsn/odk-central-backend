@@ -9,6 +9,7 @@
 /* eslint-disable */ // FIXME re-enable lint here
 
 module.exports = {
+  assertErrorMessage,
   assertErrorPage,
   assertLocation,
   assertLoginSuccessful,
