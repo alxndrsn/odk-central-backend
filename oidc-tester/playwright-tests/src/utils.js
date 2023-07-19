@@ -35,12 +35,11 @@ async function assertErrorPage(page, expectedMessage) {
 }
 
 function assertLocation(page, expectedLocation) {
-  console.log('  assertLocation()');
-  console.log(`   expected: '${expectedLocation}'`);
+  console.log('     assertLocation()');
+  console.log(`      expected: '${expectedLocation}'`);
   return page.waitForFunction(expectedLocation => {
-    console.log(`\n      ...getting location...`);
     const actualLocation = window.location.href;
-    console.log(`\n      actual: ${actualLocation}`);
+    console.log(`actual: ${actualLocation}`);
     return actualLocation === expectedLocation;
   }, expectedLocation);
 }
