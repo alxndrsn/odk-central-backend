@@ -18,7 +18,7 @@ const {
   initConsole,
 } = require('./utils');
 
-test('handles successful authN, failed authZ', async ({ page }) => {
+test(`successful authN, but no 'email' claim provided`, async ({ page }) => {
   await initConsole(page);
   await page.goto(`${frontendUrl}/v1/oidc/login`);
   await fillLoginForm(page, { username:'dave', password:'topsecret!!!!!' });
