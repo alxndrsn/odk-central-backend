@@ -11,7 +11,7 @@
 const { devices } = require('@playwright/test');
 
 const availableProjects = {
-  'chrome-desktop', { channel:'chrome' },
+  'chrome-desktop': { channel:'chrome' },
   'chrome-mobile':  { ...devices['Pixel 5'] },
   'chromium':       { ...devices['Desktop Chrome'] },
   'edge':           { channel:'msedge' },
