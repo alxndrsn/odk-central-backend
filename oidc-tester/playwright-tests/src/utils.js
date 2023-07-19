@@ -68,5 +68,5 @@ async function fillLoginForm(page, { username, password }) {
 }
 
 function initConsole(page) {
-  page.on('console', ({ type, location, text }) => console[type()](location(), text()));
+  page.on('console', msg => console.log(msg.type?.(), msg.location?.(), msg?.text()));
 }
