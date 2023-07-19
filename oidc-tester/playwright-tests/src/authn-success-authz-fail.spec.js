@@ -20,5 +20,5 @@ const {
 test('handles successful authN, failed authZ', async ({ page }) => {
   await page.goto(`${frontendUrl}/v1/oidc/login`);
   await fillLoginForm(page, { username:'bob', password:'topsecret!!!!!' });
-  await assertErrorShown(page, 'User not known by server');
+  await assertErrorShown(page, 'Authentication successful, but there is no user in the system with the supplied email address (bob@example.com).');
 });

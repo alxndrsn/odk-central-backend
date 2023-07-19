@@ -16,5 +16,5 @@ const { assertErrorShown } = require('./utils');
 test('handles aborted login', async ({ page }) => {
   await page.goto(`${frontendUrl}/v1/oidc/login`);
   await page.getByText('Cancel').click();
-  await assertErrorShown(page, 'access_denied (End-User aborted interaction');
+  await assertErrorShown(page, 'access_denied (End-User aborted interaction)');
 });
