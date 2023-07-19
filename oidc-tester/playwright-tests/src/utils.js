@@ -69,5 +69,8 @@ async function fillLoginForm(page, { username, password }) {
 }
 
 function initConsole(page) {
-  page.on('console', msg => console.log(msg.type?.(), msg.location?.(), msg?.text()));
+  page.on('console', msg => {
+    const level = msg.type().toUpperCase();
+    console.log(level, msg.text());
+  });
 }
