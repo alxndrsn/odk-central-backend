@@ -111,12 +111,3 @@ const config = {
 };
 
 module.exports = config;
-
-let fakeFrontend;
-function globalTeardown() {
-  fakeFrontend?.close();
-}
-async function globalSetup() {
-  fakeFrontend = await require('./src/fake-frontend').start();
-  console.log('Setup complete.');
-}
