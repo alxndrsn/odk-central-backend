@@ -6,6 +6,7 @@ const { join } = require('path');
 const request = require('supertest');
 // eslint-disable-next-line import/no-dynamic-require
 const { task } = require(appRoot + '/lib/task/task');
+const authenticateUser = require('../util/authenticate-user');
 
 // knex things.
 const config = require('config');
@@ -128,21 +129,7 @@ const augment = (service) => {
   // eslint-disable-next-line no-param-reassign
   service.login = async (userOrUsers, test = undefined) => {
     const users = Array.isArray(userOrUsers) ? userOrUsers : [userOrUsers];
-    const tokens = await Promise.all(users.map(async (user) => {
-      if(process.env.TEST_AUTH === 'oidc') {
-        const username = typeof user === 'string' ? user : user.email.split('@')[0];
-        const token = await oidcAuthFor(service, username);
-        return token;
-      } else {
-        const credentials = (typeof user === 'string')
-          ? { email: `${user}@getodk.org`, password: user }
-          : user;
-        const { body } = await service.post('/v1/sessions')
-          .send(credentials)
-          .expect(200);
-        return body.token;
-      }
-    }));
+    const tokens = await Promise.all(users.map(user => authenticateUser(service, user)));
     const proxies = tokens.map((token) => new Proxy(service, authProxy(token)));
     return test != null
       ? test(...proxies)
@@ -206,109 +193,6 @@ const testTask = (test) => () => new Promise((resolve, reject) => {
     return test(task._container).then(rollback(resolve), rollback(reject));
   });//.catch(Promise.resolve.bind(Promise));
 });
-
-async function oidcAuthFor(service, user) {
-  const makeFetchCookie = require('fetch-cookie');
-  try {
-    const res1 = await service.get('/v1/oidc/login');
-
-    // custom cookie jar probably not important, but we will need these cookies
-    // for the final redirect
-    const cookieJar = new makeFetchCookie.toughCookie.CookieJar();
-    res1.headers['set-cookie'].forEach(cookieString => {
-      cookieJar.setCookie(cookieString, 'http://localhost:8383/v1/oidc/login');
-    });
-    console.log(cookieJar);
-
-    console.log(res1.headers);
-    const location1 = res1.headers.location;
-    console.log({ location1 });
-
-    const fetchC = makeFetchCookie(fetch, cookieJar);
-    const res2 = await fetchC(location1);
-    if(res2.status !== 200) throw new Error('Non-200 response');
-
-    const location2 = await formActionFrom(res2);
-    console.log({ location2 });
-
-    // TODO try replacing with FormData
-    const body = require('querystring').encode({
-      prompt: 'login',
-      login: user,
-      password: 'topSecret123',
-    });
-    console.log(body);
-    const res3 = await fetchC(location2, {
-      method: 'POST', 
-      headers: { 'Content-Type':'application/x-www-form-urlencoded' },
-      body,
-    });
-    console.log('res3:', res3.headers);
-
-    const location3 = await formActionFrom(res3);
-    const body2 = require('querystring').encode({ prompt:'consent' });
-    console.log({ location3 , body2 });
-    const res4 = await fetchC(location3, {
-      method: 'POST', 
-      headers: { 'Content-Type':'application/x-www-form-urlencoded' },
-      body: body2,
-      redirect: 'manual',
-    });
-    console.log('res4:', res4);
-    console.log('res4:', await res4.text());
-    if(res4.status !== 303) throw new Error('Expected 303!');
-
-    console.log(res4.headers);
-    const location4 = res4.headers.get('location');
-    console.log({ location4 });
-    const res5 = await fetchC(location4, { redirect:'manual' });
-    console.log('res5:', res5);
-    console.log('res5:', await res5.text());
-    const location5 = res5.headers.get('location');
-    console.log({ location5 });
-
-    const u5 = new URL(location5);
-    const servicePath = u5.pathname + u5.search;
-    console.log('Requesting from service:', 'GET', servicePath);
-    //const res6 = await service.get(servicePath, { headers:{ cookie:cookieJar.getCookieStringSync(location5) } });
-    const res6 = await service.get(servicePath)
-        .set('Cookie', cookieJar.getCookieStringSync(location5));
-
-    const setCookieHeader = res6.headers['set-cookie'];
-    console.log(res6.headers);
-    if(!setCookieHeader) {
-      console.log(`
-        @@@@@@@@@@@@@@@@@@@@@@@
-        @
-        @ No cookie header found in response:
-        @   user: ${user}
-        @   res6.status:  ${res6.status}
-        @   res6.headers: ${res6.headers}
-        @
-        @@@@@@@@@@@@@@@@@@@@@@@
-      `);
-      return;
-    }
-    const token = decodeURIComponent(setCookieHeader.find(h => h.startsWith('session=')).replace(/^session=/, '').split(';')[0]);
-    console.log('token:', token);
-
-    return token;
-
-  } catch(err) {
-    console.log(`OIDC auth failed for user ${user}:`, err);
-    process.exit(1);
-  }
-}
-
-async function formActionFrom(res) {
-  const text = await res.text();
-  try {
-    return text.match(/<form.*\baction="([^"]*)"/)[1];
-  } catch(err) {
-    console.log('Failed to find form action in page:', text);
-    throw err;
-  }
-}
 
 module.exports = { testService, testServiceFullTrx, testContainer, testContainerFullTrx, testTask };
 
