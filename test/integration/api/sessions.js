@@ -3,7 +3,7 @@ const { DateTime } = require('luxon');
 const { testService } = require('../setup');
 const authenticateUser = require('../../util/authenticate-user');
 
-describe.only('api: /sessions', () => {
+describe('api: /sessions', () => {
   describe('POST', () => {
     if (process.env.TEST_AUTH === 'oidc') return; // no this.skip() available at Suite-level
 
