@@ -130,7 +130,8 @@ const augment = (service) => {
     const users = Array.isArray(userOrUsers) ? userOrUsers : [userOrUsers];
     const tokens = await Promise.all(users.map(async (user) => {
       if(process.env.TEST_AUTH === 'oidc') {
-        console.log(`TODO: TEST_AUTH=oidc NOT YET IMPLEMENTED`);
+        const token = await oidcAuthFor(user);
+        console.log(`TODO: TEST_AUTH=oidc NOT YET FULLY IMPLEMENTED`);
         process.exit(1);
       } else {
         const credentials = (typeof user === 'string')
@@ -205,6 +206,28 @@ const testTask = (test) => () => new Promise((resolve, reject) => {
     return test(task._container).then(rollback(resolve), rollback(reject));
   });//.catch(Promise.resolve.bind(Promise));
 });
+
+function oidcAuthFor(user) {
+  const cookieJar = {};
+  function _fetch(url, opts) {
+    // this does not obey all cookie options, e.g. samesite, path etc.
+    // maybe it should.
+    const hostname = 
+  }
+  try {
+    const res1 = await service.get('/v1/oidc/login');
+    console.log(res1.headers);
+    const location = res1.headers.location;
+    const ocvCookie = res1.headers['set-cookie'].find(c => c.startsWith('ocv=')).split(';')[0].replace(/^ocv=/, '')
+    console.log({ location, ocvCookie });
+
+    const res2 = await fetch(location, { method:'GET', redirect:'manual' });
+    console.log(res2);
+  } catch(err) {
+    console.log('OIDC auth failed:', err);
+    process.exit(1);
+  }
+}
 
 module.exports = { testService, testServiceFullTrx, testContainer, testContainerFullTrx, testTask };
 
