@@ -28,10 +28,14 @@ cd -
 log "Test users created."
 
 log "Running mocha tests..."
-npx mocha test/**/*.spec.js
+cd ..
+make test-oidc-integration
+cd -
+log "Mocha tests passed."
 
 log "Running playwright tests..."
 cd playwright-tests
 npx playwright test
+log "Playwright tests passed."
 
-log "Tests completed OK!"
+log "All OIDC tests completed OK!"
