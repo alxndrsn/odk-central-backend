@@ -130,7 +130,8 @@ const augment = (service) => {
     const users = Array.isArray(userOrUsers) ? userOrUsers : [userOrUsers];
     const tokens = await Promise.all(users.map(async (user) => {
       if(process.env.TEST_AUTH === 'oidc') {
-        const token = await oidcAuthFor(service, user);
+        const username = typeof user === 'string' ? user : user.email.split('@')[0];
+        const token = await oidcAuthFor(service, username);
         return token;
       } else {
         const credentials = (typeof user === 'string')
@@ -294,7 +295,7 @@ async function oidcAuthFor(service, user) {
     return token;
 
   } catch(err) {
-    console.log('OIDC auth failed:', err);
+    console.log(`OIDC auth failed for user ${user}:`, err);
     process.exit(1);
   }
 }
