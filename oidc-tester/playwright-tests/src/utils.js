@@ -29,6 +29,7 @@ function assertErrorMessage(page, expectedMessage) {
   return expect(page.locator('#error-message')).toHaveText(expectedMessage);
 }
 
+// TODO assert status code?
 async function assertErrorPage(page, expectedMessage) {
   await assertTitle(page, 'Error!');
   await assertErrorMessage(page, expectedMessage);
@@ -61,7 +62,7 @@ function assertTitle(page, expectedTitle) {
 }
 
 async function fillLoginForm(page, { username, password }) {
-  await page.locator('input[name=login]').fill(username);
+  await page.locator('input[name=login]').fill('playwright-' + username);
   await page.locator('input[name=password]').fill(password);
   await page.locator(`button[type=submit]`).click();
   await page.getByRole('button', { name:'Continue' }).click();

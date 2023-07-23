@@ -23,6 +23,12 @@ fake-oidc-server:
 	npm clean-install && \
 	FAKE_OIDC_ROOT_URL=http://localhost:9898 npx nodemon index.js
 
+.PHONY: fake-oidc-server-ci
+fake-oidc-server-ci:
+	cd oidc-tester/fake-oidc-server && \
+	npm clean-install && \
+	FAKE_OIDC_ROOT_URL=http://localhost:9898 node index.js
+
 .PHONY: node_version
 node_version: node_modules
 	node lib/bin/enforce-node-version.js
