@@ -300,7 +300,13 @@ async function oidcAuthFor(service, user) {
 }
 
 async function formActionFrom(res) {
-  return (await res.text()).match(/<form.*\baction="([^"]*)"/)[1];
+  const text = await res.text();
+  try {
+    return text.match(/<form.*\baction="([^"]*)"/)[1];
+  } catch(err) {
+    console.log('Failed to find form action in page:', text);
+    throw err;
+  }
 }
 
 module.exports = { testService, testServiceFullTrx, testContainer, testContainerFullTrx, testTask };
