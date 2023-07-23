@@ -1,8 +1,10 @@
-module.exports = async (service, user) => {
+module.exports = async (service, user, includeCsrf) => {
   if(process.env.TEST_AUTH === 'oidc') {
     const username = typeof user === 'string' ? user : user.email.split('@')[0];
-    const token = await oidcAuthFor(service, username);
-    return token;
+    const body = await oidcAuthFor(service, username);
+
+    if (includeCsrf) return body;
+    return body.token;
   } else {
     const credentials = (typeof user === 'string')
       ? { email: `${user}@getodk.org`, password: user }
@@ -10,6 +12,8 @@ module.exports = async (service, user) => {
     const { body } = await service.post('/v1/sessions')
       .send(credentials)
       .expect(200);
+
+    if (includeCsrf) return body;
     return body.token;
   }
 };
@@ -82,7 +86,7 @@ async function oidcAuthFor(service, user) {
         .set('Cookie', cookieJar.getCookieStringSync(location5));
 
     const sessionId = getSetCookie(res6, 'session');
-    const csrfToken = getSetCookie(res6, 'csrf');
+    const csrfToken = getSetCookie(res6, '__csrf');
 
     return { token:sessionId, csrf:csrfToken };
 

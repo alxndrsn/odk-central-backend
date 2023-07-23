@@ -264,12 +264,12 @@ describe.only('api: /sessions', () => {
           .set('Cookie', 'session=' + token)
           .expect(401))));
 
-    it.only('should succeed if the CSRF token is correct', testService((service) =>
-      authenticateUser(service, 'alice')
-        .then((token) => service.post('/v1/projects')
+    it('should succeed if the CSRF token is correct', testService((service) =>
+      authenticateUser(service, 'alice', 'includeCsrf')
+        .then((body) => service.post('/v1/projects')
           .send({ name: 'my project', __csrf: body.csrf })
           .set('X-Forwarded-Proto', 'https')
-          .set('Cookie', 'session=' + token)
+          .set('Cookie', 'session=' + body.token)
           .expect(200))));
   });
 });
