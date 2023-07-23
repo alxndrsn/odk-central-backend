@@ -27,6 +27,9 @@ node lib/bin/cli.js --generate-password --email alice@example.com user-create
 cd -
 log "Test users created."
 
+log "Running mocha tests..."
+npx mocha test/**/*.spec.js
+
 log "Running playwright tests..."
 cd playwright-tests
 npx playwright test

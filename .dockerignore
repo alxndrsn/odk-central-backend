@@ -9,6 +9,9 @@
 !/config/
 
 !/oidc-tester/odk-central-backend-config.json
+!/oidc-tester/package.json
+!/oidc-tester/package-lock.json
+!/oidc-tester/test/**/*.js
 !/oidc-tester/certs/*.pem
 !/oidc-tester/fake-oidc-server/accounts.json
 !/oidc-tester/fake-oidc-server/index.js
