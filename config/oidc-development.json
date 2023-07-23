@@ -35,5 +35,13 @@
 
       "_TODO": "final line to prevent dangling comma issues when moving test config about"
     }
+  },
+  "test": {
+    "database": {
+      "host": "localhost",
+      "user": "jubilant",
+      "password": "jubilant",
+      "database": "jubilant"
+    }
   }
 }
