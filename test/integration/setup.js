@@ -274,19 +274,21 @@ async function oidcAuthFor(service, user) {
         .set('Cookie', cookieJar.getCookieStringSync(location5));
 
     const setCookieHeader = res6.headers['set-cookie'];
+    console.log(res6.headers);
     if(!setCookieHeader) {
       console.log(`
         @@@@@@@@@@@@@@@@@@@@@@@
         @
         @ No cookie header found in response:
         @   user: ${user}
-        @   res6: ${res6}
+        @   res6.status:  ${res6.status}
+        @   res6.headers: ${res6.headers}
         @
         @@@@@@@@@@@@@@@@@@@@@@@
       `);
       return;
     }
-    const token = setCookieHeader.find(h => h.startsWith('session=')).replace(/^session=/, '').split(';')[0];
+    const token = decodeURIComponent(setCookieHeader.find(h => h.startsWith('session=')).replace(/^session=/, '').split(';')[0]);
     console.log('token:', token);
 
     return token;
