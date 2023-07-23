@@ -129,13 +129,18 @@ const augment = (service) => {
   service.login = async (userOrUsers, test = undefined) => {
     const users = Array.isArray(userOrUsers) ? userOrUsers : [userOrUsers];
     const tokens = await Promise.all(users.map(async (user) => {
-      const credentials = (typeof user === 'string')
-        ? { email: `${user}@getodk.org`, password: user }
-        : user;
-      const { body } = await service.post('/v1/sessions')
-        .send(credentials)
-        .expect(200);
-      return body.token;
+      if(process.env.TEST_AUTH === 'oidc') {
+        console.log(`TODO: TEST_AUTH=oidc NOT YET IMPLEMENTED`);
+        process.exit(1);
+      } else {
+        const credentials = (typeof user === 'string')
+          ? { email: `${user}@getodk.org`, password: user }
+          : user;
+        const { body } = await service.post('/v1/sessions')
+          .send(credentials)
+          .expect(200);
+        return body.token;
+      }
     }));
     const proxies = tokens.map((token) => new Proxy(service, authProxy(token)));
     return test != null
