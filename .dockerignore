@@ -7,7 +7,7 @@
 !/Makefile
 !/lib/
 !/config/
-!/test/oidc-integration/
+!/test/
 
 !/oidc-tester/odk-central-backend-config.json
 !/oidc-tester/certs/*.pem

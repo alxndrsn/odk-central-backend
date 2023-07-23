@@ -4,19 +4,14 @@ node_modules: package.json
 	npm clean-install --legacy-peer-deps
 	touch node_modules
 
-.PHONY: test-oidc-docker
-test-oidc-docker: node_modules
+.PHONY: test-oidc
+test-oidc: node_modules
 	# TODO remove shellcheck call - not available/useful/etc. outside dev(?)
 	shellcheck ./oidc-tester/scripts/docker-start.sh
 	cd oidc-tester && \
 	docker compose down && \
 	docker compose build --build-arg CACHEBUST=$$RANDOM$$(date +%s) && \
 	docker compose up --exit-code-from odk-central-oidc-tester
-
-
-.PHONY: test-oidc-integration
-test-oidc-integration:
-	npx mocha ./test/oidc-integration/**/*.spec.js
 
 .PHONY: dev-oidc
 dev-oidc: base

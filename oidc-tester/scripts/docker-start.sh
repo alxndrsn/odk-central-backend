@@ -29,7 +29,7 @@ log "Test users created."
 
 log "Running mocha tests..."
 cd ..
-make test-oidc-integration
+NODE_CONFIG_ENV=oidc-development make test-integration
 cd -
 log "Mocha tests passed."
 
