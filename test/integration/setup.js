@@ -273,7 +273,7 @@ async function oidcAuthFor(service, user) {
     const res6 = await service.get(servicePath)
         .set('Cookie', cookieJar.getCookieStringSync(location5));
 
-    const token = res6.headers['set-cookie'].find(h => h.startsWith('session=')).replace(/^session=/, '');
+    const token = res6.headers['set-cookie'].find(h => h.startsWith('session=')).replace(/^session=/, '').split(';')[0];
     console.log('token:', token);
 
     return token;
