@@ -131,8 +131,7 @@ const augment = (service) => {
     const tokens = await Promise.all(users.map(async (user) => {
       if(process.env.TEST_AUTH === 'oidc') {
         const token = await oidcAuthFor(service, user);
-        console.log(`TODO: TEST_AUTH=oidc NOT YET FULLY IMPLEMENTED`);
-        process.exit(1);
+        return token;
       } else {
         const credentials = (typeof user === 'string')
           ? { email: `${user}@getodk.org`, password: user }
@@ -273,7 +272,11 @@ async function oidcAuthFor(service, user) {
     //const res6 = await service.get(servicePath, { headers:{ cookie:cookieJar.getCookieStringSync(location5) } });
     const res6 = await service.get(servicePath)
         .set('Cookie', cookieJar.getCookieStringSync(location5));
-    console.log('res6:', res6);
+
+    const token = res6.headers['set-cookie'].find(h => h.startsWith('session=')).replace(/^session=/, '');
+    console.log('token:', token);
+
+    return token;
 
   } catch(err) {
     console.log('OIDC auth failed:', err);
