@@ -5,7 +5,7 @@ const { getOrNotFound } = require(appRoot + '/lib/util/promise');
 const { testService } = require('../setup');
 const authenticateUser = require('../../util/authenticate-user');
 
-describe.only('api: /users', () => {
+describe('api: /users', () => {
   describe('GET', () => {
     it('should reject for anonymous users', testService((service) =>
       service.get('/v1/users').expect(403)));
@@ -791,9 +791,20 @@ describe.only('api: /users', () => {
             .then(({ body }) => body.id)
             .then((chelseaId) => asAlice.delete('/v1/users/' + chelseaId)
               .expect(200)
-              .then(() => service.post('/v1/sessions')
-                .send({ email: 'chelsea@getodk.org', password: 'chelsea' })
-                .expect(401)))))));
+              .then(async () => {
+                if (process.env.TEST_AUTH === 'oidc') {
+                  try {
+                    await authenticateUser(service, 'chelsea');
+                    should.fail();
+                  } catch (err) {
+                    err.message.should.equal('expected 200 "OK", got 401 "Unauthorized"');
+                  }
+                } else {
+                  return service.post('/v1/sessions')
+                    .send({ email: 'chelsea@getodk.org', password: 'chelsea' })
+                    .expect(401);
+                }
+              }))))));
 
     it('should disable active sessions', testService((service) =>
       service.login('alice', (asAlice) =>

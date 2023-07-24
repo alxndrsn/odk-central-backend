@@ -99,7 +99,7 @@ async function oidcAuthFor(service, user) {
 
   } catch(err) {
     log(`OIDC auth failed for user ${user}:`, err);
-    process.exit(1);
+    throw err;
   }
 }
 
