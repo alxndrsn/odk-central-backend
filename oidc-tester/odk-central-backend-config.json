@@ -1,11 +1,5 @@
 {
   "default": {
-    "database": {
-      "host": "odk-central-oidc-tester-postgres",
-      "database": "oidc-tester",
-      "user": "odk-central-backend",
-      "password": "supertopsecret3000"
-    },
     "env": {
       "domain": "https://odk-central.example.org:8989",
       "oidcProviderName": "Fake OIDC Server"
@@ -15,14 +9,6 @@
       "clientId": "odk-central-backend-dev",
       "clientSecret": "super-top-secret",
       "enabled": true
-    }
-  },
-  "test": {
-    "database": {
-      "host": "odk-central-oidc-tester-postgres",
-      "database": "oidc-tester",
-      "user": "odk-central-backend",
-      "password": "supertopsecret3000"
     }
   }
 }
