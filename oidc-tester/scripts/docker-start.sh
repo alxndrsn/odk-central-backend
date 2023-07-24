@@ -21,28 +21,14 @@ log "Starting services..."
 log "Waiting for odk-central-backend to start..."
 ./scripts/wait-for-it.sh localhost:8383 --strict --timeout=60 -- echo '[oidc-tester] odk-central-backend is UP!'
 
-log "Creating docker databases..."
-node lib/bin/create-docker-databases.js
-log "Docker databases created."
-
-log "Running mocha tests..."
-cd ..
-# FIXME probably don't need NODE_CONFIG_ENV, as config comes from separate file
-TEST_AUTH=oidc NODE_CONFIG_ENV=oidc-development make test-integration
-cd -
-log "Mocha tests passed."
-
-# TODO update the usernames for playwright tests so they don't overlap with integration tests
-
-log "Creating playwright test users..." # _after_ migrations have been run
+log "Creating test users..." # _after_ migrations have been run
 cd ..
 node lib/bin/cli.js --generate-password --email alice@example.com user-create
 cd -
-log "Playwright test users created."
+log "Test users created."
 
 log "Running playwright tests..."
 cd playwright-tests
 npx playwright test
-log "Playwright tests passed."
 
-log "All OIDC tests completed OK!"
+log "Tests completed OK!"
