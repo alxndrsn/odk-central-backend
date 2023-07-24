@@ -4,7 +4,7 @@ const should = require('should');
 const { getOrNotFound } = require(appRoot + '/lib/util/promise');
 const { testService } = require('../setup');
 
-describe('api: /users', () => {
+describe.only('api: /users', () => {
   describe('GET', () => {
     it('should reject for anonymous users', testService((service) =>
       service.get('/v1/users').expect(403)));
@@ -86,280 +86,325 @@ describe('api: /users', () => {
           .send({ email: 'david@getodk.org' })
           .expect(403))));
 
-    it('should hash and store passwords if provided', testService((service) =>
-      service.login('alice', (asAlice) =>
-        asAlice.post('/v1/users')
-          .send({ email: 'david@getodk.org', password: 'alongpassword' })
-          .expect(200)
-          .then(() => service.login({ email: 'david@getodk.org', password: 'alongpassword' }, (asDavid) =>
-            asDavid.get('/v1/users/current').expect(200))))));
-
-    it('should not accept and hash blank passwords', testService((service, { Users }) =>
-      service.login('alice', (asAlice) =>
-        asAlice.post('/v1/users')
-          .send({ email: 'david@getodk.org', password: '' })
-          .expect(200) // treats a blank password as no password provided
-          .then(() => Promise.all([
-            service.post('/v1/sessions')
-              .send({ email: 'david@getodk.org', password: '' })
-              .expect(400),
-            Users.getByEmail('david@getodk.org')
-              .then(getOrNotFound)
-              .then(({ password }) => { should.not.exist(password); })
-          ])))));
-
-    it('should not accept a password that is too short', testService((service) =>
-      service.login('alice', (asAlice) =>
-        asAlice.post('/v1/users')
-          .send({ email: 'david@getodk.org', password: 'short' })
-          .expect(400))));
-
-    it('should send an email to provisioned users', testService((service) =>
-      service.login('alice', (asAlice) =>
-        asAlice.post('/v1/users')
-          .send({ email: 'david@getodk.org', password: 'daviddavid' })
-          .expect(200)
-          .then(() => {
-            const email = global.inbox.pop();
-            global.inbox.length.should.equal(0);
-            email.to.should.eql([{ address: 'david@getodk.org', name: '' }]);
-            email.subject.should.equal('ODK Central account created');
-          }))));
-
-    it('should send a token which can reset the new user password', testService((service) =>
-      service.login('alice', (asAlice) =>
-        asAlice.post('/v1/users')
-          .send({ email: 'david@getodk.org' })
-          .expect(200)
-          .then(() => {
-            const token = /token=([a-z0-9!$]+)/i.exec(global.inbox.pop().html)[1];
-            return service.post('/v1/users/reset/verify')
-              .send({ new: 'testresetpassword' })
-              .set('Authorization', 'Bearer ' + token)
+    if (process.env.TEST_AUTH === 'oidc') {
+      describe('with OIDC auth', () => {
+        it('should send an email to provisioned users', testService((service) =>
+          service.login('alice', (asAlice) =>
+            asAlice.post('/v1/users')
+              .send({ email: 'david@getodk.org' })
               .expect(200)
-              .then(() => service.login({ email: 'david@getodk.org', password: 'testresetpassword' }, (asDavid) =>
-                asDavid.get('/v1/users/current').expect(200)));
-          }))));
+              .then(() => {
+                const email = global.inbox.pop();
+                global.inbox.length.should.equal(0);
+                email.to.should.eql([{ address: 'david@getodk.org', name: '' }]);
+                email.subject.should.equal('ODK Central account created');
+              }))));
 
-    it('should not allow a too-short password when resetting via token', testService((service) =>
-      service.login('alice', (asAlice) =>
-        asAlice.post('/v1/users')
-          .send({ email: 'david@getodk.org' })
-          .expect(200)
-          .then(() => {
-            const token = /token=([a-z0-9!$]+)/i.exec(global.inbox.pop().html)[1];
-            return service.post('/v1/users/reset/verify')
-              .send({ new: 'tooshort' })
-              .set('Authorization', 'Bearer ' + token)
-              .expect(400);
-          }))));
+        it('should not send a token which can reset the new user password', testService((service) =>
+          service.login('alice', (asAlice) =>
+            asAlice.post('/v1/users')
+              .send({ email: 'david@getodk.org' })
+              .expect(200)
+              .then(() => {
+                const tokenMatch = /token=([a-z0-9!$]+)/i.exec(global.inbox.pop().html);
+                should(tokenMatch).be.null();
+              }))));
+      });
+    } else {
+      describe('with standard uname/password auth', () => {
+        it('should hash and store passwords if provided', testService((service) =>
+          service.login('alice', (asAlice) =>
+            asAlice.post('/v1/users')
+              .send({ email: 'david@getodk.org', password: 'alongpassword' })
+              .expect(200)
+              .then(() => service.login({ email: 'david@getodk.org', password: 'alongpassword' }, (asDavid) =>
+                asDavid.get('/v1/users/current').expect(200))))));
 
-    it('should send a message explaining a pre-assigned password if given', testService((service) =>
-      service.login('alice', (asAlice) =>
-        asAlice.post('/v1/users')
-          .send({ email: 'david@getodk.org', password: 'daviddavid' })
-          .expect(200)
-          .then(() => {
-            /Your account was created with an assigned password\./
-              .test(global.inbox.pop().html)
-              .should.equal(true);
-          }))));
+        it('should not accept and hash blank passwords', testService((service, { Users }) =>
+          service.login('alice', (asAlice) =>
+            asAlice.post('/v1/users')
+              .send({ email: 'david@getodk.org', password: '' })
+              .expect(200) // treats a blank password as no password provided
+              .then(() => Promise.all([
+                service.post('/v1/sessions')
+                  .send({ email: 'david@getodk.org', password: '' })
+                  .expect(400),
+                Users.getByEmail('david@getodk.org')
+                  .then(getOrNotFound)
+                  .then(({ password }) => { should.not.exist(password); })
+              ])))));
 
-    // TODO: for initial release only:
-    it('should duplicate the email into the display name if not given', testService((service) =>
-      service.login('alice', (asAlice) =>
-        asAlice.post('/v1/users')
-          .send({ email: 'david@getodk.org' })
-          .then(({ body }) => body.displayName.should.equal('david@getodk.org')))));
+        it('should not accept a password that is too short', testService((service) =>
+          service.login('alice', (asAlice) =>
+            asAlice.post('/v1/users')
+              .send({ email: 'david@getodk.org', password: 'short' })
+              .expect(400))));
 
-    it('should log the action in the audit log', testService((service, { Audits, Users }) =>
-      service.login('alice', (asAlice) =>
-        asAlice.post('/v1/users')
-          .send({ email: 'david@getodk.org' })
-          .expect(200)
-          .then(() => Promise.all([
-            Users.getByEmail('alice@getodk.org').then((o) => o.get()),
-            Users.getByEmail('david@getodk.org').then((o) => o.get()),
-            Audits.getLatestByAction('user.create').then((o) => o.get())
-          ])
-            .then(([ alice, david, log ]) => {
-              log.actorId.should.equal(alice.actor.id);
-              log.acteeId.should.equal(david.actor.acteeId);
-              log.details.data.actorId.should.be.a.Number();
-              // eslint-disable-next-line no-param-reassign
-              delete log.details.data.actorId;
-              log.details.should.eql({
-                data: {
-                  email: 'david@getodk.org',
-                  password: null
-                }
-              });
-            })))));
+        it('should send an email to provisioned users', testService((service) =>
+          service.login('alice', (asAlice) =>
+            asAlice.post('/v1/users')
+              .send({ email: 'david@getodk.org', password: 'daviddavid' })
+              .expect(200)
+              .then(() => {
+                const email = global.inbox.pop();
+                global.inbox.length.should.equal(0);
+                email.to.should.eql([{ address: 'david@getodk.org', name: '' }]);
+                email.subject.should.equal('ODK Central account created');
+              }))));
+
+        it('should send a token which can reset the new user password', testService((service) =>
+          service.login('alice', (asAlice) =>
+            asAlice.post('/v1/users')
+              .send({ email: 'david@getodk.org' })
+              .expect(200)
+              .then(() => {
+                const token = /token=([a-z0-9!$]+)/i.exec(global.inbox.pop().html)[1];
+                return service.post('/v1/users/reset/verify')
+                  .send({ new: 'testresetpassword' })
+                  .set('Authorization', 'Bearer ' + token)
+                  .expect(200)
+                  .then(() => service.login({ email: 'david@getodk.org', password: 'testresetpassword' }, (asDavid) =>
+                    asDavid.get('/v1/users/current').expect(200)));
+              }))));
+
+        it('should not allow a too-short password when resetting via token', testService((service) =>
+          service.login('alice', (asAlice) =>
+            asAlice.post('/v1/users')
+              .send({ email: 'david@getodk.org' })
+              .expect(200)
+              .then(() => {
+                const token = /token=([a-z0-9!$]+)/i.exec(global.inbox.pop().html)[1];
+                return service.post('/v1/users/reset/verify')
+                  .send({ new: 'tooshort' })
+                  .set('Authorization', 'Bearer ' + token)
+                  .expect(400);
+              }))));
+
+        it('should send a message explaining a pre-assigned password if given', testService((service) =>
+          service.login('alice', (asAlice) =>
+            asAlice.post('/v1/users')
+              .send({ email: 'david@getodk.org', password: 'daviddavid' })
+              .expect(200)
+              .then(() => {
+                /Your account was created with an assigned password\./
+                  .test(global.inbox.pop().html)
+                  .should.equal(true);
+              }))));
+
+        // TODO: for initial release only:
+        it('should duplicate the email into the display name if not given', testService((service) =>
+          service.login('alice', (asAlice) =>
+            asAlice.post('/v1/users')
+              .send({ email: 'david@getodk.org' })
+              .then(({ body }) => body.displayName.should.equal('david@getodk.org')))));
+
+        it('should log the action in the audit log', testService((service, { Audits, Users }) =>
+          service.login('alice', (asAlice) =>
+            asAlice.post('/v1/users')
+              .send({ email: 'david@getodk.org' })
+              .expect(200)
+              .then(() => Promise.all([
+                Users.getByEmail('alice@getodk.org').then((o) => o.get()),
+                Users.getByEmail('david@getodk.org').then((o) => o.get()),
+                Audits.getLatestByAction('user.create').then((o) => o.get())
+              ])
+                .then(([ alice, david, log ]) => {
+                  log.actorId.should.equal(alice.actor.id);
+                  log.acteeId.should.equal(david.actor.acteeId);
+                  log.details.data.actorId.should.be.a.Number();
+                  // eslint-disable-next-line no-param-reassign
+                  delete log.details.data.actorId;
+                  log.details.should.eql({
+                    data: {
+                      email: 'david@getodk.org',
+                      password: null
+                    }
+                  });
+                })))));
+      });
+    }
   });
 
   describe('/reset/initiate POST, /reset/verify POST', () => {
-    it('should not send any email if no account exists', testService((service) =>
-      service.post('/v1/users/reset/initiate')
-        .send({ email: 'winnifred@getodk.org' })
-        .expect(200)
-        .then(() => {
-          global.inbox.length.should.equal(0);
-        })));
+    if (process.env.TEST_AUTH === 'oidc') {
+      describe('with OIDC auth', () => {
+        it('should not expose /reset/initiate', testService((service) =>
+          service.post('/v1/users/reset/initiate')
+            .send({ email: 'winnifred@getodk.org' })
+            .expect(404)));
 
-    it('should send a specific email if an account existed but was deleted', testService((service) =>
-      service.login('alice', (asAlice) =>
-        service.login('chelsea', (asChelsea) =>
-          asChelsea.get('/v1/users/current')
-            .then(({ body }) => body.id)
-            .then((chelseaId) => asAlice.delete('/v1/users/' + chelseaId)
-              .expect(200)
-              .then(() => service.post('/v1/users/reset/initiate')
-                .send({ email: 'chelsea@getodk.org' })
-                .expect(200)
-                .then(() => {
-                  const email = global.inbox.pop();
-                  global.inbox.length.should.equal(0);
-                  email.to.should.eql([{ address: 'chelsea@getodk.org', name: '' }]);
-                  email.subject.should.equal('ODK Central account password reset');
-                  email.html.should.match(/account has been deleted/);
-                })))))));
-
-    it('should send an email with a token which can reset the user password', testService((service) =>
-      service.post('/v1/users/reset/initiate')
-        .send({ email: 'alice@getodk.org' })
-        .expect(200)
-        .then(() => {
-          const email = global.inbox.pop();
-          global.inbox.length.should.equal(0);
-          email.to.should.eql([{ address: 'alice@getodk.org', name: '' }]);
-          email.subject.should.equal('ODK Central account password reset');
-          const token = /token=([a-z0-9!$]+)/i.exec(email.html)[1];
-
-          return service.post('/v1/users/reset/verify')
+        it('should not expose /reset/verify', testService((service) =>
+          service.post('/v1/users/reset/verify')
             .send({ new: 'resetthis!' })
-            .set('Authorization', 'Bearer ' + token)
+            .set('Authorization', 'Bearer asdf')
+            .expect(404)));
+      });
+    } else {
+      describe('with standard uname/password auth', () => {
+        it('should not send any email if no account exists', testService((service) =>
+          service.post('/v1/users/reset/initiate')
+            .send({ email: 'winnifred@getodk.org' })
             .expect(200)
-            .then(() => service.login({ email: 'alice@getodk.org', password: 'resetthis!' }, (asAlice) =>
-              asAlice.get('/v1/users/current').expect(200)));
-        })));
+            .then(() => {
+              global.inbox.length.should.equal(0);
+            })));
 
-    it('should delete sessions after password reset', testService(async (service) => {
-      const asAlice = await service.login('alice');
-      await service.post('/v1/users/reset/initiate')
-        .send({ email: 'alice@getodk.org' })
-        .expect(200);
-      // The session has not been deleted yet.
-      await asAlice.get('/v1/users/current').expect(200);
+        it('should send a specific email if an account existed but was deleted', testService((service) =>
+          service.login('alice', (asAlice) =>
+            service.login('chelsea', (asChelsea) =>
+              asChelsea.get('/v1/users/current')
+                .then(({ body }) => body.id)
+                .then((chelseaId) => asAlice.delete('/v1/users/' + chelseaId)
+                  .expect(200)
+                  .then(() => service.post('/v1/users/reset/initiate')
+                    .send({ email: 'chelsea@getodk.org' })
+                    .expect(200)
+                    .then(() => {
+                      const email = global.inbox.pop();
+                      global.inbox.length.should.equal(0);
+                      email.to.should.eql([{ address: 'chelsea@getodk.org', name: '' }]);
+                      email.subject.should.equal('ODK Central account password reset');
+                      email.html.should.match(/account has been deleted/);
+                    })))))));
 
-      const token = /token=([a-z0-9!$]+)/i.exec(global.inbox.pop().html)[1];
-      await service.post('/v1/users/reset/verify')
-        .send({ new: 'resetpassword' })
-        .set('Authorization', `Bearer ${token}`)
-        .expect(200);
-      // The session has been deleted.
-      await asAlice.get('/v1/users/current').expect(401);
-    }));
+        it('should send an email with a token which can reset the user password', testService((service) =>
+          service.post('/v1/users/reset/initiate')
+            .send({ email: 'alice@getodk.org' })
+            .expect(200)
+            .then(() => {
+              const email = global.inbox.pop();
+              global.inbox.length.should.equal(0);
+              email.to.should.eql([{ address: 'alice@getodk.org', name: '' }]);
+              email.subject.should.equal('ODK Central account password reset');
+              const token = /token=([a-z0-9!$]+)/i.exec(email.html)[1];
 
-    it('should not allow password reset token replay', testService((service) =>
-      service.post('/v1/users/reset/initiate')
-        .send({ email: 'alice@getodk.org' })
-        .expect(200)
-        .then(() => /token=([a-z0-9!$]+)/i.exec(global.inbox.pop().html)[1])
-        .then((token) => service.post('/v1/users/reset/verify')
-          .send({ new: 'reset the first time!' })
-          .set('Authorization', 'Bearer ' + token)
-          .expect(200)
-          .then(() => service.post('/v1/users/reset/verify')
-            .send({ new: 'reset again!' })
-            .set('Authorization', 'Bearer ' + token)
-            .expect(401)))));
+              return service.post('/v1/users/reset/verify')
+                .send({ new: 'resetthis!' })
+                .set('Authorization', 'Bearer ' + token)
+                .expect(200)
+                .then(() => service.login({ email: 'alice@getodk.org', password: 'resetthis!' }, (asAlice) =>
+                  asAlice.get('/v1/users/current').expect(200)));
+            })));
 
-    it('should not log single use token deletion in the audit log', testService((service) =>
-      service.post('/v1/users/reset/initiate')
-        .send({ email: 'alice@getodk.org' })
-        .expect(200)
-        .then(() => /token=([a-z0-9!$]+)/i.exec(global.inbox.pop().html)[1])
-        .then((token) => service.post('/v1/users/reset/verify')
-          .send({ new: 'resetpassword' })
-          .set('Authorization', 'Bearer ' + token)
-          .expect(200))
-        .then(() => service.get('/v1/audits')
-          .auth('alice@getodk.org', 'resetpassword') // cheap way to work around that we just changed the pw
-          .set('x-forwarded-proto', 'https')
-          .then(({ body }) => {
-            body[0].action.should.equal('user.update');
-            body[0].details.data.should.eql({ password: true });
-          }))));
+        it('should delete sessions after password reset', testService(async (service) => {
+          const asAlice = await service.login('alice');
+          await service.post('/v1/users/reset/initiate')
+            .send({ email: 'alice@getodk.org' })
+            .expect(200);
+          // The session has not been deleted yet.
+          await asAlice.get('/v1/users/current').expect(200);
 
-    it('should fail the request if invalidation is requested but not allowed', testService((service) =>
-      service.post('/v1/users/reset/initiate?invalidate=true')
-        .send({ email: 'alice@getodk.org' })
-        .expect(403)));
+          const token = /token=([a-z0-9!$]+)/i.exec(global.inbox.pop().html)[1];
+          await service.post('/v1/users/reset/verify')
+            .send({ new: 'resetpassword' })
+            .set('Authorization', `Bearer ${token}`)
+            .expect(200);
+          // The session has been deleted.
+          await asAlice.get('/v1/users/current').expect(401);
+        }));
 
-    it('should invalidate the existing password if requested', testService((service) =>
-      service.login('alice', (asAlice) =>
-        asAlice.post('/v1/users/reset/initiate?invalidate=true')
-          .send({ email: 'bob@getodk.org' })
-          .expect(200)
-          .then(() => {
-            // should still send the email.
-            const email = global.inbox.pop();
-            global.inbox.length.should.equal(0);
-            email.to.should.eql([{ address: 'bob@getodk.org', name: '' }]);
-            email.subject.should.equal('ODK Central account password reset');
+        it('should not allow password reset token replay', testService((service) =>
+          service.post('/v1/users/reset/initiate')
+            .send({ email: 'alice@getodk.org' })
+            .expect(200)
+            .then(() => /token=([a-z0-9!$]+)/i.exec(global.inbox.pop().html)[1])
+            .then((token) => service.post('/v1/users/reset/verify')
+              .send({ new: 'reset the first time!' })
+              .set('Authorization', 'Bearer ' + token)
+              .expect(200)
+              .then(() => service.post('/v1/users/reset/verify')
+                .send({ new: 'reset again!' })
+                .set('Authorization', 'Bearer ' + token)
+                .expect(401)))));
 
-            return service.post('/v1/sessions')
-              .send({ email: 'bob@getodk.org', password: 'bob' })
-              .expect(401);
-          }))));
+        it('should not log single use token deletion in the audit log', testService((service) =>
+          service.post('/v1/users/reset/initiate')
+            .send({ email: 'alice@getodk.org' })
+            .expect(200)
+            .then(() => /token=([a-z0-9!$]+)/i.exec(global.inbox.pop().html)[1])
+            .then((token) => service.post('/v1/users/reset/verify')
+              .send({ new: 'resetpassword' })
+              .set('Authorization', 'Bearer ' + token)
+              .expect(200))
+            .then(() => service.get('/v1/audits')
+              .auth('alice@getodk.org', 'resetpassword') // cheap way to work around that we just changed the pw
+              .set('x-forwarded-proto', 'https')
+              .then(({ body }) => {
+                body[0].action.should.equal('user.update');
+                body[0].details.data.should.eql({ password: true });
+              }))));
 
-    it('should clear sessions if password is invalidated', testService(async (service) => {
-      // Log in as Bob twice.
-      const [asAlice, ...asBobs] = await service.login(['alice', 'bob', 'bob']);
-      await Promise.all(asBobs.map(asBob => asBob.get('/v1/users/current')
-        .expect(200)));
-      await asAlice.post('/v1/users/reset/initiate?invalidate=true')
-        .send({ email: 'bob@getodk.org' })
-        .expect(200);
-      await Promise.all(asBobs.map(asBob => asBob.get('/v1/users/current')
-        .expect(401)));
-    }));
+        it('should fail the request if invalidation is requested but not allowed', testService((service) =>
+          service.post('/v1/users/reset/initiate?invalidate=true')
+            .send({ email: 'alice@getodk.org' })
+            .expect(403)));
 
-    it('should log action in audit log if password is invalidated', testService(async (service) => {
-      const asAlice = await service.login('alice');
-      await asAlice.post('/v1/users/reset/initiate?invalidate=true')
-        .send({ email: 'bob@getodk.org' })
-        .expect(200);
-      const { body: audits } = await asAlice.get('/v1/audits?action=user.update')
-        .set('X-Extended-Metadata', 'true')
-        .expect(200);
-      audits.length.should.equal(1);
-      const audit = audits[0];
-      audit.actor.displayName.should.equal('Alice');
-      audit.actee.displayName.should.equal('Bob');
-      audit.details.should.eql({ data: { password: null } });
-    }));
+        it('should invalidate the existing password if requested', testService((service) =>
+          service.login('alice', (asAlice) =>
+            asAlice.post('/v1/users/reset/initiate?invalidate=true')
+              .send({ email: 'bob@getodk.org' })
+              .expect(200)
+              .then(() => {
+                // should still send the email.
+                const email = global.inbox.pop();
+                global.inbox.length.should.equal(0);
+                email.to.should.eql([{ address: 'bob@getodk.org', name: '' }]);
+                email.subject.should.equal('ODK Central account password reset');
 
-    it('should fail the request if invalidation is not allowed and email doesn\'t exist', testService((service) =>
-      service.login('chelsea', (asChelsea) =>
-        asChelsea.post('/v1/users/reset/initiate?invalidate=true')
-          .send({ email: 'winnifred@getodk.org' })
-          .expect(403))));
+                return service.post('/v1/sessions')
+                  .send({ email: 'bob@getodk.org', password: 'bob' })
+                  .expect(401);
+              }))));
 
-    it('should return 200 if user has rights to invalidate but account doesn\'nt exist', testService((service) =>
-      service.login('alice', (asAlice) =>
-        asAlice.post('/v1/users/reset/initiate?invalidate=true')
-          .send({ email: 'winnifred@getodk.org' })
-          .expect(200)
-          .then(() => {
-            global.inbox.length.should.equal(0);
-          }))));
+        it('should clear sessions if password is invalidated', testService(async (service) => {
+          // Log in as Bob twice.
+          const [asAlice, ...asBobs] = await service.login(['alice', 'bob', 'bob']);
+          await Promise.all(asBobs.map(asBob => asBob.get('/v1/users/current')
+            .expect(200)));
+          await asAlice.post('/v1/users/reset/initiate?invalidate=true')
+            .send({ email: 'bob@getodk.org' })
+            .expect(200);
+          await Promise.all(asBobs.map(asBob => asBob.get('/v1/users/current')
+            .expect(401)));
+        }));
 
-    it('should not allow a user to reset their own password directly', testService((service) =>
-      service.login('alice', (asAlice) =>
-        asAlice.post('/v1/users/reset/verify')
-          .send({ new: 'coolpassword' })
-          .expect(403))));
+        it('should log action in audit log if password is invalidated', testService(async (service) => {
+          const asAlice = await service.login('alice');
+          await asAlice.post('/v1/users/reset/initiate?invalidate=true')
+            .send({ email: 'bob@getodk.org' })
+            .expect(200);
+          const { body: audits } = await asAlice.get('/v1/audits?action=user.update')
+            .set('X-Extended-Metadata', 'true')
+            .expect(200);
+          audits.length.should.equal(1);
+          const audit = audits[0];
+          audit.actor.displayName.should.equal('Alice');
+          audit.actee.displayName.should.equal('Bob');
+          audit.details.should.eql({ data: { password: null } });
+        }));
+
+        it('should fail the request if invalidation is not allowed and email doesn\'t exist', testService((service) =>
+          service.login('chelsea', (asChelsea) =>
+            asChelsea.post('/v1/users/reset/initiate?invalidate=true')
+              .send({ email: 'winnifred@getodk.org' })
+              .expect(403))));
+
+        it('should return 200 if user has rights to invalidate but account doesn\'nt exist', testService((service) =>
+          service.login('alice', (asAlice) =>
+            asAlice.post('/v1/users/reset/initiate?invalidate=true')
+              .send({ email: 'winnifred@getodk.org' })
+              .expect(200)
+              .then(() => {
+                global.inbox.length.should.equal(0);
+              }))));
+
+        it('should not allow a user to reset their own password directly', testService((service) =>
+          service.login('alice', (asAlice) =>
+            asAlice.post('/v1/users/reset/verify')
+              .send({ new: 'coolpassword' })
+              .expect(403))));
+      });
+    }
   });
 
   describe('/users/current GET', () => {
