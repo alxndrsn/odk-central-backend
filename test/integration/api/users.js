@@ -584,119 +584,130 @@ describe.only('api: /users', () => {
   });
 
   describe('/users/:id/password PUT', () => {
-    it('should reject if the authed user cannot update', testService((service) =>
-      service.login('alice', (asAlice) =>
-        asAlice.get('/v1/users/current')
-          .expect(200)
-          .then(({ body }) => service.login('chelsea', (asChelsea) =>
-            asChelsea.put(`/v1/users/${body.id}/password`)
+    if (process.env.TEST_AUTH === 'oidc') {
+      describe('with OIDC auth', () => {
+        it('should not expose this endpoint', testService((service) =>
+          service.login('alice', (asAlice) =>
+            asAlice.get('/v1/users/current')
+              .expect(404))));
+      });
+    } else {
+      describe('with standard uname/password auth', () => {
+        it('should reject if the authed user cannot update', testService((service) =>
+          service.login('alice', (asAlice) =>
+            asAlice.get('/v1/users/current')
+              .expect(200)
+              .then(({ body }) => service.login('chelsea', (asChelsea) =>
+                asChelsea.put(`/v1/users/${body.id}/password`)
+                  .send({ old: 'alice', new: 'chelsea' })
+                  .expect(403))))));
+
+        it('should reject if the user does not exist', testService((service) =>
+          service.login('alice', (asAlice) =>
+            asAlice.put('/v1/users/9999/password')
               .send({ old: 'alice', new: 'chelsea' })
-              .expect(403))))));
+              .expect(404))));
 
-    it('should reject if the user does not exist', testService((service) =>
-      service.login('alice', (asAlice) =>
-        asAlice.put('/v1/users/9999/password')
-          .send({ old: 'alice', new: 'chelsea' })
-          .expect(404))));
+        it('should reject if the old password is not correct', testService((service) =>
+          service.login('alice', (asAlice) =>
+            asAlice.get('/v1/users/current')
+              .expect(200)
+              .then(({ body }) => asAlice.put(`/v1/users/${body.id}/password`)
+                .send({ old: 'notalice', new: 'newpassword' })
+                .expect(401)))));
 
-    it('should reject if the old password is not correct', testService((service) =>
-      service.login('alice', (asAlice) =>
-        asAlice.get('/v1/users/current')
-          .expect(200)
-          .then(({ body }) => asAlice.put(`/v1/users/${body.id}/password`)
-            .send({ old: 'notalice', new: 'newpassword' })
-            .expect(401)))));
+        it('should change the password', testService((service) =>
+          service.login('alice', (asAlice) =>
+            asAlice.get('/v1/users/current')
+              .expect(200)
+              .then(({ body }) => asAlice.put(`/v1/users/${body.id}/password`)
+                .send({ old: 'alice', new: 'newpassword' })
+                .expect(200))
+              .then(({ body }) => {
+                body.success.should.equal(true);
+                return service.post('/v1/sessions')
+                  .send({ email: 'alice@getodk.org', password: 'newpassword' })
+                  .expect(200);
+              }))));
 
-    it('should change the password', testService((service) =>
-      service.login('alice', (asAlice) =>
-        asAlice.get('/v1/users/current')
-          .expect(200)
-          .then(({ body }) => asAlice.put(`/v1/users/${body.id}/password`)
+        it('should disallow a password that is too short (<10 chars)', testService((service) =>
+          service.login('alice', (asAlice) =>
+            asAlice.get('/v1/users/current')
+              .expect(200)
+              .then(({ body }) => asAlice.put(`/v1/users/${body.id}/password`)
+                .send({ old: 'alice', new: '123456789' })
+                .expect(400))))); // 400.21
+
+        it('should allow nonadministrator users to set their own password', testService((service) =>
+          service.login('chelsea', (asChelsea) =>
+            asChelsea.get('/v1/users/current').expect(200).then(({ body }) => body.id)
+              .then((chelseaId) => asChelsea.put(`/v1/users/${chelseaId}/password`)
+                .send({ old: 'chelsea', new: 'newchelsea' })
+                .expect(200)
+                .then(() => service.post('/v1/sessions')
+                  .send({ email: 'chelsea@getodk.org', password: 'newchelsea' })
+                  .expect(200))))));
+
+        it('should delete other sessions', testService(async (service) => {
+          const asAlice = await service.login('alice');
+          const anotherAlice = await service.login('alice');
+          const { body: { id } } = await asAlice.get('/v1/users/current')
+            .expect(200);
+          await anotherAlice.get('/v1/users/current').expect(200);
+          await asAlice.put(`/v1/users/${id}/password`)
             .send({ old: 'alice', new: 'newpassword' })
-            .expect(200))
-          .then(({ body }) => {
-            body.success.should.equal(true);
-            return service.post('/v1/sessions')
-              .send({ email: 'alice@getodk.org', password: 'newpassword' })
-              .expect(200);
-          }))));
+            .expect(200);
+          // The other session has been deleted.
+          await anotherAlice.get('/v1/users/current').expect(401);
+          // The current session has not.
+          await asAlice.get('/v1/users/current').expect(200);
+        }));
 
-    it('should disallow a password that is too short (<10 chars)', testService((service) =>
-      service.login('alice', (asAlice) =>
-        asAlice.get('/v1/users/current')
-          .expect(200)
-          .then(({ body }) => asAlice.put(`/v1/users/${body.id}/password`)
-            .send({ old: 'alice', new: '123456789' })
-            .expect(400))))); // 400.21
-
-    it('should allow nonadministrator users to set their own password', testService((service) =>
-      service.login('chelsea', (asChelsea) =>
-        asChelsea.get('/v1/users/current').expect(200).then(({ body }) => body.id)
-          .then((chelseaId) => asChelsea.put(`/v1/users/${chelseaId}/password`)
-            .send({ old: 'chelsea', new: 'newchelsea' })
-            .expect(200)
-            .then(() => service.post('/v1/sessions')
-              .send({ email: 'chelsea@getodk.org', password: 'newchelsea' })
-              .expect(200))))));
-
-    it('should delete other sessions', testService(async (service) => {
-      const asAlice = await service.login('alice');
-      const anotherAlice = await service.login('alice');
-      const { body: { id } } = await asAlice.get('/v1/users/current')
-        .expect(200);
-      await anotherAlice.get('/v1/users/current').expect(200);
-      await asAlice.put(`/v1/users/${id}/password`)
-        .send({ old: 'alice', new: 'newpassword' })
-        .expect(200);
-      // The other session has been deleted.
-      await anotherAlice.get('/v1/users/current').expect(401);
-      // The current session has not.
-      await asAlice.get('/v1/users/current').expect(200);
-    }));
-
-    it('should delete sessions if Basic auth is used', testService(async (service) => {
-      const asAlice = await service.login('alice');
-      const { body: { id } } = await asAlice.get('/v1/users/current')
-        .expect(200);
-      const basic = Buffer.from('alice@getodk.org:alice').toString('base64');
-      await service.put(`/v1/users/${id}/password`)
-        .set('Authorization', `Basic ${basic}`)
-        .set('X-Forwarded-Proto', 'https')
-        .send({ old: 'alice', new: 'newpassword' })
-        .expect(200);
-      await asAlice.get('/v1/users/current').expect(401);
-    }));
-
-    it('should send an email to a user when their password changes', testService((service) =>
-      service.login('alice', (asAlice) =>
-        asAlice.get('/v1/users/current')
-          .expect(200)
-          .then(({ body }) => asAlice.put(`/v1/users/${body.id}/password`)
+        it('should delete sessions if Basic auth is used', testService(async (service) => {
+          const asAlice = await service.login('alice');
+          const { body: { id } } = await asAlice.get('/v1/users/current')
+            .expect(200);
+          const basic = Buffer.from('alice@getodk.org:alice').toString('base64');
+          await service.put(`/v1/users/${id}/password`)
+            .set('Authorization', `Basic ${basic}`)
+            .set('X-Forwarded-Proto', 'https')
             .send({ old: 'alice', new: 'newpassword' })
-            .expect(200)
-            .then(() => {
-              const email = global.inbox.pop();
-              global.inbox.length.should.equal(0);
-              email.to.should.eql([{ address: 'alice@getodk.org', name: '' }]);
-              email.subject.should.equal('ODK Central account password change');
-            })))));
+            .expect(200);
+          await asAlice.get('/v1/users/current').expect(401);
+        }));
 
-    it('should log an audit on password change', testService((service, { Audits, Users }) =>
-      service.login('alice', (asAlice) =>
-        asAlice.get('/v1/users/current')
-          .expect(200)
-          .then(({ body }) => asAlice.put(`/v1/users/${body.id}/password`)
-            .send({ old: 'alice', new: 'newpassword' })
-            .expect(200)
-            .then(() => Promise.all([
-              Users.getByEmail('alice@getodk.org').then((o) => o.get()),
-              Audits.getLatestByAction('user.update').then((o) => o.get())
-            ]))
-            .then(([ alice, log ]) => {
-              log.actorId.should.equal(alice.actor.id);
-              log.details.should.eql({ data: { password: true } });
-              log.acteeId.should.equal(alice.actor.acteeId);
-            })))));
+        it('should send an email to a user when their password changes', testService((service) =>
+          service.login('alice', (asAlice) =>
+            asAlice.get('/v1/users/current')
+              .expect(200)
+              .then(({ body }) => asAlice.put(`/v1/users/${body.id}/password`)
+                .send({ old: 'alice', new: 'newpassword' })
+                .expect(200)
+                .then(() => {
+                  const email = global.inbox.pop();
+                  global.inbox.length.should.equal(0);
+                  email.to.should.eql([{ address: 'alice@getodk.org', name: '' }]);
+                  email.subject.should.equal('ODK Central account password change');
+                })))));
+
+        it('should log an audit on password change', testService((service, { Audits, Users }) =>
+          service.login('alice', (asAlice) =>
+            asAlice.get('/v1/users/current')
+              .expect(200)
+              .then(({ body }) => asAlice.put(`/v1/users/${body.id}/password`)
+                .send({ old: 'alice', new: 'newpassword' })
+                .expect(200)
+                .then(() => Promise.all([
+                  Users.getByEmail('alice@getodk.org').then((o) => o.get()),
+                  Audits.getLatestByAction('user.update').then((o) => o.get())
+                ]))
+                .then(([ alice, log ]) => {
+                  log.actorId.should.equal(alice.actor.id);
+                  log.details.should.eql({ data: { password: true } });
+                  log.acteeId.should.equal(alice.actor.acteeId);
+                })))));
+      });
+    }
   });
 
   describe('/users/:id DELETE', () => {
