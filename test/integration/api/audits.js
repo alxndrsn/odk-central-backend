@@ -22,12 +22,12 @@ const submitThree = (asAlice) =>
       .expect(200));
 
 describe('/audits', () => {
-  describe.only('GET', () => {
+  describe('GET', () => {
     it('should reject if the user cannot read audits', testService((service) =>
       service.login('chelsea', (asChelsea) =>
         asChelsea.get('/v1/audits').expect(403))));
 
-    it.only('should return all activity', testService((service, { Projects, Users }) =>
+    it('should return all activity', testService((service, { Projects, Users }) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects')
           .send({ name: 'audit project' })
@@ -82,7 +82,7 @@ describe('/audits', () => {
               audits[3].loggedAt.should.be.a.recentIsoDate();
             })))));
 
-    it.only('should return extended data if requested', testService((service, { Projects, Forms, Users }) =>
+    it('should return extended data if requested', testService((service, { Projects, Forms, Users }) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects')
           .send({ name: 'audit project' })
@@ -214,7 +214,7 @@ describe('/audits', () => {
               }))))));
 
     // we don't test every single action. but we do exercise every category.
-    it.only('should filter by action category (user)', testService((service) =>
+    it('should filter by action category (user)', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects')
           .send({ name: 'audit project' })
