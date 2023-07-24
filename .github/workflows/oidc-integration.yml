@@ -30,6 +30,7 @@ jobs:
     - run: npm ci --legacy-peer-deps
     - run: make fake-oidc-server-ci > fake-oidc-server.log &
     - run: node lib/bin/create-docker-databases.js
+    - run: TEST_AUTH=oidc NODE_CONFIG_ENV=oidc-development make test-integration
     - name: Fake OIDC Server Logs
       if: always()
       run: "! [[ -f ./fake-oidc-server.log ]] || cat ./fake-oidc-server.log"
