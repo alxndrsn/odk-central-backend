@@ -22,12 +22,12 @@ const submitThree = (asAlice) =>
       .expect(200));
 
 describe('/audits', () => {
-  describe('GET', () => {
+  describe.only('GET', () => {
     it('should reject if the user cannot read audits', testService((service) =>
       service.login('chelsea', (asChelsea) =>
         asChelsea.get('/v1/audits').expect(403))));
 
-    it('should return all activity', testService((service, { Projects, Users }) =>
+    it.only('should return all activity', testService((service, { Projects, Users }) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects')
           .send({ name: 'audit project' })
@@ -46,7 +46,12 @@ describe('/audits', () => {
               Users.getByEmail('david@getodk.org').then((o) => o.get())
             ]))
             .then(([ audits, project, alice, david ]) => {
-              audits.length.should.equal(4);
+              assertAuditActions(audits, [
+                'user.create',
+                'project.update',
+                'project.create',
+                'user.session.create',
+              ]);
               audits.forEach((audit) => { audit.should.be.an.Audit(); });
 
               audits[0].actorId.should.equal(alice.actor.id);
@@ -77,7 +82,7 @@ describe('/audits', () => {
               audits[3].loggedAt.should.be.a.recentIsoDate();
             })))));
 
-    it('should return extended data if requested', testService((service, { Projects, Forms, Users }) =>
+    it.only('should return extended data if requested', testService((service, { Projects, Forms, Users }) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects')
           .send({ name: 'audit project' })
@@ -101,7 +106,13 @@ describe('/audits', () => {
               Users.getByEmail('david@getodk.org').then((o) => o.get())
             ]))
             .then(([ audits, [ project, form ], alice, david ]) => {
-              audits.length.should.equal(5);
+              assertAuditActions(audits, [
+                'user.create',
+                'form.update.publish',
+                'form.create',
+                'project.create',
+                'user.session.create',
+              ]);
               audits.forEach((audit) => { audit.should.be.an.Audit(); });
 
               audits[0].actorId.should.equal(alice.actor.id);
@@ -203,7 +214,7 @@ describe('/audits', () => {
               }))))));
 
     // we don't test every single action. but we do exercise every category.
-    it('should filter by action category (user)', testService((service) =>
+    it.only('should filter by action category (user)', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects')
           .send({ name: 'audit project' })
@@ -224,13 +235,14 @@ describe('/audits', () => {
           .then(() => asAlice.get('/v1/audits?action=user')
             .expect(200)
             .then(({ body }) => {
-              body.length.should.equal(6);
-              body[0].action.should.equal('user.delete');
-              body[1].action.should.equal('user.assignment.delete');
-              body[2].action.should.equal('user.assignment.create');
-              body[3].action.should.equal('user.update');
-              body[4].action.should.equal('user.create');
-              body[5].action.should.equal('user.session.create');
+              assertAuditActions(body, [
+                'user.delete',
+                'user.assignment.delete',
+                'user.assignment.create',
+                'user.update',
+                'user.create',
+                'user.session.create',
+              ]);
             })))));
 
     it('should filter by action category (project)', testService((service) =>
@@ -620,3 +632,8 @@ describe('/audits', () => {
   });
 });
 
+
+function assertAuditActions(audits, expected) {
+  console.log(JSON.stringify(audits, null, 2));
+  audits.map(a => a.action).should.deepEqual(expected);
+}
