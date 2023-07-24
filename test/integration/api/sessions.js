@@ -108,22 +108,17 @@ describe('api: /sessions', () => {
 
     it('should return a 403 if the user cannot delete the given token', testService((service) =>
       authenticateUser(service, 'alice')
-        .then((token) => {
-          return service.login('chelsea', (asChelsea) =>
-            asChelsea.delete('/v1/sessions/' + token).expect(403));
-        })));
+        .then((token) => service.login('chelsea', (asChelsea) =>
+          asChelsea.delete('/v1/sessions/' + token).expect(403)))));
 
     it('should invalidate the token if successful', testService((service) =>
       authenticateUser(service, 'alice')
-        .then((token) => {
-          // eslint-disable-next-line prefer-destructuring
-          return service.delete('/v1/sessions/' + token)
+        .then((token) => service.delete('/v1/sessions/' + token)
+          .set('Authorization', 'Bearer ' + token)
+          .expect(200)
+          .then(() => service.get('/v1/users/current') // actually doesn't matter which route; we get 401 due to broken auth.
             .set('Authorization', 'Bearer ' + token)
-            .expect(200)
-            .then(() => service.get('/v1/users/current') // actually doesn't matter which route; we get 401 due to broken auth.
-              .set('Authorization', 'Bearer ' + token)
-              .expect(401));
-        })));
+            .expect(401)))));
 
     it('should log the action in the audit log if it is a field key', testService((service) =>
       service.login('alice', (asAlice) =>
@@ -141,14 +136,12 @@ describe('api: /sessions', () => {
 
     it('should allow non-admins to delete their own sessions', testService((service) =>
       authenticateUser(service, 'chelsea')
-        .then((token) => {
-          return service.delete('/v1/sessions/' + token)
+        .then((token) => service.delete('/v1/sessions/' + token)
+          .set('Authorization', 'Bearer ' + token)
+          .expect(200)
+          .then(() => service.get('/v1/users/current') // actually doesn't matter which route; we get 401 due to broken auth.
             .set('Authorization', 'Bearer ' + token)
-            .expect(200)
-            .then(() => service.get('/v1/users/current') // actually doesn't matter which route; we get 401 due to broken auth.
-              .set('Authorization', 'Bearer ' + token)
-              .expect(401));
-        })));
+            .expect(401)))));
 
     it('should allow managers to delete project app user sessions', testService((service) =>
       service.login('bob', (asBob) =>
@@ -183,15 +176,13 @@ describe('api: /sessions', () => {
 
     it('should clear the cookie if successful for the current session', testService((service) =>
       authenticateUser(service, 'alice')
-        .then((token) => {
-          return service.delete('/v1/sessions/' + token)
-            .set('Authorization', 'Bearer ' + token)
-            .expect(200)
-            .then(({ headers }) => {
-              const cookie = headers['set-cookie'][0];
-              cookie.should.match(/session=null/);
-            });
-        })));
+        .then((token) => service.delete('/v1/sessions/' + token)
+          .set('Authorization', 'Bearer ' + token)
+          .expect(200)
+          .then(({ headers }) => {
+            const cookie = headers['set-cookie'][0];
+            cookie.should.match(/session=null/);
+          }))));
 
     it('should not clear the cookie if using some other session', testService((service) =>
       authenticateUser(service, 'alice')

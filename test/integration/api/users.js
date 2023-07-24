@@ -547,7 +547,8 @@ describe('api: /users', () => {
                 body.displayName.should.equal('a new display name');
               }))))));
 
-    it('should send an email to the user\'s previous email when their email changes', function() {
+    // eslint-disable-next-line func-names
+    it('should send an email to the user\'s previous email when their email changes', function () {
       // REVIEW or could exclude _outside_ it() as per larger blocks of tests in this file.
       // mocha marks skipped tests as "pending", which doesn't seem appropriate in the case
       // of uname/pword vs OIDC auth.

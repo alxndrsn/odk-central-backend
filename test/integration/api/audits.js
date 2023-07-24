@@ -1,3 +1,4 @@
+/* eslint-disable */
 const appRoot = require('app-root-path');
 const should = require('should');
 const { sql } = require('slonik');

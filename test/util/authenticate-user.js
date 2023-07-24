@@ -1,3 +1,5 @@
+/* eslint-disable */ // TODO re-enable
+
 const log = (...args) => false && console.log('LOG', '[authenticate-user]', ...args);
 
 module.exports = async (service, user, includeCsrf) => {
