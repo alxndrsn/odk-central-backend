@@ -29,6 +29,7 @@ log "Test users created."
 
 log "Running mocha tests..."
 cd ..
+# FIXME probably don't need NODE_CONFIG_ENV, as config comes from separate file
 TEST_AUTH=oidc NODE_CONFIG_ENV=oidc-development make test-integration
 cd -
 log "Mocha tests passed."
