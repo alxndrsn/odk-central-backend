@@ -1,4 +1,6 @@
 module.exports = async (service, user, includeCsrf) => {
+  if(!user) throw new Error('Did you forget the **service** arg?');
+  console.log('authenticateUser()', user); // TODO remove
   if(process.env.TEST_AUTH === 'oidc') {
     const username = typeof user === 'string' ? user : user.email.split('@')[0];
     const body = await oidcAuthFor(service, username);
