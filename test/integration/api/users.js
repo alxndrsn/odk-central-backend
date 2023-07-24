@@ -596,7 +596,10 @@ describe.only('api: /users', () => {
         it('should not expose this endpoint', testService((service) =>
           service.login('alice', (asAlice) =>
             asAlice.get('/v1/users/current')
-              .expect(404))));
+              .expect(200)
+              .then(({ body }) => asAlice.put(`/v1/users/${body.id}/password`)
+                .send({ old: 'alice', new: 'newpassword' })
+                .expect(404)))));
       });
     } else {
       describe('with standard uname/password auth', () => {
