@@ -58,7 +58,7 @@ async function oidcAuthFor(service, user) {
     });
     log(body);
     const res3 = await fetchC(location2, {
-      method: 'POST', 
+      method: 'POST',
       headers: { 'Content-Type':'application/x-www-form-urlencoded' },
       body,
     });
@@ -68,7 +68,7 @@ async function oidcAuthFor(service, user) {
     const body2 = require('querystring').encode({ prompt:'consent' });
     log({ location3 , body2 });
     const res4 = await fetchC(location3, {
-      method: 'POST', 
+      method: 'POST',
       headers: { 'Content-Type':'application/x-www-form-urlencoded' },
       body: body2,
       redirect: 'manual',

@@ -3,12 +3,9 @@ name: OIDC integration tests
 on: push
 
 jobs:
-  soak-test:
+  oidc-integration-test:
     # TODO should we use the same container as circle & central?
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [16.19.1]
     services:
       # see: https://docs.github.com/en/enterprise-server@3.5/actions/using-containerized-services/creating-postgresql-service-containers
       postgres:
@@ -25,10 +22,10 @@ jobs:
           --health-retries 5
     steps:
     - uses: actions/checkout@v3
-    - name: Use Node.js ${{ matrix.node-version }}
+    - name: Use Node.js 18
       uses: actions/setup-node@v3
       with:
-        node-version: ${{ matrix.node-version }}
+        node-version: 18
         cache: 'npm'
     - run: npm ci --legacy-peer-deps
     - run: make fake-oidc-server-ci > fake-oidc-server.log &
