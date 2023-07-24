@@ -3,6 +3,7 @@ const should = require('should');
 // eslint-disable-next-line import/no-dynamic-require
 const { getOrNotFound } = require(appRoot + '/lib/util/promise');
 const { testService } = require('../setup');
+const authenticateUser = require('../../util/authenticate-user');
 
 describe.only('api: /users', () => {
   describe('GET', () => {
@@ -518,13 +519,19 @@ describe.only('api: /users', () => {
             .then((after) => {
               before.body.id.should.equal(after.body.id);
               after.body.displayName.should.equal('new alice');
-              after.body.email.should.equal('newalice@odk.org');
               should.not.exist(after.body.meta);
               before.body.createdAt.should.equal(after.body.createdAt);
               after.body.updatedAt.should.be.a.recentIsoDate();
-              return service.post('/v1/sessions')
-                .send({ email: 'newalice@odk.org', password: 'alice' })
-                .expect(200);
+
+              if (process.env.TEST_AUTH === 'oidc') {
+                after.body.email.should.equal('alice@getodk.org');
+                return authenticateUser(service, 'alice');
+              } else {
+                after.body.email.should.equal('newalice@odk.org');
+                return service.post('/v1/sessions')
+                  .send({ email: 'newalice@odk.org', password: 'alice' })
+                  .expect(200);
+              }
             })))));
 
     it('should allow nonadministrator users to update themselves', testService((service) =>
