@@ -548,7 +548,9 @@ describe.only('api: /users', () => {
               }))))));
 
     it('should send an email to the user\'s previous email when their email changes', function() {
-      // REVIEW or could exclude _outside_ it() as per larger blocks of tests in this file
+      // REVIEW or could exclude _outside_ it() as per larger blocks of tests in this file.
+      // mocha marks skipped tests as "pending", which doesn't seem appropriate in the case
+      // of uname/pword vs OIDC auth.
       if (process.env.TEST_AUTH === 'oidc') return this.skip();
       return testService((service) =>
         service.login('alice', (asAlice) =>
