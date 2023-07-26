@@ -34,10 +34,11 @@ async function assertErrorPage(page, expectedMessage) {
 async function assertErrorRedirect(page, expectedErrorCode) {
   console.log('assertErrorRedirect()');
   await page.waitForFunction(expected => {
-    const fakeSearch = window.location.hash.replace(/[^?]*\?/, ''); // hash & search exchanged in odk-central-frontend
+    const { href, hash } = window.location;
+    const fakeSearch = hash.replace(/[^?]*\?/, ''); // hash & search exchanged in odk-central-frontend
     const actual = new URLSearchParams(fakeSearch).get('oidcError');
-    console.log('      href:', window.location.href);
-    console.log('      href:', window.location.hash);
+    console.log('      href:', href);
+    console.log('      hash:', hash);
     console.log('  expected:', expected);
     console.log('    actual:', actual);
     return actual === expected;
