@@ -22,5 +22,5 @@ test('successful authN, but user unknown by central', async ({ browserName, page
   await initTest({ browserName, page });
   await page.goto(`${frontendUrl}/v1/oidc/login`);
   await fillLoginForm(page, { username:'bob', password:'topsecret!!!!!' });
-  await assertErrorRedirect(page, 'email-not-verified');
+  await assertErrorRedirect(page, 'auth-ok-user-not-found');
 });
