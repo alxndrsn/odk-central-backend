@@ -37,6 +37,7 @@ async function assertErrorPage(page, expectedMessage) {
 }
 
 async function assertErrorRedirect(page, expectedErrorCode) {
+  await page.waitForNavigation(); // TODO required?
   const url = new URL(page.url());
   assert.equal(url.searchParams.get('oidcError'), expectedErrorCode);
 }
