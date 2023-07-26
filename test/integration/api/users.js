@@ -798,7 +798,7 @@ describe('api: /users', () => {
                     await authenticateUser(service, 'chelsea');
                     should.fail();
                   } catch (err) {
-                    err.message.should.equal('expected 200 "OK", got 401 "Unauthorized"');
+                    err.message.should.equal('expected 200 "OK", got 302 "Found"');
                   }
                 } else {
                   return service.post('/v1/sessions')
