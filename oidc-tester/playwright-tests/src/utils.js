@@ -50,7 +50,7 @@ function assertLocation(page, expectedLocation) {
 async function assertLoginSuccessful(page) {
   await expect(page.locator('h1')).toHaveText('Success!');
 
-  const requestCookies = JSON.parse(await page.locator(`#request-cookies`).textContent());
+  const requestCookies = JSON.parse(await page.locator('#request-cookies').textContent());
 
   console.log('requestCookies:', JSON.stringify(requestCookies, null, 2));
 
