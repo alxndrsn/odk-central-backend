@@ -7,7 +7,7 @@
       "enabled": true,
       "discoveryUrl": "http://localhost:9898",
       "clientId": "odk-central-backend-dev",
-      "clientSecret": "super-top-secret",
+      "clientSecret": "super-top-secret"
     }
   }
 }
