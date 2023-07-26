@@ -31,11 +31,15 @@ async function startFakeFrontend() {
   const fakeFrontend = express();
   fakeFrontend.use(cookieParser());
   fakeFrontend.get('/', (req, res) => {
-    console.log('fakeFrontend :: request headers:', req.headers);
+    // include request details in response body to allow for:
+    //
+    // * testing values in playwright
+    // * getting helpful debug info in screenshots
     res.send(html`
       <h1>Success!</h1>
-      <div id="query-params">${JSON.stringify(req.query)}</div>
-      <div id="request-cookies">${JSON.stringify(req.cookies)}</div>
+      <div id="request-headers">     ${JSON.stringify(req.headers)}</div>
+      <div id="request-query-params">${JSON.stringify(req.query)}  </div>
+      <div id="request-cookies">     ${JSON.stringify(req.cookies)}</div>
     `);
   });
   fakeFrontend.use(createProxyMiddleware('/v1', { target:backendUrl }));
