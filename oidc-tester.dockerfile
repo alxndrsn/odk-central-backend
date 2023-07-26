@@ -33,8 +33,6 @@ RUN npm clean-install && echo -n 'Playwright: ' && npx playwright --version && n
 # servers that will run.  This is very convenient and probably allows for faster
 # builds, but care should be taken to avoid interdependencies.
 WORKDIR /odk-central-backend
-# TODO remove this... maybe?  really handy in dev to make sure we're getting up-to-date files
-ARG CACHEBUST=1
 COPY / .
 
 COPY oidc-tester/odk-central-backend-config.json config/local.json

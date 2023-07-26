@@ -10,7 +10,7 @@ test-oidc-e2e: node_modules
 	shellcheck ./oidc-tester/scripts/docker-start.sh
 	cd oidc-tester && \
 	docker compose down && \
-	docker compose build --build-arg CACHEBUST=$$RANDOM$$(date +%s) && \
+	docker compose build && \
 	docker compose up --exit-code-from odk-central-oidc-tester
 
 .PHONY: dev-oidc
