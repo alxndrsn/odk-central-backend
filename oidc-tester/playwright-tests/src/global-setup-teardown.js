@@ -34,6 +34,7 @@ async function startFakeFrontend() {
     console.log('fakeFrontend :: request headers:', req.headers);
     res.send(html`
       <h1>Success!</h1>
+      <div id="query-params">${JSON.stringify(req.query)}</div>
       <div id="request-cookies">${JSON.stringify(req.cookies)}</div>
     `);
   });
