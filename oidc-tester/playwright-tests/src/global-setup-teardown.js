@@ -41,7 +41,7 @@ async function startFakeFrontend() {
       hostname: req.hostname,
     };
     res.send(html`
-      <style>body { font-size:8px; }</style>
+      <style>body { font-size:8px; }</style> <!-- fit more output on the screen -->
       <h1>Success!</h1>
       <h2>Request Details</h2>
       <div><h3>Path         </h3><pre id="request-details">${     JSON.stringify(reqDetails,  null, 2)}</pre></div>
