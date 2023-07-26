@@ -12,6 +12,7 @@ services:
       context: ../
       # expose playwright results
     environment:
+      DEBUG: pw:api
       ODK_PLAYWRIGHT_BROWSERS: chromium,firefox,webkit
     volumes:
       - ./playwright-tests/results:/odk-central-backend/oidc-tester/playwright-tests/results
