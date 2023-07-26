@@ -9,7 +9,6 @@
 /* eslint-disable */ // FIXME re-enable lint here
 
 module.exports = {
-  assertErrorMessage,
   assertErrorPage,
   assertErrorRedirect,
   assertLocation,
@@ -26,14 +25,10 @@ const { frontendUrl } = require('./config');
 
 const SESSION_COOKIE = (frontendUrl.startsWith('https://') ? '__Host-' : '') + 'session';
 
-function assertErrorMessage(page, expectedMessage) {
-  return expect(page.locator('#error-message')).toHaveText(expectedMessage);
-}
-
 // TODO assert status code?
 async function assertErrorPage(page, expectedMessage) {
   await assertTitle(page, 'Error!');
-  await assertErrorMessage(page, expectedMessage);
+  await expect(page.locator('#error-message')).toHaveText(expectedMessage);
 }
 
 async function assertErrorRedirect(page, expectedErrorCode) {

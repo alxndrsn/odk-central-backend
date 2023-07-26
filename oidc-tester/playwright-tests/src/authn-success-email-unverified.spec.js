@@ -12,7 +12,7 @@ const { test } = require('@playwright/test');
 
 const { frontendUrl } = require('./config');
 const {
-  assertErrorMessage,
+  assertErrorRedirect,
   assertLoginSuccessful,
   assertTitle,
   fillLoginForm,
@@ -23,6 +23,5 @@ test(`successful authN, but claim 'email_verified' has value false`, async ({ br
   await initTest({ browserName, page });
   await page.goto(`${frontendUrl}/v1/oidc/login`);
   await fillLoginForm(page, { username:'charlie', password:'topsecret!!!!!' });
-  await assertTitle(page, 'Hello, charlie@example.com!');
-  await assertErrorMessage(page, 'Your email is not verified.');
+  await assertErrorRedirect(page, 'email-not-verified');
 });
