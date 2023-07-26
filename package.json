@@ -30,7 +30,7 @@
     "mustache": "~2.3",
     "nodemailer": "~6",
     "odata-v4-parser": "~0.1",
-    "pg": "~8",
+    "pg": "~8.11.1",
     "pg-query-stream": "~4",
     "prompt": "~1",
     "ramda": "~0",
