@@ -12,7 +12,7 @@ const { test } = require('@playwright/test');
 
 const { frontendUrl } = require('./config');
 const {
-  assertErrorPage,
+  assertErrorRedirect,
   assertLoginSuccessful,
   fillLoginForm,
   initTest,
@@ -22,5 +22,5 @@ test(`successful authN, but no 'email' claim provided`, async ({ browserName, pa
   await initTest({ browserName, page });
   await page.goto(`${frontendUrl}/v1/oidc/login`);
   await fillLoginForm(page, { username:'dave', password:'topsecret!!!!!' });
-  await assertErrorPage(page, `Required claim not provided in UserInfo Response: 'email'`);
+  await assertErrorRedirect(page, 'provider-misconfigured');
 });

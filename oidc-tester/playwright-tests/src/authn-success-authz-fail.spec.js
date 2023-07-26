@@ -12,7 +12,7 @@ const { test } = require('@playwright/test');
 
 const { frontendUrl } = require('./config');
 const {
-  assertErrorPage,
+  assertErrorRedirect,
   assertLoginSuccessful,
   fillLoginForm,
   initTest,
@@ -22,5 +22,5 @@ test('successful authN, but user unknown by central', async ({ browserName, page
   await initTest({ browserName, page });
   await page.goto(`${frontendUrl}/v1/oidc/login`);
   await fillLoginForm(page, { username:'bob', password:'topsecret!!!!!' });
-  await assertErrorPage(page, 'Authentication was successful, but there is no user in the system with the supplied email address (bob@example.com).');
+  await assertErrorRedirect(page, 'email-not-verified');
 });

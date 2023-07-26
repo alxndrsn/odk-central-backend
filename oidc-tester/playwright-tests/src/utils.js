@@ -11,6 +11,7 @@
 module.exports = {
   assertErrorMessage,
   assertErrorPage,
+  assertErrorRedirect,
   assertLocation,
   assertLoginSuccessful,
   assertTitle,
@@ -33,6 +34,12 @@ function assertErrorMessage(page, expectedMessage) {
 async function assertErrorPage(page, expectedMessage) {
   await assertTitle(page, 'Error!');
   await assertErrorMessage(page, expectedMessage);
+}
+
+async function assertErrorRedirect(page, expectedErrorCode) {
+  await page.waitForNavigation(); // TODO required?
+  const url = new URL(page.url());
+  assert.equal(url.searchParams.get('oidcError'), expectedErrorCode);
 }
 
 function assertLocation(page, expectedLocation) {
