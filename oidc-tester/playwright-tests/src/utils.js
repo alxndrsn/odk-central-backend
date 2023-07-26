@@ -35,7 +35,7 @@ async function assertErrorRedirect(page, expectedErrorCode) {
   console.log('assertErrorRedirect()');
   await page.waitForFunction(expected => {
     const actual = new URLSearchParams(window.location.search).get('oidcError');
-    console.log('  expected:', expectedErrorCode);
+    console.log('  expected:', expected);
     console.log('    actual:', actual);
     return actual === expected;
   }, expectedErrorCode);
