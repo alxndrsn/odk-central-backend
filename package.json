@@ -31,7 +31,7 @@
     "nodemailer": "~6",
     "odata-v4-parser": "~0.1",
     "pg": "~8",
-    "pg-query-stream": "~4",
+    "pg-query-stream": "~4.5.1",
     "prompt": "~1",
     "ramda": "~0",
     "sanitize-filename": "~1",
