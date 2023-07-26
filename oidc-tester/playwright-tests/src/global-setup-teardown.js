@@ -37,9 +37,11 @@ async function startFakeFrontend() {
     // * getting helpful debug info in screenshots
     res.send(html`
       <h1>Success!</h1>
-      <div id="request-headers">     ${JSON.stringify(req.headers)}</div>
-      <div id="request-query-params">${JSON.stringify(req.query)}  </div>
-      <div id="request-cookies">     ${JSON.stringify(req.cookies)}</div>
+      <h2>Request Details</h2>
+      <div><h3>Path        </h3><pre id="path">${req.originalUrl}</pre></div>
+      <div><h3>Headers     </h3><pre id="request-headers">${     JSON.stringify(req.headers, null, 2)}</pre></div>
+      <div><h3>Query Params</h3><pre id="request-query-params">${JSON.stringify(req.query  , null, 2)}  </pre></div>
+      <div><h3>Cookies     </h3><pre id="request-cookies">${     JSON.stringify(req.cookies, null, 2)}</pre></div>
     `);
   });
   fakeFrontend.use(createProxyMiddleware('/v1', { target:backendUrl }));
