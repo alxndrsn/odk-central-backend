@@ -32,9 +32,13 @@ async function assertErrorPage(page, expectedMessage) {
 }
 
 async function assertErrorRedirect(page, expectedErrorCode) {
-  await page.waitForNavigation(); // TODO required?
-  const url = new URL(page.url());
-  assert.equal(url.searchParams.get('oidcError'), expectedErrorCode);
+  console.log('assertErrorRedirect()');
+  await page.waitForFunction(expected => {
+    const actual = new URLSearchParams(window.location.search).get('oidcError');
+    console.log('  expected:', expectedErrorCode);
+    console.log('    actual:', actual);
+    return actual === expected;
+  }, expectedErrorCode);
 }
 
 function assertLocation(page, expectedLocation) {

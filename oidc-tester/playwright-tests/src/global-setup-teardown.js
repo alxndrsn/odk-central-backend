@@ -35,13 +35,20 @@ async function startFakeFrontend() {
     //
     // * testing values in playwright
     // * getting helpful debug info in screenshots
+    const reqDetails = {
+      url: req.url,
+      originalUrl: req.originalUrl,
+      hostname: req.hostname,
+    };
     res.send(html`
       <h1>Success!</h1>
       <h2>Request Details</h2>
-      <div><h3>Path        </h3><pre id="path">${req.originalUrl}</pre></div>
-      <div><h3>Headers     </h3><pre id="request-headers">${     JSON.stringify(req.headers, null, 2)}</pre></div>
-      <div><h3>Query Params</h3><pre id="request-query-params">${JSON.stringify(req.query  , null, 2)}  </pre></div>
-      <div><h3>Cookies     </h3><pre id="request-cookies">${     JSON.stringify(req.cookies, null, 2)}</pre></div>
+      <div><h3>Path         </h3><pre id="request-details">${     JSON.stringify(reqDetails,  null, 2)}</pre></div>
+      <div><h3>Headers      </h3><pre id="request-headers">${     JSON.stringify(req.headers, null, 2)}</pre></div>
+      <div><h3>Query Params </h3><pre id="request-query-params">${JSON.stringify(req.query  , null, 2)}</pre></div>
+      <div><h3>Cookies      </h3><pre id="request-cookies">${     JSON.stringify(req.cookies, null, 2)}</pre></div>
+      <div><h3>location.href</h3><pre id="location-href"></pre></div>
+      <script>document.getElementById('location.href').textContent = window.location.href;</script>
     `);
   });
   fakeFrontend.use(createProxyMiddleware('/v1', { target:backendUrl }));
