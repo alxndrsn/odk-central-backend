@@ -18,7 +18,7 @@ const {
   initTest,
 } = require('./utils');
 
-test('can log in', async ({ browserName, page }) => {
+test('can log in with next parameter', async ({ browserName, page }) => {
   await initTest({ browserName, page });
   await page.goto(`${frontendUrl}/v1/oidc/login?next=/some/path`);
   await fillLoginForm(page, { username:'alice', password:'topsecret!!!!!' });
