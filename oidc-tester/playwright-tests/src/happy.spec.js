@@ -22,6 +22,6 @@ test('can log in', async ({ browserName, page }) => {
   await initTest({ browserName, page });
   await page.goto(`${frontendUrl}/v1/oidc/login`);
   await fillLoginForm(page, { username:'alice', password:'topsecret!!!!!' });
-  await assertLoginSuccessful(page, '/#/');
+  await assertLoginSuccessful(page, '/'); // N.B. backend doesn't receive URL fragments
   await assertLocation(page, frontendUrl + '/#/');
 });
