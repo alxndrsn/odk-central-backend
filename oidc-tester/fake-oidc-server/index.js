@@ -39,6 +39,7 @@ const oidc = new Provider(rootUrl, {
   }],
 
   features: {
+    // backchannelLogout should not be relevant TODO remove it and make sure things still work
     backchannelLogout: {
       enabled: true,
     },
