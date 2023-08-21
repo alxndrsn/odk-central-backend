@@ -39,6 +39,12 @@ const oidc = new Provider(rootUrl, {
   }],
 
   features: {
+    backchannelLogout: {
+      enabled: true,
+    },
+    rpInitiatedLogout: {
+      enabled: true,
+    },
     resourceIndicators: {
       enabled: true,
       getResourceServerInfo: async (ctx, resourceIndicator, client) => {
@@ -72,11 +78,18 @@ const oidc = new Provider(rootUrl, {
     console.log('renderError()', err);
     ctx.type = 'html';
     const forHumans = o => o == null ? o : typeof o === 'object' ? JSON.stringify(o, null, 2) : o;
-    ctx.body = `
+    const menuLinks = html`
+      <div>
+        [ <a href="http://localhost:8989/">back to login</a> ]
+        [ <a href="http://localhost:8989/v1/oidc/logout">logout with IdP</a> ]
+      </div>
+    `;
+    ctx.body = html`
       <html>
         <head><title>Error</title></head>
         <body>
           <div>
+            ${menuLinks}
             <h1>Error</h1>
             <code><pre>${err}</pre></code>
             <h2>Stack</h2>
@@ -92,8 +105,7 @@ const oidc = new Provider(rootUrl, {
               <li>Note that the login form expects the account's <i>username</i>, <b>not</b> email address.  This is to highlight that auth servers can choose their own authentication mechanisms, but will share the user's email back to the <code>odk-central-backend</code> server.</li>
               <li>If your user exists in the OIDC server, but not in <code>odk-central-backend</code>'s database, try running <code>node lib/bin/cli.js --generate-password --email &lt;your email here&gt; user-create</code></li>
             </ul>
-            <br/>
-            [ <a href="http://localhost:8989/">back to login</a> ]
+            ${menuLinks}
           </div>
         </body>
       </html>
@@ -113,3 +125,7 @@ const oidc = new Provider(rootUrl, {
   console.log(`oidc-provider listening on port ${port}, check ${rootUrl}/.well-known/openid-configuration`);
 })();
 
+// handy dev function for enabling syntax hilighting of html
+function html([ first, ...rest ], ...vars) {
+  return first + vars.map((v, idx) => [ v, rest[idx] ]).flat().join('');
+}
