@@ -22,6 +22,6 @@ test('can log in with next parameter', async ({ browserName, page }) => {
   await initTest({ browserName, page });
   await page.goto(`${frontendUrl}/v1/oidc/login?next=/some/path`);
   await fillLoginForm(page, { username:'alice', password:'topsecret!!!!!' });
-  await assertLoginSuccessful(page);
+  await assertLoginSuccessful(page, '/#/some/path');
   await assertLocation(page, frontendUrl + '/#/some/path');
 });
