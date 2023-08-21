@@ -19,8 +19,10 @@ dev-oidc: base
 
 .PHONY: fake-oidc-server
 fake-oidc-server:
+	# This command includes a horrible monkey-patch of oidc-provider.  Probably it's not necessary and there's a configuration mistake.
 	cd oidc-tester/fake-oidc-server && \
 	npm clean-install && \
+	sed -i.bak 's/return this\.postLogoutRedirectUris.includes(uri);/return true;/' node_modules/oidc-provider/lib/models/client.js && \
 	FAKE_OIDC_ROOT_URL=http://localhost:9898 npx nodemon index.js
 
 .PHONY: fake-oidc-server-ci
