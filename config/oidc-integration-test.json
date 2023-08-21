@@ -5,7 +5,7 @@
     },
     "oidc": {
       "enabled": true,
-      "discoveryUrl": "http://localhost:9898",
+      "issuerUrl": "http://localhost:9898",
       "clientId": "odk-central-backend-dev",
       "clientSecret": "super-top-secret"
     }
