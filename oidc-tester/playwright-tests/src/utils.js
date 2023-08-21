@@ -58,8 +58,8 @@ function assertLocation(page, expectedLocation) {
   }, expectedLocation);
 }
 
-async function assertLoginSuccessful(page) {
-  await expect(page.locator('h1')).toHaveText('Success!');
+async function assertLoginSuccessful(page, expectedPath) {
+  await expect(page.locator('h1')).toHaveText(`${expectedPath} success!`);
 
   const requestCookies = JSON.parse(await page.locator('#request-cookies').textContent());
 
