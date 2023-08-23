@@ -19,9 +19,14 @@ const {
 } = require('./utils');
 
 test('can log in with next parameter pointing to enketo', async ({ browserName, page }) => {
+  // given
   await initTest({ browserName, page });
+
+  // when
   await page.goto(`${frontendUrl}/v1/oidc/login?next=/-/some/path`);
   await fillLoginForm(page, { username:'alice', password:'topsecret!!!!!' });
+
+  // then
   await assertLoginSuccessful(page, '/-/some/path');
   await assertLocation(page, frontendUrl + '/-/some/path');
 });

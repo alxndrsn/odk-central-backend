@@ -19,8 +19,13 @@ const {
 } = require('./utils');
 
 test('successful authN, but user unknown by central', async ({ browserName, page }) => {
+  // given
   await initTest({ browserName, page });
+
+  // when
   await page.goto(`${frontendUrl}/v1/oidc/login`);
   await fillLoginForm(page, { username:'bob', password:'topsecret!!!!!' });
+
+  // then
   await assertErrorRedirect(page, 'auth-ok-user-not-found');
 });

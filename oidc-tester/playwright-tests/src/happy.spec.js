@@ -19,9 +19,14 @@ const {
 } = require('./utils');
 
 test('can log in', async ({ browserName, page }) => {
+  // given
   await initTest({ browserName, page });
+
+  // when
   await page.goto(`${frontendUrl}/v1/oidc/login`);
   await fillLoginForm(page, { username:'alice', password:'topsecret!!!!!' });
+
+  // then
   await assertLoginSuccessful(page, '/'); // N.B. backend doesn't receive URL fragments
   await assertLocation(page, frontendUrl + '/#/');
 });

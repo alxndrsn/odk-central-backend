@@ -20,8 +20,13 @@ const {
 } = require('./utils');
 
 test(`successful authN, but claim 'email_verified' has value false`, async ({ browserName, page }) => {
+  // given
   await initTest({ browserName, page });
+
+  // when
   await page.goto(`${frontendUrl}/v1/oidc/login`);
   await fillLoginForm(page, { username:'charlie', password:'topsecret!!!!!' });
+
+  // then
   await assertErrorRedirect(page, 'email-not-verified');
 });

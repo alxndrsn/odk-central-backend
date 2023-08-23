@@ -19,8 +19,13 @@ const {
 } = require('./utils');
 
 test(`successful authN, but no 'email' claim provided`, async ({ browserName, page }) => {
+  // given
   await initTest({ browserName, page });
+
+  // when
   await page.goto(`${frontendUrl}/v1/oidc/login`);
   await fillLoginForm(page, { username:'dave', password:'topsecret!!!!!' });
+
+  // then
   await assertErrorRedirect(page, 'provider-misconfigured');
 });

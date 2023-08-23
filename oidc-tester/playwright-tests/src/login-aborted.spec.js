@@ -17,8 +17,13 @@ const {
 } = require('./utils');
 
 test('handles aborted login', async ({ browserName, page }) => {
+  // given
   await initTest({ browserName, page });
+
+  // when
   await page.goto(`${frontendUrl}/v1/oidc/login`);
   await page.getByText('Cancel').click();
+
+  // then
   await assertErrorPage(page, 'access_denied (End-User aborted interaction)');
 });
