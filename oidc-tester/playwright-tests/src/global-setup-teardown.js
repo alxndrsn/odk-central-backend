@@ -6,35 +6,34 @@
 // https://www.apache.org/licenses/LICENSE-2.0. No part of ODK Central,
 // including this file, may be copied, modified, propagated, or distributed
 // except according to the terms contained in the LICENSE file.
-/* eslint-disable */ // FIXME re-enable lint here
 
-module.exports = globalSetup;
+/* eslint-disable no-multi-spaces,template-curly-spacing */
 
 // globalSetup() returns globalTeardown()
 // See: https://playwright.dev/docs/test-global-setup-teardown#configure-globalsetup-and-globalteardown
-async function globalSetup() {
-  const fakeFrontend = await startFakeFrontend();
+module.exports = async function globalSetup() {
+  const fakeFrontend = await startFakeFrontend(); // eslint-disable-line no-use-before-define
   return function globalTeardown() {
     fakeFrontend.close();
-  }
-}
+  };
+};
 
 const express = require('express');
 const cookieParser = require('cookie-parser');
 const { createProxyMiddleware } = require('http-proxy-middleware');
 
-const { port, frontendUrl } = require('./config.js');
+const { port, frontendUrl } = require('./config');
 const backendUrl = 'http://localhost:8383';
 
 async function startFakeFrontend() {
-  console.log('Starting fake frontend proxy...');
+  console.log('Starting fake frontend proxy...'); // eslint-disable-line no-console
   const fakeFrontend = express();
   fakeFrontend.use(cookieParser());
-  fakeFrontend.get('/',    successHandler);
-  fakeFrontend.get('/-/*', successHandler);
-  fakeFrontend.use(createProxyMiddleware('/v1', { target:backendUrl }));
+  fakeFrontend.get('/',    successHandler); // eslint-disable-line no-use-before-define
+  fakeFrontend.get('/-/*', successHandler); // eslint-disable-line no-use-before-define
+  fakeFrontend.use(createProxyMiddleware('/v1', { target: backendUrl }));
 
-  if(frontendUrl.startsWith('http://')) {
+  if (frontendUrl.startsWith('http://')) {
     return fakeFrontend.listen(port);
   } else {
     const fs = require('node:fs');
@@ -74,7 +73,7 @@ function successHandler(req, res) {
     <h2>Request Details</h2>
     <div><h3>Path         </h3><pre id="request-details">${     JSON.stringify(reqDetails,  null, 2)}</pre></div>
     <div><h3>Headers      </h3><pre id="request-headers">${     JSON.stringify(req.headers, null, 2)}</pre></div>
-    <div><h3>Query Params </h3><pre id="request-query-params">${JSON.stringify(req.query  , null, 2)}</pre></div>
+    <div><h3>Query Params </h3><pre id="request-query-params">${JSON.stringify(req.query,   null, 2)}</pre></div>
     <div><h3>Cookies      </h3><pre id="request-cookies">${     JSON.stringify(req.cookies, null, 2)}</pre></div>
     <div><h3>location.href</h3><pre id="location-href"></pre></div>
     <script>document.getElementById('location.href').textContent = window.location.href;</script>

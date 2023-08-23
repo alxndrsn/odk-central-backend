@@ -5,6 +5,8 @@
   "scripts": {},
   "dependencies": {
     "@playwright/test": "^1.36.1",
+    "cookie-parser": "^1.4.6",
+    "express": "^4.18.2",
     "http-proxy-middleware": "^2.0.6"
   },
   "volta": {
