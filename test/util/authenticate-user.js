@@ -1,11 +1,12 @@
-/* eslint-disable */ // TODO re-enable
+// Allow main functionality to stay at top of file:
+/* eslint-disable no-use-before-define */
 
 const makeFetchCookie = require('fetch-cookie');
 
 module.exports = async (service, user, includeCsrf) => {
-  if(!user) throw new Error('Did you forget the **service** arg?');
-  if(process.env.TEST_AUTH === 'oidc') {
-    if(user.password) throw new Error('Password supplied but OIDC is enabled.');
+  if (!user) throw new Error('Did you forget the **service** arg?');
+  if (process.env.TEST_AUTH === 'oidc') {
+    if (user.password) throw new Error('Password supplied but OIDC is enabled.');
 
     const username = typeof user === 'string' ? user : user.email.split('@')[0];
     const body = await oidcAuthFor(service, username);
@@ -39,7 +40,7 @@ async function oidcAuthFor(service, user) {
 
   const fetchC = makeFetchCookie(fetch, cookieJar);
   const res2 = await fetchC(location1);
-  if(res2.status !== 200) throw new Error('Non-200 response');
+  if (res2.status !== 200) throw new Error('Non-200 response');
 
   const location2 = await formActionFrom(res2);
 
@@ -51,40 +52,40 @@ async function oidcAuthFor(service, user) {
   });
   const res3 = await fetchC(location2, {
     method: 'POST',
-    headers: { 'Content-Type':'application/x-www-form-urlencoded' },
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
     body,
   });
 
   const location3 = await formActionFrom(res3);
-  const body2 = require('querystring').encode({ prompt:'consent' });
+  const body2 = require('querystring').encode({ prompt: 'consent' });
   const res4 = await fetchC(location3, {
     method: 'POST',
-    headers: { 'Content-Type':'application/x-www-form-urlencoded' },
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
     body: body2,
     redirect: 'manual',
   });
-  if(res4.status !== 303) throw new Error('Expected 303!');
+  if (res4.status !== 303) throw new Error('Expected 303!');
 
   const location4 = res4.headers.get('location');
-  const res5 = await fetchC(location4, { redirect:'manual' });
+  const res5 = await fetchC(location4, { redirect: 'manual' });
   const location5 = res5.headers.get('location');
 
   const u5 = new URL(location5);
   const servicePath = u5.pathname + u5.search;
   //const res6 = await service.get(servicePath, { headers:{ cookie:cookieJar.getCookieStringSync(location5) } });
   const res6 = await service.get(servicePath)
-      .set('Cookie', cookieJar.getCookieStringSync(location5))
-      .expect(200);
+    .set('Cookie', cookieJar.getCookieStringSync(location5))
+    .expect(200);
 
   const sessionId = getSetCookie(res6, 'session');
   const csrfToken = getSetCookie(res6, '__csrf');
 
-  return { token:sessionId, csrf:csrfToken };
+  return { token: sessionId, csrf: csrfToken };
 }
 
 function getSetCookie(res, cookieName) {
   const setCookieHeader = res.headers['set-cookie'];
-  if(!setCookieHeader) throw new Error(`Requested cookie '${cookieName}' was not found in Set-Cookie header!`);
+  if (!setCookieHeader) throw new Error(`Requested cookie '${cookieName}' was not found in Set-Cookie header!`);
 
   const prefix = `${cookieName}=`;
   return decodeURIComponent(setCookieHeader.find(h => h.startsWith(prefix)).substring(prefix.length).split(';')[0]);
