@@ -6,26 +6,24 @@
 // https://www.apache.org/licenses/LICENSE-2.0. No part of ODK Central,
 // including this file, may be copied, modified, propagated, or distributed
 // except according to the terms contained in the LICENSE file.
-/* eslint-disable */ // FIXME re-enable lint here
 
 const { test } = require('@playwright/test');
 
 const { frontendUrl } = require('./config');
-const {
+const { // eslint-disable-line object-curly-newline
   assertErrorRedirect,
-  assertLoginSuccessful,
-  assertTitle,
   fillLoginForm,
   initTest,
-} = require('./utils');
+} = require('./utils'); // eslint-disable-line object-curly-newline
 
+// eslint-disable-next-line quotes
 test(`successful authN, but claim 'email_verified' has value false`, async ({ browserName, page }) => {
   // given
   await initTest({ browserName, page });
 
   // when
   await page.goto(`${frontendUrl}/v1/oidc/login`);
-  await fillLoginForm(page, { username:'charlie', password:'topsecret!!!!!' });
+  await fillLoginForm(page, { username: 'charlie', password: 'topsecret!!!!!' });
 
   // then
   await assertErrorRedirect(page, 'email-not-verified');

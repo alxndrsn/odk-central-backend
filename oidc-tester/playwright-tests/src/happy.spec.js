@@ -6,17 +6,16 @@
 // https://www.apache.org/licenses/LICENSE-2.0. No part of ODK Central,
 // including this file, may be copied, modified, propagated, or distributed
 // except according to the terms contained in the LICENSE file.
-/* eslint-disable */ // FIXME re-enable lint here
 
 const { test } = require('@playwright/test');
 
 const { frontendUrl } = require('./config');
-const {
+const { // eslint-disable-line object-curly-newline
   assertLocation,
   assertLoginSuccessful,
   fillLoginForm,
   initTest,
-} = require('./utils');
+} = require('./utils'); // eslint-disable-line object-curly-newline
 
 test('can log in', async ({ browserName, page }) => {
   // given
@@ -24,7 +23,7 @@ test('can log in', async ({ browserName, page }) => {
 
   // when
   await page.goto(`${frontendUrl}/v1/oidc/login`);
-  await fillLoginForm(page, { username:'alice', password:'topsecret!!!!!' });
+  await fillLoginForm(page, { username: 'alice', password: 'topsecret!!!!!' });
 
   // then
   await assertLoginSuccessful(page, '/'); // N.B. backend doesn't receive URL fragments

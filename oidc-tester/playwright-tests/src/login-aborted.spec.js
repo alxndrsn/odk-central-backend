@@ -6,15 +6,14 @@
 // https://www.apache.org/licenses/LICENSE-2.0. No part of ODK Central,
 // including this file, may be copied, modified, propagated, or distributed
 // except according to the terms contained in the LICENSE file.
-/* eslint-disable */ // FIXME re-enable lint here
 
-const { expect, test } = require('@playwright/test');
+const { test } = require('@playwright/test');
 
 const { frontendUrl } = require('./config');
-const {
+const { // eslint-disable-line object-curly-newline
   assertErrorPage,
   initTest,
-} = require('./utils');
+} = require('./utils'); // eslint-disable-line object-curly-newline
 
 test('handles aborted login', async ({ browserName, page }) => {
   // given

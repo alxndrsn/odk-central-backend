@@ -6,17 +6,15 @@
 // https://www.apache.org/licenses/LICENSE-2.0. No part of ODK Central,
 // including this file, may be copied, modified, propagated, or distributed
 // except according to the terms contained in the LICENSE file.
-/* eslint-disable */ // FIXME re-enable lint here
 
 const { test } = require('@playwright/test');
 
 const { frontendUrl } = require('./config');
-const {
+const { // eslint-disable-line object-curly-newline
   assertErrorRedirect,
-  assertLoginSuccessful,
   fillLoginForm,
   initTest,
-} = require('./utils');
+} = require('./utils'); // eslint-disable-line object-curly-newline
 
 test('successful authN, but user unknown by central', async ({ browserName, page }) => {
   // given
@@ -24,7 +22,7 @@ test('successful authN, but user unknown by central', async ({ browserName, page
 
   // when
   await page.goto(`${frontendUrl}/v1/oidc/login`);
-  await fillLoginForm(page, { username:'bob', password:'topsecret!!!!!' });
+  await fillLoginForm(page, { username: 'bob', password: 'topsecret!!!!!' });
 
   // then
   await assertErrorRedirect(page, 'auth-ok-user-not-found');
