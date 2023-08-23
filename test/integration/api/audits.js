@@ -1,4 +1,3 @@
-/* eslint-disable */
 const appRoot = require('app-root-path');
 const should = require('should');
 const { sql } = require('slonik');
@@ -47,7 +46,7 @@ describe('/audits', () => {
               Users.getByEmail('david@getodk.org').then((o) => o.get())
             ]))
             .then(([ audits, project, alice, david ]) => {
-              assertAuditActions(audits, [
+              assertAuditActions(audits, [ // eslint-disable-line no-use-before-define
                 'user.create',
                 'project.update',
                 'project.create',
@@ -107,7 +106,7 @@ describe('/audits', () => {
               Users.getByEmail('david@getodk.org').then((o) => o.get())
             ]))
             .then(([ audits, [ project, form ], alice, david ]) => {
-              assertAuditActions(audits, [
+              assertAuditActions(audits, [ // eslint-disable-line no-use-before-define
                 'user.create',
                 'form.update.publish',
                 'form.create',
@@ -236,7 +235,7 @@ describe('/audits', () => {
           .then(() => asAlice.get('/v1/audits?action=user')
             .expect(200)
             .then(({ body }) => {
-              assertAuditActions(body, [
+              assertAuditActions(body, [ // eslint-disable-line no-use-before-define
                 'user.delete',
                 'user.assignment.delete',
                 'user.assignment.create',
@@ -633,8 +632,6 @@ describe('/audits', () => {
   });
 });
 
-
 function assertAuditActions(audits, expected) {
-  console.log(JSON.stringify(audits, null, 2));
   audits.map(a => a.action).should.deepEqual(expected);
 }
