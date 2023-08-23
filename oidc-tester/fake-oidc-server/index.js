@@ -6,30 +6,34 @@
 // https://www.apache.org/licenses/LICENSE-2.0. No part of ODK Central,
 // including this file, may be copied, modified, propagated, or distributed
 // except according to the terms contained in the LICENSE file.
-/* eslint-disable */
 
-// Have to use modules :shrug:
 import Provider from 'oidc-provider';
 import Path from 'node:path';
 import fs from 'node:fs';
-import { fileURLToPath } from 'node:url';
 import https from 'node:https';
 
 const port = 9898;
 const rootUrl = process.env.FAKE_OIDC_ROOT_URL || 'https://fake-oidc-server.example.net:9898';
 
-const loadJson = path => JSON.parse(fs.readFileSync(path, { encoding:'utf8' }));
+const loadJson = path => JSON.parse(fs.readFileSync(path, { encoding: 'utf8' }));
 
 const ACCOUNTS_JSON_PATH = Path.resolve('./accounts.json');
 const ACCOUNTS = loadJson(ACCOUNTS_JSON_PATH);
 
 const pkg = loadJson('./package.json');
+// eslint-disable-next-line no-console
 const log = (...args) => console.error(pkg.name, new Date().toISOString(), 'INFO', ...args);
 log.info = log;
 
+function forHumans(o) {
+  if (o == null) return o;
+  if (typeof o === 'object') return JSON.stringify(o, null, 2);
+  return o;
+}
+
 const oidc = new Provider(rootUrl, {
   scopes: ['email'],
-  claims: { email:['email', 'email_verified'] },
+  claims: { email: ['email', 'email_verified'] },
 
   clients: [{
     client_id: 'odk-central-backend-dev',
@@ -50,7 +54,7 @@ const oidc = new Provider(rootUrl, {
 
   async findAccount(ctx, id) {
     const account = ACCOUNTS[id];
-    if(!account) {
+    if (!account) {
       log.info(`findAccount() :: User account '${id}' not found!  Check ${ACCOUNTS_JSON_PATH}!`);
       throw new Error(`User account '${id}' not found!  Check ${ACCOUNTS_JSON_PATH}!`);
     }
@@ -58,8 +62,8 @@ const oidc = new Provider(rootUrl, {
     const ret = {
       accountId: id,
       async claims(use, scope) {
-        log.info('findAccount.claims()', { this:this, use, scope });
-        const claims = { sub:id, ...account };
+        log.info('findAccount.claims()', { this: this, use, scope });
+        const claims = { sub: id, ...account };
         log.info('findAccount.claims()', 'returning:', claims);
         return claims;
       },
@@ -69,9 +73,8 @@ const oidc = new Provider(rootUrl, {
   },
 
   async renderError(ctx, out, err) {
-    console.log('renderError()', err);
+    log('renderError()', err);
     ctx.type = 'html';
-    const forHumans = o => o == null ? o : typeof o === 'object' ? JSON.stringify(o, null, 2) : o;
     ctx.body = `
       <html>
         <head><title>Error</title></head>
@@ -102,14 +105,13 @@ const oidc = new Provider(rootUrl, {
 });
 
 (async () => {
-  if(rootUrl.startsWith('https://')) {
-    const key  = fs.readFileSync('../certs/fake-oidc-server.example.net-key.pem', 'utf8');
+  if (rootUrl.startsWith('https://')) {
+    const key  = fs.readFileSync('../certs/fake-oidc-server.example.net-key.pem', 'utf8'); // eslint-disable-line no-multi-spaces
     const cert = fs.readFileSync('../certs/fake-oidc-server.example.net.pem', 'utf8');
     const httpsServer = https.createServer({ key, cert }, oidc.callback());
     await httpsServer.listen(port);
   } else {
     await oidc.listen(port);
   }
-  console.log(`oidc-provider listening on port ${port}, check ${rootUrl}/.well-known/openid-configuration`);
+  log(`oidc-provider listening on port ${port}, check ${rootUrl}/.well-known/openid-configuration`);
 })();
-
