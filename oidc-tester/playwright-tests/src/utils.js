@@ -6,7 +6,8 @@
 // https://www.apache.org/licenses/LICENSE-2.0. No part of ODK Central,
 // including this file, may be copied, modified, propagated, or distributed
 // except according to the terms contained in the LICENSE file.
-/* eslint-disable */ // FIXME re-enable lint here
+
+/* eslint-disable no-console,no-use-before-define */
 
 module.exports = {
   assertErrorPage,
@@ -51,10 +52,10 @@ async function assertErrorRedirect(page, expectedErrorCode) {
 function assertLocation(page, expectedLocation) {
   console.log('     assertLocation()');
   console.log(`      expected: '${expectedLocation}'`);
-  return page.waitForFunction(expectedLocation => {
+  return page.waitForFunction(expected => {
     const actualLocation = window.location.href;
     console.log(`actual: '${actualLocation}'`);
-    return actualLocation === expectedLocation;
+    return actualLocation === expected;
   }, expectedLocation);
 }
 
@@ -66,7 +67,7 @@ async function assertLoginSuccessful(page, expectedPath) {
   console.log('requestCookies:', JSON.stringify(requestCookies, null, 2));
 
   assert(requestCookies[SESSION_COOKIE], 'No session cookie found!');
-  assert(requestCookies['__csrf'],       'No CSRF cookie found!');
+  assert(requestCookies['__csrf'],       'No CSRF cookie found!'); // eslint-disable-line dot-notation,no-multi-spaces
   assert.equal(Object.keys(requestCookies).length, 2, 'Unexpected requestCookie count!');
 }
 
@@ -77,8 +78,8 @@ function assertTitle(page, expectedTitle) {
 async function fillLoginForm(page, { username, password }) {
   await page.locator('input[name=login]').fill('playwright-' + username);
   await page.locator('input[name=password]').fill(password);
-  await page.locator(`button[type=submit]`).click();
-  await page.getByRole('button', { name:'Continue' }).click();
+  await page.locator('button[type=submit]').click();
+  await page.getByRole('button', { name: 'Continue' }).click();
 }
 
 function initTest({ browserName, page }) {

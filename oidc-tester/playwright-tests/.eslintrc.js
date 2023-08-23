@@ -16,5 +16,8 @@ if (process.env.CI) rules['import/no-unresolved'] = 'off';
 
 module.exports = {
   extends: '../../.eslintrc.json',
+  env: {
+    browser: true, // for page.waitForFunction() code
+  },
   rules,
 };
