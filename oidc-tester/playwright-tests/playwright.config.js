@@ -6,29 +6,28 @@
 // https://www.apache.org/licenses/LICENSE-2.0. No part of ODK Central,
 // including this file, may be copied, modified, propagated, or distributed
 // except according to the terms contained in the LICENSE file.
-/* eslint-disable */ // FIXME re-enable lint
 
 const { devices } = require('@playwright/test');
 
 const availableProjects = {
-  'chrome-desktop': { channel:'chrome' },
-  'chrome-mobile':  { ...devices['Pixel 5'] },
-  'chromium':       { ...devices['Desktop Chrome'] },
-  'edge':           { channel:'msedge' },
-  'firefox':        { ...devices['Desktop Firefox'] },
-  'safari-mobile':  { ...devices['iPhone 12'] },
-  'webkit':         { ...devices['Desktop Safari'] },
+  'chrome-desktop': { channel: 'chrome' },
+  'chrome-mobile':  { ...devices['Pixel 5'] },         // eslint-disable-line key-spacing,no-multi-spaces
+  'chromium':       { ...devices['Desktop Chrome'] },  // eslint-disable-line key-spacing,no-multi-spaces,quote-props
+  'edge':           { channel: 'msedge' },             // eslint-disable-line key-spacing,no-multi-spaces,quote-props
+  'firefox':        { ...devices['Desktop Firefox'] }, // eslint-disable-line key-spacing,no-multi-spaces,quote-props
+  'safari-mobile':  { ...devices['iPhone 12'] },       // eslint-disable-line key-spacing,no-multi-spaces
+  'webkit':         { ...devices['Desktop Safari'] },  // eslint-disable-line key-spacing,no-multi-spaces,quote-props
 };
 const requestedBrowsers = process.env.ODK_PLAYWRIGHT_BROWSERS || 'firefox';
 const projects = requestedBrowsers
-    .split(',')
-    .map(name => {
-      if(!Object.prototype.hasOwnProperty.call(availableProjects, name)) {
-        throw new Error(`No project config available with name '${name}'!`);
-      }
-      const use = availableProjects[name];
-      return { name, use };
-    });
+  .split(',')
+  .map(name => {
+    if (!Object.prototype.hasOwnProperty.call(availableProjects, name)) {
+      throw new Error(`No project config available with name '${name}'!`);
+    }
+    const use = availableProjects[name];
+    return { name, use };
+  });
 
 /**
  * @see https://playwright.dev/docs/test-configuration
@@ -38,7 +37,7 @@ const config = {
   testDir: 'src',
   /* Maximum time one test can run for. */
   timeout: 10 * 1000,
-  expect: { timeout:2000 },
+  expect: { timeout: 2000 },
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: 0, // retries mean failure
