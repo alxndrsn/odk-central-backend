@@ -42,7 +42,7 @@ const config = {
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: 0, // retries mean failure
-  workers: 4,
+  workers: process.env.CI ? 1 : undefined,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: 'line',
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
