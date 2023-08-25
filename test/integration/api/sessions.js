@@ -52,6 +52,7 @@ describe('api: /sessions', () => {
 
     it('should log the action in the audit log', testService((service) =>
       authenticateUser(service, 'alice')
+        // FIXME .set('User-Agent', 'central/tests')
         .then((token) => service.get('/v1/audits')
           .set('Authorization', `Bearer ${token}`)
           .set('X-Extended-Metadata', 'true')
