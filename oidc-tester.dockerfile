@@ -3,15 +3,12 @@
 # localhost domain.
 # See: https://web.dev/when-to-use-local-https/#when-to-use-https-for-local-development
 
-# N.B. cannot use 16.19.1 because of playwright dependency install issues
-# We also need node 18 for oidc-provider(?... or TODO does it just need to be an ESM module?)
-# TODO check node version support - the whole repo will prob update to 18 soon
 # Make sure base image is compatible with Playwright system requirements.
 # See: https://playwright.dev/docs/intro#system-requirements
 # See: https://hub.docker.com/_/node
 # See: https://wiki.debian.org/DebianReleases#Codenames
 # See: https://en.wikipedia.org/wiki/Debian_version_history
-FROM node:18-bullseye
+FROM node:18.17.0-bullseye
 
 # Set up main project dependencies - this layer is slow, but should be cached most of the time.
 WORKDIR /odk-central-backend
