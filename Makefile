@@ -6,8 +6,6 @@ node_modules: package.json
 
 .PHONY: test-oidc-e2e
 test-oidc-e2e: node_modules
-	# TODO remove shellcheck call - not available/useful/etc. outside dev(?)
-	shellcheck ./oidc-tester/scripts/docker-start.sh
 	cd oidc-tester && \
 	docker compose down && \
 	docker compose build && \
