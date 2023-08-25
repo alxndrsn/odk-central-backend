@@ -10,7 +10,7 @@
     "http-proxy-middleware": "^2.0.6"
   },
   "volta": {
-    "node": "18.16.0"
+    "node": "18"
   },
   "license": "SEE LICENSE IN ../../LICENSE"
 }
