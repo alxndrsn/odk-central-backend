@@ -4,36 +4,11 @@
       "oidcProviderName": "OpenID Connect"
     },
     "oidc": {
-      "_description": "in testing, move the config you want to last-place",
-      "enabled": false,
-
-      "_description": "broken config: fiddle with this config to test out different init failure modes",
-      "issuerUrl": "http://example.com",
-      "clientId": "this is required; should be reported during client init if this line commented out",
-      "clientSecret": "this is required; should be reported during client init if this line commented out TODO should it?  or should come from env var?",
-
-      "_description": "auth0: https://manage.auth0.com/dashboard/us/odk-oidc-dev/",
-      "issuerUrl": "https://odk-oidc-dev.us.auth0.com",
-      "clientId": "ZKKpcW8TpKymVLbD1dbDVExj7SU4Zxbn",
-      "_TODO":  "this should come from env var!",
-      "clientSecret": "7tuVT7OsjRHfmUiwYYyWNT8YArMNlmvvv70tqlChkjtVHW0Xsp0mvVAyKIfCgUn5",
-      "_TODO": " personal setting in dev - a bit inconvenient at the moment to verify emails:",
-
-      "_description": "google: from https://console.cloud.google.com/apis/credentials",
-      "issuerUrl": "https://accounts.google.com",
-      "clientId": "564021877275-o5q3i8j44190d93d9mldd3rti1fncn3u.apps.googleusercontent.com",
-      "_TODO":  "this should come from env var!",
-      "clientSecret": "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",
-
       "_description": "local test server: from https://www.npmjs.com/package/oidc-provider",
       "issuerUrl": "http://localhost:9898",
       "clientId": "odk-central-backend-dev",
       "clientSecret": "super-top-secret",
-
-      "_FIXME": "only enabled while developing the feature!",
-      "enabled": true,
-
-      "_TODO": "final line to prevent dangling comma issues when moving test config about"
+      "enabled": true
     }
   }
 }
