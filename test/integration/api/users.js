@@ -223,7 +223,6 @@ describe('api: /users', () => {
                 })))));
       });
     }
->>>>>>> Support Single Sign-on with OpenID Connect
   });
 
   describe('/reset/initiate POST, /reset/verify POST', () => {
