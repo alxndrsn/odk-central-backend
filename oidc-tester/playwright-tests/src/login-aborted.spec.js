@@ -24,5 +24,7 @@ test('handles aborted login', async ({ browserName, page }) => {
   await page.getByText('Cancel').click();
 
   // then
-  await assertErrorPage(page, 'access_denied (End-User aborted interaction)');
+  // Upstream error message is not exposed to the client, but would be:
+  // > access_denied (End-User aborted interaction)
+  await assertErrorPage(page, 'An unknown error occurred on the server.');
 });
