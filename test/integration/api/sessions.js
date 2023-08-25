@@ -244,10 +244,7 @@ describe('api: /sessions', () => {
         .expect(404)));
 
     it('should invalidate the token if successful', testService(async (service) => {
-      const { body: session } = await service.post('/v1/sessions')
-        .send({ email: 'alice@getodk.org', password: 'alice' })
-        .expect(200);
-      const { token } = session;
+      const token = await authenticateUser(service, 'alice');
       const { body } = await service.delete('/v1/sessions/current')
         .set('Authorization', `Bearer ${token}`)
         .expect(200);
