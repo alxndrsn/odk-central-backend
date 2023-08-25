@@ -93,7 +93,7 @@ const oidc = new Provider(rootUrl, {
               <li>If you restarted the fake-oidc-server while viewing the login page, you'll need to restart your auth flow.  Click "back to login" below.</li>
               <li>To delete an auth session with fake-oidc-server, restart it!  If running with <code>nodemon</code>/<code>make dev-oidc</code> you can do this by typing <code>rs</code> and pressing <code>&lt;enter&gt;</code>.</li>
               <li>Note that the login form expects the account's <i>username</i>, <b>not</b> email address.  This is to highlight that auth servers can choose their own authentication mechanisms, but will share the user's email back to the <code>odk-central-backend</code> server.</li>
-              <li>If your user exists in the OIDC server, but not in <code>odk-central-backend</code>'s database, try running <code>node lib/bin/cli.js --generate-password --email &lt;your email here&gt; user-create</code></li>
+              <li>If your user exists in the OIDC server, but not in <code>odk-central-backend</code>'s database, try running <code>node lib/bin/cli.js --email &lt;your email here&gt; user-create --null-password</code></li>
             </ul>
             <br/>
             [ <a href="http://localhost:8989/">back to login</a> ]

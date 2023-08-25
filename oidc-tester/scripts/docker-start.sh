@@ -23,7 +23,7 @@ log "Waiting for odk-central-backend to start..."
 
 log "Creating test users..." # _after_ migrations have been run
 cd ..
-node lib/bin/cli.js --generate-password --email alice@example.com user-create
+node lib/bin/cli.js --email alice@example.com user-create --null-password
 cd -
 log "Test users created."
 
