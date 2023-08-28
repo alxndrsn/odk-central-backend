@@ -21,8 +21,8 @@ RUN npm clean-install
 
 WORKDIR /odk-central-backend/oidc-tester/playwright-tests
 COPY oidc-tester/playwright-tests/package.json \
-		 oidc-tester/playwright-tests/package-lock.json \
-		 .
+     oidc-tester/playwright-tests/package-lock.json \
+     .
 RUN npm clean-install && echo -n 'Playwright: ' && npx playwright --version && npx playwright install --with-deps
 
 # Copy ALL files whitelisted in .dockerignore.  Note that this means there is no
