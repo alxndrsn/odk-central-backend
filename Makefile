@@ -1,7 +1,7 @@
 default: base
 
 node_modules: package.json
-	npm clean-install --legacy-peer-deps
+	npm install --legacy-peer-deps
 	touch node_modules
 
 .PHONY: test-oidc-e2e
