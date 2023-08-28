@@ -36,7 +36,7 @@ test: lint
 	BCRYPT=no npx mocha --recursive --exit
 .PHONY: test-full
 test-full: lint
-	npx mocha --recursive --exit
+	BCRYPT=no npx mocha --recursive --exit
 
 .PHONY: test-integration
 test-integration: node_version
