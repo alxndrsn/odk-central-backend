@@ -8,8 +8,7 @@
 // except according to the terms contained in the LICENSE file.
 
 const port = 8989;
-// FIXME default to localhost and set env var in CI
-const frontendUrl = process.env.ODK_CENTRAL_FRONTEND || `https://odk-central.example.org:${port}`;
+const frontendUrl = `https://odk-central.example.org:${port}`;
 
 module.exports = {
   frontendUrl,
