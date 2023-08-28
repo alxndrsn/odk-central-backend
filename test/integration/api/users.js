@@ -797,7 +797,7 @@ describe('api: /users', () => {
                     await authenticateUser(service, 'chelsea');
                     should.fail();
                   } catch (err) {
-                    err.message.should.equal('expected 200 "OK", got 302 "Found"');
+                    err.message.should.equal('expected 200 "OK", got 307 "Temporary Redirect"');
                   }
                 } else {
                   return service.post('/v1/sessions')
