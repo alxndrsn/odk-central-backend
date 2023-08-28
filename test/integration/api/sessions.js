@@ -1,7 +1,6 @@
 const should = require('should');
 const { DateTime } = require('luxon');
 const { testService } = require('../setup');
-const authenticateUser = require('../../util/authenticate-user');
 
 describe('api: /sessions', () => {
   describe('POST', () => {
@@ -94,14 +93,16 @@ describe('api: /sessions', () => {
         .expect(404)));
 
     it('should return the active session if it exists', testService((service) =>
-      authenticateUser(service, 'alice')
-        .then((token) => service.get('/v1/sessions/restore')
+      service.post('/v1/sessions')
+        .send({ email: 'alice@getodk.org', password: 'alice' })
+        .expect(200)
+        .then(({ body }) => service.get('/v1/sessions/restore')
           .set('X-Forwarded-Proto', 'https')
           .set('Cookie', 'session=' + token)
           .expect(200)
           .then((restore) => {
             restore.body.should.be.a.Session();
-            restore.body.token.should.equal(token);
+            restore.body.token.should.equal(body.token);
           }))));
   });
 
@@ -111,18 +112,30 @@ describe('api: /sessions', () => {
         .expect(403)));
 
     it('should return a 403 if the user cannot delete the given token', testService((service) =>
-      authenticateUser(service, 'alice')
-        .then((token) => service.login('chelsea', (asChelsea) =>
-          asChelsea.delete('/v1/sessions/' + token).expect(403)))));
+      service.post('/v1/sessions')
+        .send({ email: 'alice@getodk.org', password: 'alice' })
+        .expect(200)
+        .then(({ body }) => {
+          // eslint-disable-next-line prefer-destructuring
+          const token = body.token;
+          return service.login('chelsea', (asChelsea) =>
+            asChelsea.delete('/v1/sessions/' + token).expect(403));
+        })));
 
     it('should invalidate the token if successful', testService((service) =>
-      authenticateUser(service, 'alice')
-        .then((token) => service.delete('/v1/sessions/' + token)
-          .set('Authorization', 'Bearer ' + token)
-          .expect(200)
-          .then(() => service.get('/v1/users/current') // actually doesn't matter which route; we get 401 due to broken auth.
+      service.post('/v1/sessions')
+        .send({ email: 'alice@getodk.org', password: 'alice' })
+        .expect(200)
+        .then(({ body }) => {
+          // eslint-disable-next-line prefer-destructuring
+          const token = body.token;
+          return service.delete('/v1/sessions/' + token)
             .set('Authorization', 'Bearer ' + token)
-            .expect(401)))));
+            .expect(200)
+            .then(() => service.get('/v1/users/current') // actually doesn't matter which route; we get 401 due to broken auth.
+              .set('Authorization', 'Bearer ' + token)
+              .expect(401));
+        })));
 
     it('should log the action in the audit log if it is a field key', testService((service) =>
       service.login('alice', (asAlice) =>
@@ -139,13 +152,19 @@ describe('api: /sessions', () => {
             })))));
 
     it('should allow non-admins to delete their own sessions', testService((service) =>
-      authenticateUser(service, 'chelsea')
-        .then((token) => service.delete('/v1/sessions/' + token)
-          .set('Authorization', 'Bearer ' + token)
-          .expect(200)
-          .then(() => service.get('/v1/users/current') // actually doesn't matter which route; we get 401 due to broken auth.
+      service.post('/v1/sessions')
+        .send({ email: 'chelsea@getodk.org', password: 'chelsea' })
+        .expect(200)
+        .then(({ body }) => {
+          // eslint-disable-next-line prefer-destructuring
+          const token = body.token;
+          return service.delete('/v1/sessions/' + token)
             .set('Authorization', 'Bearer ' + token)
-            .expect(401)))));
+            .expect(200)
+            .then(() => service.get('/v1/users/current') // actually doesn't matter which route; we get 401 due to broken auth.
+              .set('Authorization', 'Bearer ' + token)
+              .expect(401));
+        })));
 
     it('should allow managers to delete project app user sessions', testService((service) =>
       service.login('bob', (asBob) =>
@@ -179,19 +198,28 @@ describe('api: /sessions', () => {
             .expect(403)))));
 
     it('should clear cookies if successful for the current session', testService((service) =>
-      authenticateUser(service, 'alice')
-        .then((token) => service.delete('/v1/sessions/' + token)
-          .set('Authorization', 'Bearer ' + token)
-          .expect(200)
-          .then(({ headers }) => {
-            headers['set-cookie'].should.eql([
-              'session=null; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly; Secure; SameSite=Strict',
-              '__csrf=null; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; Secure; SameSite=Strict'
-            ]);
-          }))));
+      service.post('/v1/sessions')
+        .send({ email: 'alice@getodk.org', password: 'alice' })
+        .expect(200)
+        .then(({ body }) => {
+          // eslint-disable-next-line prefer-destructuring
+          const token = body.token;
+          return service.delete('/v1/sessions/' + token)
+            .set('Authorization', 'Bearer ' + token)
+            .expect(200)
+            .then(({ headers }) => {
+              headers['set-cookie'].should.eql([
+                '__Host-session=null; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly; Secure; SameSite=Strict',
+                '__csrf=null; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; Secure; SameSite=Strict'
+              ]);
+            });
+        })));
 
     it('should not clear cookies if using some other session', testService((service) =>
-      authenticateUser(service, 'alice')
+      service.post('/v1/sessions')
+        .send({ email: 'alice@getodk.org', password: 'alice' })
+        .expect(200)
+        .then(({ body }) => body.token)
         .then((token) => service.login('alice', (asAlice) =>
           asAlice.delete('/v1/sessions/' + token)
             .expect(200)
@@ -200,7 +228,10 @@ describe('api: /sessions', () => {
             })))));
 
     it('should not log the action in the audit log for users', testService((service) =>
-      authenticateUser(service, 'alice')
+      service.post('/v1/sessions')
+        .send({ email: 'alice@getodk.org', password: 'alice' })
+        .expect(200)
+        .then(({ body }) => body.token)
         .then((token) => service.delete('/v1/sessions/' + token)
           .set('Authorization', 'Bearer ' + token)
           .expect(200)
@@ -248,7 +279,10 @@ describe('api: /sessions', () => {
         .expect(404)));
 
     it('should invalidate the token if successful', testService(async (service) => {
-      const token = await authenticateUser(service, 'alice');
+      const { body: session } = await service.post('/v1/sessions')
+        .send({ email: 'alice@getodk.org', password: 'alice' })
+        .expect(200);
+      const { token } = session;
       const { body } = await service.delete('/v1/sessions/current')
         .set('Authorization', `Bearer ${token}`)
         .expect(200);
@@ -272,24 +306,30 @@ describe('api: /sessions', () => {
   // whole stack in addition to the unit tests.
   describe('cookie CSRF auth', () => {
     it('should reject if the CSRF token is missing', testService((service) =>
-      authenticateUser(service, 'alice')
-        .then((token) => service.post('/v1/projects')
+      service.post('/v1/sessions')
+        .send({ email: 'alice@getodk.org', password: 'alice' })
+        .expect(200)
+        .then(({ body }) => service.post('/v1/projects')
           .send({ name: 'my project' })
           .set('X-Forwarded-Proto', 'https')
           .set('Cookie', 'session=' + token)
           .expect(401))));
 
     it('should reject if the CSRF token is wrong', testService((service) =>
-      authenticateUser(service, 'alice')
-        .then((token) => service.post('/v1/projects')
+      service.post('/v1/sessions')
+        .send({ email: 'alice@getodk.org', password: 'alice' })
+        .expect(200)
+        .then(({ body }) => service.post('/v1/projects')
           .send({ name: 'my project', __csrf: 'nope' })
           .set('X-Forwarded-Proto', 'https')
           .set('Cookie', 'session=' + token)
           .expect(401))));
 
     it('should succeed if the CSRF token is correct', testService((service) =>
-      authenticateUser(service, 'alice', 'includeCsrf')
-        .then((body) => service.post('/v1/projects')
+      service.post('/v1/sessions')
+        .send({ email: 'alice@getodk.org', password: 'alice' })
+        .expect(200)
+        .then(({ body }) => service.post('/v1/projects')
           .send({ name: 'my project', __csrf: body.csrf })
           .set('X-Forwarded-Proto', 'https')
           .set('Cookie', 'session=' + body.token)
