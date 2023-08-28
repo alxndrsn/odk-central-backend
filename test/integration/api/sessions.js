@@ -94,16 +94,14 @@ describe('api: /sessions', () => {
         .expect(404)));
 
     it('should return the active session if it exists', testService((service) =>
-      service.post('/v1/sessions')
-        .send({ email: 'alice@getodk.org', password: 'alice' })
-        .expect(200)
-        .then(({ body }) => service.get('/v1/sessions/restore')
+      authenticateUser(service, 'alice')
+        .then((token) => service.get('/v1/sessions/restore')
           .set('X-Forwarded-Proto', 'https')
-          .set('Cookie', 'session=' + body.token)
+          .set('Cookie', 'session=' + token)
           .expect(200)
           .then((restore) => {
             restore.body.should.be.a.Session();
-            restore.body.token.should.equal(body.token);
+            restore.body.token.should.equal(token);
           }))));
   });
 
