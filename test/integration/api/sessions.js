@@ -51,8 +51,11 @@ describe('api: /sessions', () => {
         })));
 
     it('should log the action in the audit log', testService((service) =>
-      authenticateUser(service, 'alice')
-        // FIXME .set('User-Agent', 'central/tests')
+      service.post('/v1/sessions')
+        .send({ email: 'alice@getodk.org', password: 'alice' })
+        .set('User-Agent', 'central/tests')
+        .expect(200)
+        .then(({ body }) => body.token)
         .then((token) => service.get('/v1/audits')
           .set('Authorization', `Bearer ${token}`)
           .set('X-Extended-Metadata', 'true')
