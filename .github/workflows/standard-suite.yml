@@ -1,14 +1,11 @@
-name: Soak Test
+name: Full Standard Test Suite
 
 on: push
 
 jobs:
-  soak-test:
+  standard-tests:
     # TODO should we use the same container as circle & central?
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [18.17.0]
     services:
       # see: https://docs.github.com/en/enterprise-server@3.5/actions/using-containerized-services/creating-postgresql-service-containers
       postgres:
@@ -25,16 +22,11 @@ jobs:
           --health-retries 5
     steps:
     - uses: actions/checkout@v3
-    - name: Use Node.js ${{ matrix.node-version }}
+    - name: Use Node.js 18
       uses: actions/setup-node@v3
       with:
-        node-version: ${{ matrix.node-version }}
+        node-version: 18.17.0
         cache: 'npm'
     - run: npm ci --legacy-peer-deps
     - run: node lib/bin/create-docker-databases.js
-    - name: Soak Test
-      timeout-minutes: 10
-      run: ./soak-tester/scripts/ci-soak-test
-    - name: Backend Logs
-      if: always()
-      run: "! [[ -f ./backend.log ]] || cat ./backend.log"
+    - run: make test-full
