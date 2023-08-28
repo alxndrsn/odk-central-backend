@@ -98,7 +98,7 @@ describe('api: /sessions', () => {
         .expect(200)
         .then(({ body }) => service.get('/v1/sessions/restore')
           .set('X-Forwarded-Proto', 'https')
-          .set('Cookie', 'session=' + token)
+          .set('Cookie', 'session=' + body.token)
           .expect(200)
           .then((restore) => {
             restore.body.should.be.a.Session();
@@ -209,7 +209,7 @@ describe('api: /sessions', () => {
             .expect(200)
             .then(({ headers }) => {
               headers['set-cookie'].should.eql([
-                '__Host-session=null; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly; Secure; SameSite=Strict',
+                'session=null; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly; Secure; SameSite=Strict',
                 '__csrf=null; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; Secure; SameSite=Strict'
               ]);
             });
@@ -312,7 +312,7 @@ describe('api: /sessions', () => {
         .then(({ body }) => service.post('/v1/projects')
           .send({ name: 'my project' })
           .set('X-Forwarded-Proto', 'https')
-          .set('Cookie', 'session=' + token)
+          .set('Cookie', 'session=' + body.token)
           .expect(401))));
 
     it('should reject if the CSRF token is wrong', testService((service) =>
@@ -322,7 +322,7 @@ describe('api: /sessions', () => {
         .then(({ body }) => service.post('/v1/projects')
           .send({ name: 'my project', __csrf: 'nope' })
           .set('X-Forwarded-Proto', 'https')
-          .set('Cookie', 'session=' + token)
+          .set('Cookie', 'session=' + body.token)
           .expect(401))));
 
     it('should succeed if the CSRF token is correct', testService((service) =>
