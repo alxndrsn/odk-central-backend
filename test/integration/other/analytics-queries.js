@@ -115,13 +115,23 @@ describe('analytics task queries', () => {
       res.total.should.equal(3);
     }));
 
-    it('should count admins', testService(async (service, container) => {
+    it.only('should count admins', testService(async (service, container) => {
+      const start = Date.now();
+
       await createTestUser(service, container, 'annie', 'admin', 1);
+      console.log('step 1:', Date.now() - start, 'ms');
+
       await createTestUser(service, container, 'betty', 'admin', 1, false); // no recent activity
+      console.log('step 2:', Date.now() - start, 'ms');
+
       await createTestUser(service, container, 'carly', 'admin', 1, false); // no recent activity
+      console.log('step 3:', Date.now() - start, 'ms');
+
       // another admin exists already from fixtures: 'alice', who should have recent activity from logging the others in
 
       const res = await container.Analytics.countAdmins();
+      console.log('step 4:', Date.now() - start, 'ms');
+
       res.recent.should.equal(2);
       res.total.should.equal(4);
     }));
