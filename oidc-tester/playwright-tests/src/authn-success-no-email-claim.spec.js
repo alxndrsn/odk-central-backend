@@ -26,5 +26,5 @@ test(`successful authN, but no 'email' claim provided`, async ({ browserName, pa
   await fillLoginForm(page, { username: 'dave', password: 'topsecret!!!!!' });
 
   // then
-  await assertErrorRedirect(page, 'provider-misconfigured');
+  await assertErrorRedirect(page, 'email-claim-not-provided');
 });
