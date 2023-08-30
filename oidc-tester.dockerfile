@@ -15,13 +15,13 @@ WORKDIR /odk-central-backend
 COPY Makefile package.json package-lock.json .
 RUN npm clean-install --legacy-peer-deps
 
-WORKDIR /odk-central-backend/oidc-tester/fake-oidc-server
-COPY oidc-tester/fake-oidc-server/package.json oidc-tester/fake-oidc-server/package-lock.json .
+WORKDIR /odk-central-backend/oidc-dev/fake-oidc-server
+COPY oidc-dev/fake-oidc-server/package.json oidc-dev/fake-oidc-server/package-lock.json .
 RUN npm clean-install
 
-WORKDIR /odk-central-backend/oidc-tester/playwright-tests
-COPY oidc-tester/playwright-tests/package.json \
-     oidc-tester/playwright-tests/package-lock.json \
+WORKDIR /odk-central-backend/oidc-dev/playwright-tests
+COPY oidc-dev/playwright-tests/package.json \
+     oidc-dev/playwright-tests/package-lock.json \
      .
 RUN npm clean-install && echo -n 'Playwright: ' && npx playwright --version && npx playwright install --with-deps
 
@@ -33,5 +33,5 @@ WORKDIR /odk-central-backend
 COPY / .
 
 ENV NODE_CONFIG_ENV=oidc-tester-docker
-WORKDIR /odk-central-backend/oidc-tester
+WORKDIR /odk-central-backend/oidc-dev
 CMD ./scripts/docker-start.sh

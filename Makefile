@@ -6,7 +6,7 @@ node_modules: package.json
 
 .PHONY: test-oidc-e2e
 test-oidc-e2e: node_modules
-	cd oidc-tester && \
+	cd oidc-dev && \
 	docker compose down && \
 	docker compose build && \
 	docker compose up --exit-code-from odk-central-oidc-tester
@@ -17,13 +17,13 @@ dev-oidc: base
 
 .PHONY: fake-oidc-server
 fake-oidc-server:
-	cd oidc-tester/fake-oidc-server && \
+	cd oidc-dev/fake-oidc-server && \
 	npm clean-install && \
 	FAKE_OIDC_ROOT_URL=http://localhost:9898 npx nodemon index.js
 
 .PHONY: fake-oidc-server-ci
 fake-oidc-server-ci:
-	cd oidc-tester/fake-oidc-server && \
+	cd oidc-dev/fake-oidc-server && \
 	npm clean-install && \
 	FAKE_OIDC_ROOT_URL=http://localhost:9898 node index.js
 

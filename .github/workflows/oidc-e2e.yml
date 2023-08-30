@@ -19,4 +19,4 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: Playwright Screenshots
-        path: oidc-tester/playwright-results/**/*.png
+        path: oidc-dev/playwright-results/**/*.png

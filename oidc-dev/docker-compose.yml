@@ -15,4 +15,4 @@ services:
       DEBUG: pw:api
       ODK_PLAYWRIGHT_BROWSERS: chromium,firefox,webkit
     volumes:
-      - ./playwright-results:/odk-central-backend/oidc-tester/playwright-tests/results
+      - ./playwright-results:/odk-central-backend/oidc-dev/playwright-tests/results
