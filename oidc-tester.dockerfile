@@ -32,7 +32,6 @@ RUN npm clean-install && echo -n 'Playwright: ' && npx playwright --version && n
 WORKDIR /odk-central-backend
 COPY / .
 
-COPY oidc-tester/odk-central-backend-config.json config/local.json
-
+ENV NODE_CONFIG_ENV=oidc-tester-docker
 WORKDIR /odk-central-backend/oidc-tester
 CMD ./scripts/docker-start.sh
