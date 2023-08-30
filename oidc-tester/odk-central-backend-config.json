@@ -7,7 +7,7 @@
       "password": "supertopsecret3000"
     },
     "env": {
-      "domain": "https://odk-central.example.org:8989",
+      "domain": "https://odk-central.example.org:8989"
     },
     "oidc": {
       "issuerUrl": "https://fake-oidc-server.example.net:9898",
