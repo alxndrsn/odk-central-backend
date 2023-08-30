@@ -1,8 +1,5 @@
 {
   "default": {
-    "env": {
-      "oidcProviderName": "Broken provider"
-    },
     "oidc": {
       "_description": "broken config: fiddle with this config to test out different init failure modes",
       "issuerUrl": "http://example.com",

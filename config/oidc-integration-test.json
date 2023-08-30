@@ -1,8 +1,5 @@
 {
   "default": {
-    "env": {
-      "oidcProviderName": "OpenID Connect"
-    },
     "oidc": {
       "enabled": true,
       "issuerUrl": "http://localhost:9898",

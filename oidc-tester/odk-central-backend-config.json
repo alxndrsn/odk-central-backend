@@ -8,7 +8,6 @@
     },
     "env": {
       "domain": "https://odk-central.example.org:8989",
-      "oidcProviderName": "Fake OIDC Server"
     },
     "oidc": {
       "issuerUrl": "https://fake-oidc-server.example.net:9898",

@@ -1,8 +1,5 @@
 {
   "default": {
-    "env": {
-      "oidcProviderName": "Auth0"
-    },
     "oidc": {
       "_description": "auth0: https://manage.auth0.com/dashboard/us/odk-oidc-dev/",
       "issuerUrl": "https://odk-oidc-dev.us.auth0.com",
