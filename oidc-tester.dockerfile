@@ -10,6 +10,8 @@
 # See: https://en.wikipedia.org/wiki/Debian_version_history
 FROM node:18.17.0-bullseye
 
+RUN apt-get update && apt-get install wait-for-it && rm -rf /var/lib/apt/lists/*
+
 # Set up main project dependencies - this layer is slow, but should be cached most of the time.
 WORKDIR /odk-central-backend
 COPY Makefile package.json package-lock.json .
