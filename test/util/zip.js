@@ -4,6 +4,15 @@ const { createWriteStream } = require('fs');
 
 const streamTest = require('streamtest').v2;
 
+const binaryParser = (res, callback) => {
+  res.setEncoding('binary');
+  res.data = ''; // TODO why res.data?  surely let.data is ok?
+  res.on('data', (chunk) => { res.data += chunk; });
+  res.on('end', () => {
+    callback(null, Buffer.from(res.data, 'binary'));
+  });
+};
+
 // unzip and detangle zipfiles.
 // also, hooraaaayy callback hell.
 // calls the callback with an object as follows:
@@ -68,11 +77,16 @@ const zipStreamToFiles = (zipStream, callback) => {
 };
 
 const httpZipResponseToFiles = (zipHttpResponse) => new Promise((resolve, reject) => {
-  yauzl.fromBuffer(zipHttpResponse.body, (err, zipfile) => {
-    if (err) return reject(err);
-
+  zipHttpResponse.buffer().parse(binaryParser).end((err, res) => {
+    if (err) return callback(err);
+ 
     // eslint-disable-next-line no-shadow
-    processZipFile(zipfile, (err, result) => { if (err) reject(err); else resolve(result); });
+    yauzl.fromBuffer(res.body, (err, zipfile) => {
+      if (err) return reject(err);
+
+      // eslint-disable-next-line no-shadow
+      processZipFile(zipfile, (err, result) => { if (err) reject(err); else resolve(result); });
+    });
   });
 });
 
