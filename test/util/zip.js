@@ -66,8 +66,7 @@ const zipStreamToFiles = (zipStream, callback) => {
   });
 };
 
-// TODO rename to zipHttpResponseToFiles
-const pZipStreamToFiles = (zipHttpResponse) => new Promise((resolve, reject) => {
+const httpZipResponseToFiles = (zipHttpResponse) => new Promise((resolve, reject) => {
   yauzl.fromBuffer(zipHttpResponse.body, (err, zipfile) => {
     if (err) return reject(err);
 
@@ -76,4 +75,4 @@ const pZipStreamToFiles = (zipHttpResponse) => new Promise((resolve, reject) => 
   });
 });
 
-module.exports = { zipStreamToFiles, pZipStreamToFiles };
+module.exports = { zipStreamToFiles, httpZipResponseToFiles };
