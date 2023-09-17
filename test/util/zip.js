@@ -40,6 +40,7 @@ const processZipFile = (zipfile, callback) => {
             completed += 1;
             if (completed === entries.length) {
               callback(null, result);
+              zipfile.close();
             }
           }));
         });
