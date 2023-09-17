@@ -1,7 +1,10 @@
+const tmp = require('tmp');
 const yauzl = require('yauzl');
+const { createWriteStream } = require('fs');
+
 const streamTest = require('streamtest').v2;
 
-// load zipfile into a buffer, then unzip and detangle the result.
+// unzip and detangle zipfiles.
 // also, hooraaaayy callback hell.
 // calls the callback with an object as follows:
 // {
@@ -10,49 +13,67 @@ const streamTest = require('streamtest').v2;
 //      {filename}: "contents",
 //      …
 // }
-const zipStreamToFiles = (res, callback) => {
-  // eslint-disable-next-line no-shadow
-  yauzl.fromBuffer(res.body, (err, zipfile) => {
+const processZipFile = (zipfile, callback) => {
+  const result = { filenames: [] };
+  const entries = [];
+  let completed = 0;
+
+  zipfile.on('entry', (entry) => entries.push(entry));
+  zipfile.on('end', (err) => {
     if (err) return callback(err);
 
-    const result = { filenames: [] };
-    const entries = [];
-    let completed = 0;
+    if (entries.length === 0) {
+      callback(null, result);
+      zipfile.close();
+    } else {
+      entries.forEach((entry) => {
+        result.filenames.push(entry.fileName);
+        // eslint-disable-next-line no-shadow
+        zipfile.openReadStream(entry, (err, resultStream) => {
+          if (err) return callback(err);
 
-    zipfile.on('entry', (entry) => entries.push(entry));
-    // eslint-disable-next-line no-shadow
-    zipfile.on('end', (err) => {
-      if (err) return callback(err);
-
-      if (entries.length === 0) {
-        callback(null, result);
-        zipfile.close();
-      } else {
-        entries.forEach((entry) => {
-          result.filenames.push(entry.fileName);
           // eslint-disable-next-line no-shadow
-          zipfile.openReadStream(entry, (err, resultStream) => {
-
+          resultStream.pipe(streamTest.toText((err, contents) => {
             if (err) return callback(err);
 
-            // eslint-disable-next-line no-shadow
-            resultStream.pipe(streamTest.toText((err, contents) => {
-              if (err) return callback(err);
-
-              result[entry.fileName] = contents;
-              completed += 1;
-              if (completed === entries.length) {
-                callback(null, result);
-              }
-            }));
-          });
+            result[entry.fileName] = contents;
+            completed += 1;
+            if (completed === entries.length) {
+              callback(null, result);
+            }
+          }));
         });
-      }
+      });
+    }
+  });
+};
+
+const zipStreamToFiles = (zipStream, callback) => {
+  tmp.file((err, tmpfile) => {
+    if (err) return callback(err);
+
+    const writeStream = createWriteStream(tmpfile);
+    zipStream.pipe(writeStream);
+    zipStream.on('end', () => {
+      setTimeout(() => {
+        // eslint-disable-next-line no-shadow
+        yauzl.open(tmpfile, { autoClose: false }, (err, zipfile) => {
+          if (err) return callback(err);
+          processZipFile(zipfile, callback);
+        });
+      }, 5); // otherwise sometimes the file doesn't fully drain
     });
   });
 };
 
-// eslint-disable-next-line no-confusing-arrow
-const pZipStreamToFiles = (zipStream) => new Promise((resolve, reject) => { zipStreamToFiles(zipStream, (err, result) => err ? reject(err) : resolve(result)); });
+// TODO rename to zipHttpResponseToFiles
+const pZipStreamToFiles = (zipHttpResponse) => new Promise((resolve, reject) => {
+  yauzl.fromBuffer(zipHttpResponse.body, (err, zipfile) => {
+    if (err) return reject(err);
+
+    // eslint-disable-next-line no-shadow
+    processZipFile(zipfile, (err, result) => { if (err) reject(err); else resolve(result); });
+  });
+});
 
 module.exports = { zipStreamToFiles, pZipStreamToFiles };
