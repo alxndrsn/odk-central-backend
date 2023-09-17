@@ -4,15 +4,6 @@ const { createWriteStream } = require('fs');
 
 const streamTest = require('streamtest').v2;
 
-const binaryParser = (res, callback) => {
-  res.setEncoding('binary');
-  res.data = ''; // TODO why res.data?  surely let.data is ok?
-  res.on('data', (chunk) => { res.data += chunk; });
-  res.on('end', () => {
-    callback(null, Buffer.from(res.data, 'binary'));
-  });
-};
-
 // unzip and detangle zipfiles.
 // also, hooraaaayy callback hell.
 // calls the callback with an object as follows:
@@ -73,6 +64,15 @@ const zipStreamToFiles = (zipStream, callback) => {
         });
       }, 5); // otherwise sometimes the file doesn't fully drain
     });
+  });
+};
+
+const binaryParser = (res, callback) => {
+  res.setEncoding('binary');
+  let data = '';
+  res.on('data', (chunk) => { data += chunk; });
+  res.on('end', () => {
+    callback(null, Buffer.from(data, 'binary'));
   });
 };
 
