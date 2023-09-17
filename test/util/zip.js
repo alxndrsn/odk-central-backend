@@ -78,8 +78,8 @@ const zipStreamToFiles = (zipStream, callback) => {
 
 const httpZipResponseToFiles = (zipHttpResponse) => new Promise((resolve, reject) => {
   zipHttpResponse.buffer().parse(binaryParser).end((err, res) => {
-    if (err) return callback(err);
- 
+    if (err) return reject(err);
+
     // eslint-disable-next-line no-shadow
     yauzl.fromBuffer(res.body, (err, zipfile) => {
       if (err) return reject(err);
