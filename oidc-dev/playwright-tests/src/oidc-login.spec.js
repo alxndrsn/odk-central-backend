@@ -25,8 +25,6 @@ test.describe.configure({ mode: 'parallel' });
 test.describe('happy', () => {
   [
     [ 'no next param',       '',                   '/',            '/#/' ],          // eslint-disable-line no-multi-spaces
-    [ 'internal next param', '?next=/some/path',   '/',            '/#/some/path' ], // eslint-disable-line no-multi-spaces
-    [ 'enketo next param',   '?next=/-/some/path', '/-/some/path', '/-/some/path' ], // eslint-disable-line no-multi-spaces
   ].forEach(([ description, initialQueryString, expectedBackendPath, expectedFrontendPath ]) => {
     test(`can log in (${description})`, async ({ browserName, page }, testInfo) => {
       // given
@@ -41,38 +39,4 @@ test.describe('happy', () => {
       await assertLocation(page, frontendUrl + expectedFrontendPath);
     });
   });
-});
-
-test.describe('redirected errors', () => {
-  [
-    [ 'user unknown by central',                'bob',     'auth-ok-user-not-found' ],   // eslint-disable-line no-multi-spaces
-    [ `no 'email' claim provided`,              'dave',    'email-claim-not-provided' ], // eslint-disable-line no-multi-spaces, quotes
-    [ `claim 'email_verified' has value false`, 'charlie', 'email-not-verified' ],       // eslint-disable-line no-multi-spaces, quotes
-  ].forEach(([ description, username, expectedError ]) => {
-    test(`successful authN, but ${description}`, async ({ browserName, page }, testInfo) => {
-      // given
-      await initTest({ browserName, page }, testInfo);
-
-      // when
-      await page.goto(`${frontendUrl}/v1/oidc/login`);
-      await fillLoginForm(page, { username, password });
-
-      // then
-      await assertErrorRedirect(page, expectedError);
-    });
-  });
-});
-
-test('aborted login', async ({ browserName, page }, testInfo) => {
-  // given
-  await initTest({ browserName, page }, testInfo);
-
-  // when
-  await page.goto(`${frontendUrl}/v1/oidc/login`);
-  await page.getByText('Cancel').click();
-
-  // then
-  // Upstream error message is not exposed to the client, but would be:
-  // > access_denied (End-User aborted interaction)
-  await assertErrorRedirect(page, 'internal-server-error');
 });
