@@ -16,7 +16,7 @@ jobs:
     - run: make test-oidc-e2e
     - name: Fake OIDC Server Logs
       if: always()
-      run: docker logs --timestamps odk-central-oidc-tester
+      run: docker container ls --all && docker logs --timestamps odk-central-oidc-tester
     - name: Archive playwright screenshots
       if: failure()
       uses: actions/upload-artifact@v3
