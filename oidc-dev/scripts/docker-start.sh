@@ -15,7 +15,8 @@ log "Waiting for postgres to start..."
 wait-for-it odk-central-oidc-tester-postgres:5432 --strict --timeout=60 -- echo '[oidc-tester] postgres is UP!'
 
 log "Starting services..."
-# Catch stdout & stderr from subshells
+# Catch stdout & stderr from subshells by opening new file descriptors to the
+# parent shell's stdout & stderr.
 exec 3>/dev/stdout
 exec 4>/dev/stderr
 (cd fake-oidc-server && node index.js 1>&3 2>&4) &
