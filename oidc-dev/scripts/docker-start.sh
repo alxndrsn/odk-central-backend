@@ -16,8 +16,8 @@ wait-for-it odk-central-oidc-tester-postgres:5432 --strict --timeout=60 -- echo 
 
 log "Starting services..."
 # Catch stdout & stderr from subshells
-exec 3>&1
-exec 4>&2
+exec 3>/dev/stdout
+exec 4>/dev/stderr
 (cd fake-oidc-server && node index.js 1>&3 2>&4) &
 (cd .. && make base 1>&3 2>&4 && NODE_TLS_REJECT_UNAUTHORIZED=0 node lib/bin/run-server.js 1>&3 2>&4) &
 
