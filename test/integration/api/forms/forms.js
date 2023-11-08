@@ -10,8 +10,8 @@ const testData = require('../../../data/xml');
 const { exhaust } = require(appRoot + '/lib/worker/worker');
 const { without } = require(appRoot + '/lib/util/util');
 
-// These tests do not depend on real .xls/.xlsx files because the xlsform
-// service is mocked.
+// Some tests do not depend on real .xls/.xlsx files because the xlsform service
+// is mocked.
 const mockExcelFile = Buffer.from([]);
 
 describe('api: /projects/:id/forms (create, read, update)', () => {

@@ -1,4 +1,3 @@
-const { readFileSync } = require('fs');
 const appRoot = require('app-root-path');
 const { testService } = require('../setup');
 const testData = require('../../data/xml');
@@ -13,6 +12,10 @@ const { createConflict } = require('../fixtures/scenarios');
 
 const { exhaust } = require(appRoot + '/lib/worker/worker');
 const Option = require(appRoot + '/lib/util/option');
+
+// Some tests do not depend on real .xls/.xlsx files because the xlsform service
+// is mocked.
+const mockExcelFile = Buffer.from([]);
 
 describe('datasets and entities', () => {
   describe('listing and downloading datasets', () => {
@@ -1551,7 +1554,7 @@ describe('datasets and entities', () => {
         global.xlsformForm = 'itemsets';
 
         await asAlice.post('/v1/projects/1/forms')
-          .send(readFileSync(appRoot + '/test/data/simple.xlsx'))
+          .send(mockExcelFile)
           .set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
           .set('X-XlsForm-FormId-Fallback', 'itemsets')
           .expect(200)
@@ -1579,7 +1582,7 @@ describe('datasets and entities', () => {
         global.xlsformForm = 'itemsets';
 
         await asAlice.post('/v1/projects/1/forms/itemsets/draft')
-          .send(readFileSync(appRoot + '/test/data/simple.xlsx'))
+          .send(mockExcelFile)
           .set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
           .set('X-XlsForm-FormId-Fallback', 'itemsets')
           .expect(200)
