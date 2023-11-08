@@ -1,14 +1,17 @@
-const { readFileSync } = require('fs');
 const appPath = require('app-root-path');
 const { sql } = require('slonik');
 const testData = require('../../data/xml');
 const { testService } = require('../setup');
 
+// Some tests do not depend on real .xls/.xlsx files because the xlsform service
+// is mocked.
+const mockExcelFile = Buffer.from([]);
+
 describe('blob query module', () => {
   it('should not purge xls blob that is still referenced', testService((service, container) =>
     service.login('alice', (asAlice) =>
       asAlice.post('/v1/projects/1/forms?publish=true')
-        .send(readFileSync(appPath + '/test/data/simple.xlsx'))
+        .send(mockExcelFile)
         .set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
         .expect(200)
         .then(() => container.Blobs.purgeUnattached())
