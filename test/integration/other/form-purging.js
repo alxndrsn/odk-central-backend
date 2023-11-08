@@ -1,10 +1,13 @@
-const { createReadStream, readFileSync } = require('fs');
+const { createReadStream } = require('fs');
 const appPath = require('app-root-path');
 const { sql } = require('slonik');
 const { testService } = require('../setup');
 const testData = require('../../data/xml');
 const { exhaust } = require(appPath + '/lib/worker/worker');
 
+// Some tests do not depend on real .xls/.xlsx files because the xlsform service
+// is mocked.
+const mockExcelFile = Buffer.from([]);
 
 describe('query module form purge', () => {
   it('should purge a form deleted over 30 days ago', testService((service, container) =>
@@ -288,7 +291,7 @@ describe('query module form purge', () => {
     it('should purge xls blob of a form', testService((service, container) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms?publish=true')
-          .send(readFileSync(appPath + '/test/data/simple.xlsx'))
+          .send(mockExcelFile)
           .set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
           .then(() => asAlice.delete('/v1/projects/1/forms/simple2') // Delete form
             .expect(200))
