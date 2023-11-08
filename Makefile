@@ -59,7 +59,7 @@ debug: base
 	node --debug --inspect lib/bin/run-server.js
 
 .PHONY: test
-test: lint
+test: 
 	BCRYPT=no npx mocha --recursive --exit
 
 .PHONY: test-full
