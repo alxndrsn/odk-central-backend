@@ -1,4 +1,3 @@
-const { readFileSync } = require('fs');
 const appRoot = require('app-root-path');
 const { mergeRight } = require('ramda');
 const { sql } = require('slonik');
@@ -207,8 +206,12 @@ const withClosedForm = (f) => async (service) => {
     .send({ state: 'closed' })
     .expect(200);
 
+  // Some tests do not depend on real .xls/.xlsx files because the xlsform service
+  // is mocked.
+  const mockExcelFile = Buffer.from([]);
+
   await asAlice.post('/v1/projects/1/forms?publish=true')
-    .send(readFileSync(appRoot + '/test/data/simple.xlsx'))
+    .send(mockExcelFile)
     .set('Content-Type', 'application/vnd.ms-excel')
     .expect(200);
 
