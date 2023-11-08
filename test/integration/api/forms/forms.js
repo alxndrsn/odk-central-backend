@@ -139,7 +139,15 @@ describe('api: /projects/:id/forms (create, read, update)', () => {
           .set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
           .set('X-XlsForm-FormId-Fallback', 'testformid')
           .expect(200)
-          .then(mockExcelFile))));
+          .then(({ body }) => {
+            // this checks that the conversion service received the correct xlsx bits:
+            global.xlsformHash.should.equal('9ebd53024b8560ffd0b84763481ed24159ca600f');
+            global.xlsformFallback.should.equal('testformid');
+
+            // these check appropriate plumbing of the mock conversion service response:
+            body.sha.should.equal('466b8cf532c22aea7b1791ea2e6712ab31ce90a4');
+            body.xmlFormId.should.equal('simple2');
+          }))));
 
     it('should fail on warnings even for valid xlsx files', testService((service) => {
       global.xlsformTest = 'warning'; // set up the mock service to warn.
