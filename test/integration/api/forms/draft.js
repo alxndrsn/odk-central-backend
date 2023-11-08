@@ -1,10 +1,13 @@
-const { readFileSync } = require('fs');
 const appRoot = require('app-root-path');
 const should = require('should');
 const { testService } = require('../../setup');
 const testData = require('../../../data/xml');
 const { exhaust } = require(appRoot + '/lib/worker/worker');
 const { sql } = require('slonik');
+
+// Some tests do not depend on real .xls/.xlsx files because the xlsform service
+// is mocked.
+const mockExcelFile = Buffer.from([]);
 
 describe('api: /projects/:id/forms (drafts)', () => {
 
@@ -288,7 +291,7 @@ describe('api: /projects/:id/forms (drafts)', () => {
             .set('Content-Type', 'application/xml')
             .expect(200)
             .then(() => asAlice.post('/v1/projects/1/forms/simple2/draft')
-              .send(readFileSync(appRoot + '/test/data/simple.xlsx'))
+              .send(mockExcelFile)
               .set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
               .set('X-XlsForm-FormId-Fallback', 'simple')
               .then(() => asAlice.get('/v1/projects/1/forms/simple2/draft')
@@ -308,7 +311,7 @@ describe('api: /projects/:id/forms (drafts)', () => {
             .set('Content-Type', 'application/xml')
             .expect(200)
             .then(() => asAlice.post('/v1/projects/1/forms/simple2/draft?ignoreWarnings=true')
-              .send(readFileSync(appRoot + '/test/data/simple.xlsx'))
+              .send(mockExcelFile)
               .set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
               .set('X-XlsForm-FormId-Fallback', 'simple')
               .expect(200)
@@ -328,7 +331,7 @@ describe('api: /projects/:id/forms (drafts)', () => {
             .set('Content-Type', 'application/xml')
             .expect(200)
             .then(() => asAlice.post('/v1/projects/1/forms/itemsets/draft')
-              .send(readFileSync(appRoot + '/test/data/simple.xlsx'))
+              .send(mockExcelFile)
               .set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
               .set('X-XlsForm-FormId-Fallback', 'itemsets'))
             .then(() => asAlice.get('/v1/projects/1/forms/itemsets/draft/attachments/itemsets.csv')
@@ -346,7 +349,7 @@ describe('api: /projects/:id/forms (drafts)', () => {
             .set('Content-Type', 'application/xml')
             .expect(200)
             .then(() => asAlice.post('/v1/projects/1/forms/itemsets/draft?ignoreWarnings=true')
-              .send(readFileSync(appRoot + '/test/data/simple.xlsx'))
+              .send(mockExcelFile)
               .set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
               .set('X-XlsForm-FormId-Fallback', 'itemsets'))
             .then(() => asAlice.get('/v1/projects/1/forms/itemsets/draft/attachments/itemsets.csv')
@@ -368,7 +371,7 @@ describe('api: /projects/:id/forms (drafts)', () => {
               .set('Content-Type', 'text/xml')
               .expect(200))
             .then(() => asAlice.post('/v1/projects/1/forms/itemsets/draft')
-              .send(readFileSync(appRoot + '/test/data/simple.xlsx'))
+              .send(mockExcelFile)
               .set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
               .set('X-XlsForm-FormId-Fallback', 'itemsets'))
             .then(() => asAlice.get('/v1/projects/1/forms/itemsets/draft/attachments/itemsets.csv')
