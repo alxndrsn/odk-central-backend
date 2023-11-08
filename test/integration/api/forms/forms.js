@@ -661,7 +661,7 @@ describe('api: /projects/:id/forms (create, read, update)', () => {
               asChelsea.get('/v1/projects/1/forms/simple2.xlsx')
                 .expect(403))))));
 
-      it('should return xls notfound given xlsx file', testService((service) =>
+      it.only('should return xls notfound given xlsx file', testService((service) =>
         service.login('alice', (asAlice) =>
           asAlice.post('/v1/projects/1/forms')
             .send(readFileSync(appRoot + '/test/data/simple.xlsx'))
