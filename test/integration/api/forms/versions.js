@@ -8,6 +8,10 @@ const { testService } = require('../../setup');
 const testData = require('../../../data/xml');
 const { exhaust } = require(appRoot + '/lib/worker/worker');
 
+// Some tests do not depend on real .xls/.xlsx files because the xlsform service
+// is mocked.
+const mockExcelFile = Buffer.from([]);
+
 describe('api: /projects/:id/forms (versions)', () => {
 
   ////////////////////////////////////////////////////////////////////////////////
@@ -134,7 +138,7 @@ describe('api: /projects/:id/forms (versions)', () => {
       it('should return xls content type with extended form details', testService((service) =>
         service.login('alice', (asAlice) =>
           asAlice.post('/v1/projects/1/forms?publish=true')
-            .send(readFileSync(appRoot + '/test/data/simple.xlsx'))
+            .send(mockExcelFile)
             .set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
             .set('X-XlsForm-FormId-Fallback', 'testformid')
             .expect(200)
@@ -255,10 +259,9 @@ describe('api: /projects/:id/forms (versions)', () => {
         // look, we'll just test xlsx and trust that xls works.
 
         it('should return the xlsx file originally provided', testService((service) => {
-          const input = readFileSync(appRoot + '/test/data/simple.xlsx');
           return service.login('alice', (asAlice) =>
             asAlice.post('/v1/projects/1/forms')
-              .send(input)
+              .send(mockExcelFile) // REVIEW: questionable...
               .set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
               .expect(200)
               .then(() => asAlice.post('/v1/projects/1/forms/simple2/draft/publish')
@@ -274,7 +277,7 @@ describe('api: /projects/:id/forms (versions)', () => {
                 .then(({ headers, body }) => {
                   headers['content-type'].should.equal('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
                   headers['content-disposition'].should.equal('attachment; filename="simple2.xlsx"; filename*=UTF-8\'\'simple2.xlsx');
-                  Buffer.compare(input, body).should.equal(0);
+                  Buffer.compare(readFileSync(appRoot + '/test/data/simple.xlsx'), body).should.equal(0);
                 })));
         }));
       });
