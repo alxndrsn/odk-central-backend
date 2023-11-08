@@ -1,4 +1,3 @@
-const { readFileSync } = require('fs');
 const appRoot = require('app-root-path');
 const uuid = require('uuid').v4;
 const config = require('config');
@@ -11,6 +10,9 @@ const populateUsers = require('../fixtures/01-users');
 const populateForms = require('../fixtures/02-forms');
 const { getFormFields } = require('../../../lib/data/schema');
 
+// Some tests do not depend on real .xls/.xlsx files because the xlsform service
+// is mocked.
+const mockExcelFile = Buffer.from([]);
 
 const withTestDatabase = withDatabase(config.get('test.database'));
 const migrationsDir = appRoot + '/lib/model/migrations';
@@ -69,7 +71,7 @@ describe.skip('database migrations', function() {
 
     await service.login('alice', (asAlice) =>
       asAlice.post('/v1/projects/1/forms?publish=true')
-        .send(readFileSync(appRoot + '/test/data/simple.xlsx'))
+        .send(mockExcelFile)
         .set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
         .expect(200));
 
@@ -91,7 +93,7 @@ describe.skip('database migrations', function() {
     // xmlFormId of this xlsx form is 'simple2'
     await service.login('alice', (asAlice) =>
       asAlice.post('/v1/projects/1/forms?publish=true')
-        .send(readFileSync(appRoot + '/test/data/simple.xlsx'))
+        .send(mockExcelFile)
         .set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
         .expect(200)
         .then(() => asAlice.delete('/v1/projects/1/forms/simple2') // Delete form
