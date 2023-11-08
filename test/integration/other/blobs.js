@@ -1,4 +1,3 @@
-const appPath = require('app-root-path');
 const { sql } = require('slonik');
 const testData = require('../../data/xml');
 const { testService } = require('../setup');

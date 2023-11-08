@@ -258,8 +258,8 @@ describe('api: /projects/:id/forms (versions)', () => {
       describe('.xlsx GET', () => {
         // look, we'll just test xlsx and trust that xls works.
 
-        it('should return the xlsx file originally provided', testService((service) => {
-          return service.login('alice', (asAlice) =>
+        it('should return the xlsx file originally provided', testService((service) =>
+          service.login('alice', (asAlice) =>
             asAlice.post('/v1/projects/1/forms')
               .send(mockExcelFile) // REVIEW: questionable...
               .set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
@@ -278,8 +278,7 @@ describe('api: /projects/:id/forms (versions)', () => {
                   headers['content-type'].should.equal('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
                   headers['content-disposition'].should.equal('attachment; filename="simple2.xlsx"; filename*=UTF-8\'\'simple2.xlsx');
                   Buffer.compare(readFileSync(appRoot + '/test/data/simple.xlsx'), body).should.equal(0);
-                })));
-        }));
+                })))));
       });
 
       describe('/fields GET', () => {
