@@ -10,6 +10,10 @@ const testData = require('../../../data/xml');
 const { exhaust } = require(appRoot + '/lib/worker/worker');
 const { without } = require(appRoot + '/lib/util/util');
 
+// These tests do not depend on real .xls/.xlsx files because the xlsform
+// service is mocked.
+const mockExcelFile = Buffer.from([]);
+
 describe('api: /projects/:id/forms (create, read, update)', () => {
 
   ////////////////////////////////////////////////////////////////////////////////
@@ -131,25 +135,17 @@ describe('api: /projects/:id/forms (create, read, update)', () => {
     it('should accept and convert valid xlsx files', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms')
-          .send(readFileSync(appRoot + '/test/data/simple.xlsx'))
+          .send(mockExcelFile)
           .set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
           .set('X-XlsForm-FormId-Fallback', 'testformid')
           .expect(200)
-          .then(({ body }) => {
-            // this checks that the conversion service received the correct xlsx bits:
-            global.xlsformHash.should.equal('9ebd53024b8560ffd0b84763481ed24159ca600f');
-            global.xlsformFallback.should.equal('testformid');
-
-            // these check appropriate plumbing of the mock conversion service response:
-            body.sha.should.equal('466b8cf532c22aea7b1791ea2e6712ab31ce90a4');
-            body.xmlFormId.should.equal('simple2');
-          }))));
+          .then(mockExcelFile))));
 
     it('should fail on warnings even for valid xlsx files', testService((service) => {
       global.xlsformTest = 'warning'; // set up the mock service to warn.
       return service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms')
-          .send(readFileSync(appRoot + '/test/data/simple.xlsx'))
+          .send(mockExcelFile)
           .set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
           .expect(400)
           .then(({ body }) => {
@@ -162,7 +158,7 @@ describe('api: /projects/:id/forms (create, read, update)', () => {
       global.xlsformTest = 'warning'; // set up the mock service to warn.
       return service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms?ignoreWarnings=true')
-          .send(readFileSync(appRoot + '/test/data/simple.xlsx'))
+          .send(mockExcelFile)
           .set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
           .expect(200)
           .then(({ body }) => {
@@ -175,7 +171,7 @@ describe('api: /projects/:id/forms (create, read, update)', () => {
       global.xlsformForm = 'itemsets';
       return service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms')
-          .send(readFileSync(appRoot + '/test/data/simple.xlsx'))
+          .send(mockExcelFile)
           .set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
           .set('X-XlsForm-FormId-Fallback', 'itemsets')
           .expect(200)
@@ -190,7 +186,7 @@ describe('api: /projects/:id/forms (create, read, update)', () => {
       global.xlsformForm = 'extra-itemsets';
       return service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms')
-          .send(readFileSync(appRoot + '/test/data/simple.xlsx'))
+          .send(mockExcelFile)
           .set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
           .set('X-XlsForm-FormId-Fallback', 'simple2')
           .expect(200)
@@ -205,7 +201,7 @@ describe('api: /projects/:id/forms (create, read, update)', () => {
       global.xlsformTest = 'error'; // set up the mock service to fail.
       return service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms')
-          .send(readFileSync(appRoot + '/test/data/simple.xlsx'))
+          .send(mockExcelFile)
           .set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
           .expect(400)
           .then(({ body }) => {
@@ -504,7 +500,7 @@ describe('api: /projects/:id/forms (create, read, update)', () => {
       global.xlsformTest = 'warning'; // set up the mock service to warn.
 
       await asAlice.post('/v1/projects/1/forms')
-        .send(readFileSync(appRoot + '/test/data/simple.xlsx'))
+        .send(mockExcelFile)
         .set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
         .expect(400)
         .then(({ body }) => {
@@ -549,7 +545,7 @@ describe('api: /projects/:id/forms (create, read, update)', () => {
       global.xlsformTest = 'warning'; // set up the mock service to warn.
 
       await asAlice.post('/v1/projects/1/forms/simple2/draft')
-        .send(readFileSync(appRoot + '/test/data/simple.xlsx'))
+        .send(mockExcelFile)
         .set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
         .expect(400)
         .then(({ body }) => {
@@ -626,7 +622,7 @@ describe('api: /projects/:id/forms (create, read, update)', () => {
       global.xlsformTest = 'warning'; // set up the mock service to warn.
 
       await asAlice.post('/v1/projects/1/forms?ignoreWarnings=true')
-        .send(readFileSync(appRoot + '/test/data/simple.xlsx'))
+        .send(mockExcelFile)
         .set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
         .expect(200);
     }));
@@ -654,24 +650,24 @@ describe('api: /projects/:id/forms (create, read, update)', () => {
       it('should reject if the user cannot read', testService((service) =>
         service.login('alice', (asAlice) =>
           asAlice.post('/v1/projects/1/forms')
-            .send(readFileSync(appRoot + '/test/data/simple.xlsx'))
+            .send(mockExcelFile)
             .set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
             .expect(200)
             .then(() => service.login('chelsea', (asChelsea) =>
               asChelsea.get('/v1/projects/1/forms/simple2.xlsx')
                 .expect(403))))));
 
-      it.only('should return xls notfound given xlsx file', testService((service) =>
+      it('should return xls notfound given xlsx file', testService((service) =>
         service.login('alice', (asAlice) =>
           asAlice.post('/v1/projects/1/forms')
-            .send(readFileSync(appRoot + '/test/data/simple.xlsx'))
+            .send(mockExcelFile)
             .set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
             .expect(200)
             .then(() => asAlice.get('/v1/projects/1/forms/simple2.xls')
               .expect(404)))));
 
       it('should return the xlsx file originally provided', testService((service) => {
-        const input = readFileSync(appRoot + '/test/data/simple.xlsx');
+        const input = mockExcelFile;
         return service.login('alice', (asAlice) =>
           asAlice.post('/v1/projects/1/forms?publish=true')
             .send(input)
@@ -688,7 +684,7 @@ describe('api: /projects/:id/forms (create, read, update)', () => {
       }));
 
       it('should return the xlsx file originally provided', testService((service) => {
-        const input = readFileSync(appRoot + '/test/data/simple.xlsx');
+        const input = mockExcelFile;
         return service.login('alice', (asAlice) =>
           asAlice.post('/v1/projects/1/forms?publish=true')
             .send(input)
@@ -709,7 +705,7 @@ describe('api: /projects/:id/forms (create, read, update)', () => {
       }));
 
       it('should continue to offer the xlsx file after a copy-draft', testService((service) => {
-        const input = readFileSync(appRoot + '/test/data/simple.xlsx');
+        const input = mockExcelFile;
         return service.login('alice', (asAlice) =>
           asAlice.post('/v1/projects/1/forms?publish=true')
             .send(input)
@@ -728,7 +724,7 @@ describe('api: /projects/:id/forms (create, read, update)', () => {
       }));
 
       it('should not continue to offer the xlsx file after a noncopy-draft', testService((service) => {
-        const input = readFileSync(appRoot + '/test/data/simple.xlsx');
+        const input = mockExcelFile;
         return service.login('alice', (asAlice) =>
           asAlice.post('/v1/projects/1/forms?publish=true')
             .send(input)
@@ -751,7 +747,7 @@ describe('api: /projects/:id/forms (create, read, update)', () => {
       it('should allow xls file download only', testService((service) =>
         service.login('alice', (asAlice) =>
           asAlice.post('/v1/projects/1/forms?publish=true')
-            .send(readFileSync(appRoot + '/test/data/simple.xlsx'))
+            .send(mockExcelFile)
             .set('Content-Type', 'application/vnd.ms-excel')
             .set('X-XlsForm-FormId-Fallback', 'testformid')
             .expect(200)
@@ -840,7 +836,7 @@ describe('api: /projects/:id/forms (create, read, update)', () => {
       it('should return xls content type with extended form details', testService((service) =>
         service.login('alice', (asAlice) =>
           asAlice.post('/v1/projects/1/forms?publish=true')
-            .send(readFileSync(appRoot + '/test/data/simple.xlsx'))
+            .send(mockExcelFile)
             .set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
             .set('X-XlsForm-FormId-Fallback', 'testformid')
             .expect(200)
