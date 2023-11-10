@@ -4,4 +4,4 @@ on: push
 
 runs:
   using: 'docker'
-  image: 'odk-docs.dockerfile'
+  image: '../../odk-docs.dockerfile'
