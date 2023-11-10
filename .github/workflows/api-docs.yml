@@ -8,5 +8,5 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Build API Docs
-        uses: ./
+        uses: ./.github/actions/api-docs
         id: build-api-docs
