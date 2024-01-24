@@ -780,7 +780,10 @@ describe('api: /projects/:id/forms (create, read, update)', () => {
             .expect(200)
             .then(({ text }) => {
               text.should.equal(testData.forms.simple);
-            }))));
+            })
+            .then(() => asAlice.get('/v1/projects/1/forms/simple.xml')
+              .set('If-None-Match', '"25bdb03b7942881c279788575997efba"')
+              .expect(304)))));
 
       it('should get the correct form given duplicates across projects', testService((service) =>
         service.login('alice', (asAlice) =>
