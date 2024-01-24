@@ -687,7 +687,7 @@ describe('api: /projects/:id/forms (create, read, update)', () => {
                 Buffer.compare(input, body).should.equal(0);
               }))
             .then(() => asAlice.get('/v1/projects/1/forms/simple2.xlsx')
-              .set('If-None-Match', '"25bdb03b7942881c279788575997efba"')
+              .set('If-None-Match', '"30fdb0e9115ea7ca6702573f521814d1"')
               .expect(304)));
       }));
 
@@ -712,7 +712,7 @@ describe('api: /projects/:id/forms (create, read, update)', () => {
                 Buffer.compare(input, body).should.equal(0);
               }))
             .then(() => asAlice.get('/v1/projects/1/forms/simple2/draft.xlsx')
-              .set('If-None-Match', '"25bdb03b7942881c279788575997efba"')
+              .set('If-None-Match', '"30fdb0e9115ea7ca6702573f521814d1"')
               .expect(304)));
       }));
 
@@ -770,7 +770,7 @@ describe('api: /projects/:id/forms (create, read, update)', () => {
               }))
             .then(() => asAlice.get('/v1/projects/1/forms/simple2.xlsx').expect(404))
             .then(() => asAlice.get('/v1/projects/1/forms/simple2.xls')
-              .set('If-None-Match', '"25bdb03b7942881c279788575997efba"')
+              .set('If-None-Match', '"30fdb0e9115ea7ca6702573f521814d1"')
               .expect(304)))));
     });
 
