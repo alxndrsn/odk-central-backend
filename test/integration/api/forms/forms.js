@@ -763,7 +763,10 @@ describe('api: /projects/:id/forms (create, read, update)', () => {
             .set('X-XlsForm-FormId-Fallback', 'testformid')
             .expect(200)
             .then(() => asAlice.get('/v1/projects/1/forms/simple2.xls').expect(200))
-            .then(() => asAlice.get('/v1/projects/1/forms/simple2.xlsx').expect(404)))));
+            .then(() => asAlice.get('/v1/projects/1/forms/simple2.xlsx').expect(404))
+            .then(() => asAlice.get('/v1/projects/1/forms/simple2.xls')
+              .set('If-None-Match', '"25bdb03b7942881c279788575997efba"')
+              .expect(304)))));
     });
 
     describe('.xml GET', () => {
