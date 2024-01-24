@@ -683,8 +683,12 @@ describe('api: /projects/:id/forms (create, read, update)', () => {
               .then(({ headers, body }) => {
                 headers['content-type'].should.equal('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
                 headers['content-disposition'].should.equal('attachment; filename="simple2.xlsx"; filename*=UTF-8\'\'simple2.xlsx');
+                headers['etag'].should.equal('"25bdb03b7942881c279788575997efba"'); // eslint-disable-line dot-notation
                 Buffer.compare(input, body).should.equal(0);
-              })));
+              }))
+            .then(() => asAlice.get('/v1/projects/1/forms/simple2.xlsx')
+              .set('If-None-Match', '"25bdb03b7942881c279788575997efba"')
+              .expect(304)));
       }));
 
       it('should return the xlsx file originally provided', testService((service) => {
