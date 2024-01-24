@@ -708,6 +708,7 @@ describe('api: /projects/:id/forms (create, read, update)', () => {
               .then(({ headers, body }) => {
                 headers['content-type'].should.equal('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
                 headers['content-disposition'].should.equal('attachment; filename="simple2.xlsx"; filename*=UTF-8\'\'simple2.xlsx');
+                headers['etag'].should.equal('"25bdb03b7942881c279788575997efba"'); // eslint-disable-line dot-notation
                 Buffer.compare(input, body).should.equal(0);
               }))
             .then(() => asAlice.get('/v1/projects/1/forms/simple2/draft.xlsx')
@@ -762,7 +763,11 @@ describe('api: /projects/:id/forms (create, read, update)', () => {
             .set('Content-Type', 'application/vnd.ms-excel')
             .set('X-XlsForm-FormId-Fallback', 'testformid')
             .expect(200)
-            .then(() => asAlice.get('/v1/projects/1/forms/simple2.xls').expect(200))
+            .then(() => asAlice.get('/v1/projects/1/forms/simple2.xls')
+              .expect(200)
+              .then(({ headers }) => {
+                headers['etag'].should.equal('"25bdb03b7942881c279788575997efba"'); // eslint-disable-line dot-notation
+              }))
             .then(() => asAlice.get('/v1/projects/1/forms/simple2.xlsx').expect(404))
             .then(() => asAlice.get('/v1/projects/1/forms/simple2.xls')
               .set('If-None-Match', '"25bdb03b7942881c279788575997efba"')
@@ -778,8 +783,9 @@ describe('api: /projects/:id/forms (create, read, update)', () => {
         service.login('alice', (asAlice) =>
           asAlice.get('/v1/projects/1/forms/simple.xml')
             .expect(200)
-            .then(({ text }) => {
+            .then(({ headers, text }) => {
               text.should.equal(testData.forms.simple);
+              headers['etag'].should.equal('"25bdb03b7942881c279788575997efba"'); // eslint-disable-line dot-notation
             })
             .then(() => asAlice.get('/v1/projects/1/forms/simple.xml')
               .set('If-None-Match', '"25bdb03b7942881c279788575997efba"')
