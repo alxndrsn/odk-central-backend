@@ -454,7 +454,7 @@ describe('api: /submission', () => {
                 body.toString('utf8').should.equal('this is test file one');
               }))
             .then(() => asAlice.get('/v1/projects/1/forms/binaryType/submissions/both/attachments/my_file1.mp4')
-              .set('If-None-Match', '"25bdb03b7942881c279788575997efba"')
+              .set('If-None-Match', '"75f5701abfe7de8202cecaa0ca753f29"')
               .expect(304))))));
 
     it('should successfully save additionally POSTed attachment binary data', testService((service) =>
