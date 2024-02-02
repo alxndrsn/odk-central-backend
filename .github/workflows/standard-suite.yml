@@ -29,5 +29,7 @@ jobs:
         node-version: 20.10.0
         cache: 'npm'
     - run: npm ci --legacy-peer-deps
+    - run: npx mocha --version
+    - run: grep version ./node_modules/mocha/package.json
     - run: node lib/bin/create-docker-databases.js
     - run: make test-full

@@ -64,6 +64,10 @@ test: lint
 
 .PHONY: test-full
 test-full: lint
+	echo "-----" && \
+	echo "mocha version:" && \
+	npx mocha --version && \
+	echo "-----" && \
 	npx mocha --recursive --exit
 
 .PHONY: test-fast
