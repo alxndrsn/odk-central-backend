@@ -26,7 +26,7 @@ timeout 30 bash -c "while ! curl -s -o /dev/null $serverUrl; do sleep 1; done"
 log 'Backend started!'
 
 cd test/soak
-node index.mjs -s "$serverUrl" -P "$userPassword" -L /tmp/soak-tester-logs
+node index.js -s "$serverUrl" -P "$userPassword" -L /tmp/soak-tester-logs
 
 if ! curl -s -o /dev/null "$serverUrl"; then
   log 'Backend died.'
