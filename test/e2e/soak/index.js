@@ -14,7 +14,7 @@ const uuid = require('uuid').v4;
 const { basename } = require('node:path');
 const { program } = require('commander');
 
-const _log = (...args) => console.log(`[${new Date().toISOString()}]`, '[soak-tester]', ...args);
+const _log = (...args) => console.log(`[${new Date().toISOString()}]`, '[test/e2e/soak]', ...args);
 const log  = (...args) => true  && _log('INFO',   ...args);
 log.debug  = (...args) => false && _log('DEBUG',  ...args);
 log.info   = log;
