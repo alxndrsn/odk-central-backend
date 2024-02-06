@@ -8,6 +8,7 @@
 // except according to the terms contained in the LICENSE file.
 
 const fs = require('node:fs');
+const fetch = require('node-fetch');
 const _ = require('lodash');
 const uuid = require('uuid').v4;
 const { basename } = require('node:path');
