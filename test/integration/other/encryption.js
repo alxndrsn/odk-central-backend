@@ -224,6 +224,31 @@ describe('managed encryption', () => {
               result['simple.csv'].should.be.an.EncryptedSimpleCsv();
             })))));
 
+    it('should handle decryption errors gracefully', testService((service, { all, run }) =>
+      service.login('alice', (asAlice) =>
+        asAlice.post('/v1/projects/1/key')
+          .send({ passphrase: 'supersecret', hint: 'it is a secret' })
+          .expect(200)
+          .then(() => asAlice.get('/v1/projects/1/forms/simple.xml')
+            .expect(200)
+            .then(({ text }) => sendEncrypted(asAlice, extractVersion(text), extractPubkey(text)))
+            .then((send) => send(testData.instances.simple.one)
+              .then(() => send(testData.instances.simple.two))
+              .then(() => send(testData.instances.simple.three))))
+          .then(() => all(sql`SELECT * FROM blobs`))
+          .then((blobs) => console.log('blobs:', blobs))
+          .then(() => run(sql`UPDATE blobs SET content='\xDEAD'`))
+          .then(() => all(sql`SELECT * FROM blobs`))
+          .then((blobs) => console.log('blobs:', blobs))
+          .then(() => asAlice.get('/v1/projects/1/forms/simple/submissions/keys')
+            .expect(200)
+            .then(({ body }) => body[0].id))
+          .then((keyId) => asAlice.get(`/v1/projects/1/forms/simple/submissions.csv.zip?${keyId}=supersecret`)
+            .then(({ statusCode, res }) => {
+              statusCode.should.equal(200); // streamed responses can return 200 on error, if status code is written before error occurs
+              res.trailers.should.deepEqual({ status: 'oops' });
+            })))));
+
     it('should decrypt to CSV successfully as a direct root table', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/key')
