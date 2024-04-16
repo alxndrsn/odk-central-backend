@@ -41,7 +41,7 @@
     "ramda": "~0",
     "sanitize-filename": "~1",
     "slonik": "npm:@getodk/slonik@23.6.2-4",
-    "slonik-sql-tag-raw": "github:alxndrsn/slonik-sql-tag-raw#f9c06cbf4d477bd90465dedf8546fdf86e480a4a",
+    "slonik-sql-tag-raw": "npm:@getodk/slonik-sql-tag-raw@1.0.3-1",
     "tmp-promise": "~3",
     "uuid": "^9.0.0",
     "yauzl": "~2.10"
