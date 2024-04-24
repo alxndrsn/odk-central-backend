@@ -14,10 +14,7 @@ test-s3-integration: fake-s3-accounts
 
 .PHONY: test-oidc-e2e
 test-oidc-e2e: node_version
-	cd test/e2e/oidc && \
-	docker compose down && \
-	docker compose build && \
-	docker compose up --exit-code-from odk-central-oidc-tester
+	test/e2e/oidc/run-tests.sh
 
 .PHONY: dev-oidc
 dev-oidc: base
@@ -34,14 +31,12 @@ dev-s3: fake-s3-accounts base
 .PHONY: fake-oidc-server
 fake-oidc-server:
 	cd test/e2e/oidc/fake-oidc-server && \
-	npm clean-install && \
-	FAKE_OIDC_ROOT_URL=http://localhost:9898 npx nodemon index.js
+	FAKE_OIDC_ROOT_URL=http://localhost:9898 npx nodemon index.mjs
 
 .PHONY: fake-oidc-server-ci
 fake-oidc-server-ci:
 	cd test/e2e/oidc/fake-oidc-server && \
-	npm clean-install && \
-	FAKE_OIDC_ROOT_URL=http://localhost:9898 node index.js
+	node index.mjs
 
 .PHONY: fake-s3-server
 fake-s3-server:
@@ -84,6 +79,10 @@ debug: base
 .PHONY: test
 test: lint
 	BCRYPT=insecure npx mocha --recursive --exit
+
+.PHONY: test-ci
+test-ci: lint
+	BCRYPT=insecure npx mocha --recursive --exit --reporter test/ci-mocha-reporter.js
 
 .PHONY: test-fast
 test-fast: node_version

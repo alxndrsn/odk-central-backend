@@ -2425,7 +2425,7 @@ describe('Entities API', () => {
           .expect(400)
           .then(({ body }) => {
             body.code.should.equal(400.11);
-            body.message.should.equal('Invalid input data type: expected (uuid) to be (valid UUID)');
+            body.message.should.equal('Invalid input data type: expected (uuid) to be (valid version 4 UUID)');
           });
 
         // Entity list is still empty
@@ -3755,6 +3755,61 @@ describe('Entities API', () => {
         },
         errorMessage: 'The submission attempts an entity create, but the form does not permit that action. The form permits the following actions: update.'
       });
+    }));
+  });
+
+
+  describe('increased bodyParser json request limit for bulk entity creation', () => {
+    it('should reject >250kb requests to non-entity endpoint', testDataset(async (service) => {
+      const asAlice = await service.login('alice');
+
+      // 250kb limit = 256000 bytes (1024 bytes per kb)
+      await asAlice.post('/v1/projects/1/datasets')
+        .send({ name: 'x'.repeat(256001) })
+        .expect(500)
+        .then(({ body }) => {
+          body.message.should.equal('Internal Server Error');
+        });
+    }));
+
+    it('should allow >250kb requests to bulk entity endpoint', testDataset(async (service) => {
+      const asAlice = await service.login('alice');
+
+      // 250kb limit = 256000 bytes (1024 bytes per kb)
+      await asAlice.post('/v1/projects/1/datasets/people/entities')
+        .send({ source: { name: 'file.csv' }, entities: [{ label: 'x'.repeat(256001) }] })
+        .expect(200)
+        .then(({ body }) => {
+          body.success.should.be.true();
+        });
+    }));
+
+    it('should allow >250kb requests to bulk entity endpoint with query parameters', testDataset(async (service) => {
+      const asAlice = await service.login('alice');
+
+      // query parameters are not currently used in this endpoint
+      await asAlice.post('/v1/projects/1/datasets/people/entities?foo=bar')
+        .send({ source: { name: 'file.csv' }, entities: [{ label: 'x'.repeat(256001) }] })
+        .expect(200)
+        .then(({ body }) => {
+          body.success.should.be.true();
+        });
+    }));
+
+    it('should not allow larger body on GET request', testDataset(async (service) => {
+      const asAlice = await service.login('alice');
+
+      await asAlice.get('/v1/projects/1/datasets/people/entities?foo=bar')
+        .send({ source: { name: 'file.csv' }, entities: [{ label: 'x'.repeat(256001) }] })
+        .expect(500)
+        .then(({ body }) => {
+          body.message.should.equal('Internal Server Error');
+        });
+
+      // GET on this endpoint with payload doens't really make sense
+      await asAlice.get('/v1/projects/1/datasets/people/entities?foo=bar')
+        .send({ source: { name: 'file.csv' }, entities: [{ label: 'x'.repeat(10) }] })
+        .expect(200);
     }));
   });
 });
