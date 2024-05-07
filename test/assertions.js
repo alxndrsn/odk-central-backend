@@ -1,79 +1,77 @@
 const should = require('should');
 const { DateTime } = require('luxon');
 
-/* eslint-disable space-before-function-paren, func-names */
-
 // debugging things.
 // eslint-disable-next-line no-console
 global.tap = (x) => { console.log(x); return x; };
 
-should.Assertion.add('httpDate', function() {
+should.Assertion.add('httpDate', () => {
   this.params = { operator: 'to be an HTTP date string' };
   DateTime.fromHTTP(this.obj).isValid.should.equal(true);
 });
 
-should.Assertion.add('isoDate', function() {
+should.Assertion.add('isoDate', () => {
   this.params = { operator: 'to be an ISO date string' };
   DateTime.fromISO(this.obj).isValid.should.equal(true);
 });
 
-should.Assertion.add('nullOrIsoDate', function() {
+should.Assertion.add('nullOrIsoDate', () => {
   this.params = { operator: 'to be null or an ISO date string' };
   if (this.obj != null) this.obj.should.be.an.isoDate();
 });
 
-should.Assertion.add('nullOrString', function() {
+should.Assertion.add('nullOrString', () => {
   this.params = { operator: 'to be null or string' };
   if (this.obj != null) this.obj.should.be.String();
 });
 
-should.Assertion.add('nullOrNumber', function() {
+should.Assertion.add('nullOrNumber', () => {
   this.params = { operator: 'to be null or number' };
   if (this.obj != null) this.obj.should.be.Number();
 });
 
-should.Assertion.add('nullOrArray', function() {
+should.Assertion.add('nullOrArray', () => {
   this.params = { operator: 'to be null or array' };
   if (this.obj != null) this.obj.should.be.Array();
 });
 
-should.Assertion.add('nullOrObject', function() {
+should.Assertion.add('nullOrObject', () => {
   this.params = { operator: 'to be null or object' };
   if (this.obj != null) this.obj.should.be.Object();
 });
 
-should.Assertion.add('recentIsoDate', function() {
+should.Assertion.add('recentIsoDate', () => {
   this.params = { operator: 'to be a recent ISO date string' };
   this.obj.should.be.an.isoDate();
   DateTime.fromISO(this.obj).plus({ minutes: 2 }).should.be.greaterThan(DateTime.local());
 });
 
-should.Assertion.add('recentDate', function() {
+should.Assertion.add('recentDate', () => {
   this.params = { operator: 'to be a recent date instance' };
   DateTime.local().minus({ minutes: 1 }).toJSDate().should.be.lessThan(this.obj);
 });
 
-should.Assertion.add('token', function(length = 64) {
+should.Assertion.add('token', (length = 64) => {
   this.params = { operator: 'to be a token string' };
   this.obj.should.match(new RegExp(`^[a-z0-9!$]{${length}}$`, 'i'));
 });
 
-should.Assertion.add('uuid', function() {
+should.Assertion.add('uuid', () => {
   this.params = { operator: 'to be a uuid string' };
   this.obj.should.match(/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i);
 });
 
-should.Assertion.add('md5Sum', function() {
+should.Assertion.add('md5Sum', () => {
   this.params = { operator: 'to be an md5 sum string' };
   this.obj.should.match(/^[0-9a-f]{32}$/i);
 });
 
-should.Assertion.add('base64string', function() {
+should.Assertion.add('base64string', () => {
   this.params = { operator: 'to be a base64 string' };
   this.obj.should.match(/^[0-9a-z/+=]+$/i);
 });
 
-should.Assertion.add('Actor', function() {
+should.Assertion.add('Actor', () => {
   this.params = { operator: 'to be an Actor' };
 
   Object.keys(this.obj).should.containDeep([ 'createdAt', 'displayName', 'id', 'updatedAt' ]);
@@ -86,7 +84,7 @@ should.Assertion.add('Actor', function() {
   should.not.exist(this.obj.meta);
 });
 
-should.Assertion.add('Comment', function() {
+should.Assertion.add('Comment', () => {
   this.params = { operator: 'to be a Comment' };
 
   Object.keys(this.obj).should.containDeep([ 'body', 'actorId', 'createdAt' ]);
@@ -95,7 +93,7 @@ should.Assertion.add('Comment', function() {
   this.obj.createdAt.should.be.an.isoDate();
 });
 
-should.Assertion.add('User', function() {
+should.Assertion.add('User', () => {
   this.params = { operator: 'to be a User' };
 
   this.obj.should.be.an.Actor();
@@ -103,7 +101,7 @@ should.Assertion.add('User', function() {
   this.obj.email.should.be.a.String();
 });
 
-should.Assertion.add('Submission', function() {
+should.Assertion.add('Submission', () => {
   this.params = { operator: 'to be a Submission' };
 
   Object.keys(this.obj).should.containDeep([ 'instanceId', 'createdAt', 'updatedAt', 'submitterId', 'currentVersion', 'userAgent' ]);
@@ -115,7 +113,7 @@ should.Assertion.add('Submission', function() {
   if (this.obj.updatedAt != null) this.obj.updatedAt.should.be.an.isoDate();
 });
 
-should.Assertion.add('ExtendedSubmission', function() {
+should.Assertion.add('ExtendedSubmission', () => {
   this.params = { operator: 'to be an extended Submission' };
 
   Object.keys(this.obj).should.containDeep([ 'instanceId', 'createdAt', 'updatedAt', 'submitter', 'currentVersion' ]);
@@ -126,7 +124,7 @@ should.Assertion.add('ExtendedSubmission', function() {
   if (this.obj.updatedAt != null) this.obj.updatedAt.should.be.an.isoDate();
 });
 
-should.Assertion.add('SubmissionDef', function() {
+should.Assertion.add('SubmissionDef', () => {
   this.params = { operator: 'to be a Submission' };
 
   Object.keys(this.obj).should.containDeep([ 'instanceId', 'submitterId', 'createdAt', 'instanceName', 'current', 'userAgent', 'deviceId' ]);
@@ -135,14 +133,14 @@ should.Assertion.add('SubmissionDef', function() {
   if (this.obj.instanceName != null) this.obj.instanceName.should.be.a.String();
 });
 
-should.Assertion.add('ExtendedSubmissionDef', function() {
+should.Assertion.add('ExtendedSubmissionDef', () => {
   this.params = { operator: 'to be a Submission' };
 
   this.obj.should.be.a.SubmissionDef();
   this.obj.submitter.should.be.an.Actor();
 });
 
-should.Assertion.add('Session', function() {
+should.Assertion.add('Session', () => {
   this.params = { operator: 'to be a Session' };
 
   Object.keys(this.obj).should.containDeep([ 'expiresAt', 'createdAt', 'token' ]);
@@ -151,7 +149,7 @@ should.Assertion.add('Session', function() {
   this.obj.token.should.be.a.token();
 });
 
-should.Assertion.add('FieldKey', function() {
+should.Assertion.add('FieldKey', () => {
   this.params = { operator: 'to be a Field Key' };
 
   should(this.obj).be.an.Actor();
@@ -161,7 +159,7 @@ should.Assertion.add('FieldKey', function() {
   if (this.obj.token != null) this.obj.token.should.be.a.token();
 });
 
-should.Assertion.add('ExtendedFieldKey', function() {
+should.Assertion.add('ExtendedFieldKey', () => {
   this.params = { operator: 'to be an Extended Field Key' };
 
   should(this.obj).be.an.Actor();
@@ -173,7 +171,7 @@ should.Assertion.add('ExtendedFieldKey', function() {
   if (this.obj.token != null) this.obj.token.should.be.a.token();
 });
 
-should.Assertion.add('PublicLink', function() {
+should.Assertion.add('PublicLink', () => {
   this.params = { operator: 'to be a Public Link' };
 
   should(this.obj).be.an.Actor();
@@ -182,7 +180,7 @@ should.Assertion.add('PublicLink', function() {
   if (this.obj.token != null) this.obj.token.should.be.a.token();
 });
 
-should.Assertion.add('ExtendedPublicLink', function() {
+should.Assertion.add('ExtendedPublicLink', () => {
   this.params = { operator: 'to be an Extended Public Link' };
 
   should(this.obj).be.an.Actor();
@@ -191,7 +189,7 @@ should.Assertion.add('ExtendedPublicLink', function() {
   if (this.obj.token != null) this.obj.token.should.be.a.token();
 });
 
-should.Assertion.add('Form', function() {
+should.Assertion.add('Form', () => {
   this.params = { operator: 'to be a Form' };
 
   Object.keys(this.obj).should.containDeep([ 'projectId', 'xmlFormId', 'createdAt', 'updatedAt', 'name', 'version', 'hash' ]);
@@ -204,7 +202,7 @@ should.Assertion.add('Form', function() {
   this.obj.hash.should.be.an.md5Sum();
 });
 
-should.Assertion.add('ExtendedForm', function() {
+should.Assertion.add('ExtendedForm', () => {
   this.params = { operator: 'to be a ExtendedForm' };
 
   this.obj.should.be.a.Form();
@@ -214,7 +212,7 @@ should.Assertion.add('ExtendedForm', function() {
   if (this.obj.lastSubmission != null) this.obj.lastSubmission.should.be.an.isoDate();
 });
 
-should.Assertion.add('FormAttachment', function() {
+should.Assertion.add('FormAttachment', () => {
   this.params = { operator: 'to be a Form Attachment' };
 
   Object.keys(this.obj).should.eqlInAnyOrder([ 'name', 'type', 'blobExists', 'datasetExists', 'exists', 'updatedAt' ]);
@@ -228,7 +226,7 @@ should.Assertion.add('FormAttachment', function() {
   if (this.obj.updatedAt != null) this.obj.updatedAt.should.be.an.isoDate();
 });
 
-should.Assertion.add('Project', function() {
+should.Assertion.add('Project', () => {
   this.params = { operator: 'to be a Project' };
 
   Object.keys(this.obj).should.containDeep([ 'id', 'name', 'createdAt', 'updatedAt' ]);
@@ -238,7 +236,7 @@ should.Assertion.add('Project', function() {
   if (this.obj.updatedAt != null) this.obj.updatedAt.should.be.an.isoDate();
 });
 
-should.Assertion.add('ExtendedProject', function() {
+should.Assertion.add('ExtendedProject', () => {
   this.params = { operator: 'to be a Project' };
 
   this.obj.should.be.a.Project();
@@ -248,7 +246,7 @@ should.Assertion.add('ExtendedProject', function() {
   if (this.obj.lastSubmission != null) this.obj.lastSubmission.should.be.an.isoDate();
 });
 
-should.Assertion.add('Role', function() {
+should.Assertion.add('Role', () => {
   this.params = { operator: 'to be a Role' };
 
   Object.keys(this.obj).should.containDeep([ 'id', 'name', 'verbs', 'createdAt', 'updatedAt' ]);
@@ -259,7 +257,7 @@ should.Assertion.add('Role', function() {
   if (this.obj.updatedAt != null) this.obj.updatedAt.should.be.an.isoDate();
 });
 
-should.Assertion.add('Audit', function() {
+should.Assertion.add('Audit', () => {
   this.params = { operator: 'to be an Audit' };
 
   Object.keys(this.obj).should.containDeep([ 'actorId', 'action', 'acteeId', 'details', 'loggedAt' ]);
@@ -276,13 +274,13 @@ should.Assertion.add('Audit', function() {
   if (this.obj.notes != null) this.obj.notes.should.be.a.String();
 });
 
-should.Assertion.add('Key', function() {
+should.Assertion.add('Key', () => {
   this.params = { operator: 'to be an Key' };
 
   Object.keys(this.obj).should.containDeep([ 'hint', 'managed', 'public' ]);
 });
 
-should.Assertion.add('Config', function() {
+should.Assertion.add('Config', () => {
   this.params = { operator: 'to be a Config' };
 
   Object.keys(this.obj).should.containDeep([ 'key', 'value', 'setAt' ]);
@@ -291,7 +289,7 @@ should.Assertion.add('Config', function() {
   this.obj.setAt.should.be.an.isoDate();
 });
 
-should.Assertion.add('SimpleCsv', function() {
+should.Assertion.add('SimpleCsv', () => {
   this.params = { operator: 'to be a full simple.csv export with three rows' };
 
   const csv = this.obj.split('\n').map((row) => row.split(','));
@@ -309,7 +307,7 @@ should.Assertion.add('SimpleCsv', function() {
   csv[4].should.eql([ '' ]);
 });
 
-should.Assertion.add('EncryptedSimpleCsv', function() {
+should.Assertion.add('EncryptedSimpleCsv', () => {
   this.params = { operator: 'to be a full encrypted simple.csv export with three rows' };
 
   const csv = this.obj.split('\n').map((row) => row.split(','));
@@ -330,7 +328,7 @@ should.Assertion.add('EncryptedSimpleCsv', function() {
   csv[4].should.eql([ '' ]);
 });
 
-should.Assertion.add('eqlInAnyOrder', function(expectedUnsorted) {
+should.Assertion.add('eqlInAnyOrder', (expectedUnsorted) => {
   // eslint-disable-next-line key-spacing
   this.params = { operator:'to be equal in any order' };
 
