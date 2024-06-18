@@ -35,11 +35,7 @@ const Sentry = require(appRoot + '/lib/external/sentry').init();
 
 // set up our enketo mock.
 const { reset: resetEnketo, ...enketo } = require(appRoot + '/test/util/enketo');
-// Initialize the mock before other setup that uses the mock, then reset the
-// mock after setup is complete and after each test.
-before(resetEnketo);
-after(resetEnketo);
-afterEach(resetEnketo);
+beforeEach(resetEnketo);
 
 // set up odk analytics mock.
 const { ODKAnalytics } = require(appRoot + '/test/util/odk-analytics-mock');
