@@ -46,7 +46,10 @@ describe('standard', () => {
     } catch (err) {
       if (err instanceof assert.AssertionError && err.message === 'expected') throw err;
       assert.equal(err.responseStatus, 404);
-      assert.deepEqual(JSON.parse(err.responseText), {});
+      assert.deepEqual(JSON.parse(err.responseText), {
+        message: 'Could not find the resource you were looking for.',
+        code: 404.1,
+      });
     }
 
     // then
