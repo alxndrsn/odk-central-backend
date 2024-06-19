@@ -9,12 +9,8 @@
 
 /* eslint-disable */
 
-const { execSync } = require('node:child_process');
+const assert = require('node:assert');
 const fs = require('node:fs');
-const { randomBytes } = require('node:crypto');
-const { basename } = require('node:path');
-const _ = require('lodash');
-const { program } = require('commander');
 const should = require('should');
 
 const SUITE_NAME = 'test/e2e/standard';
