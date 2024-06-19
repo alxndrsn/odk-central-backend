@@ -44,7 +44,11 @@ describe('standard', () => {
     // given
     const badSubmissionId = 'bad-id:';
     await uploadSubmission(badSubmissionId);
-    const requestBadOdata = () => api.apiGet(`projects/${projectId}/forms/${encodeURIComponent(xmlFormId)}.svc/Submissions('${badSubmissionId}')?%24select=__id%2C__system%2Cmeta`);
+    let badRequests = 0;
+    const requestBadOdata = () => {
+      console.log('requestBadOdata()', ++badRequests);
+      return api.apiGet(`projects/${projectId}/forms/${encodeURIComponent(xmlFormId)}.svc/Submissions('${badSubmissionId}')?%24select=__id%2C__system%2Cmeta`);
+    };
 
     // when
     try {
