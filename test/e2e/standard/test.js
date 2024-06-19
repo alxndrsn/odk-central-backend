@@ -48,8 +48,6 @@ describe('standard', () => {
     await assert.rejects(
       () => api.apiGet(`projects/${projectId}/forms/${encodeURIComponent(xmlFormId)}.svc/Submissions('${badSubmissionId}')?%24select=__id%2C__system%2Cmeta`),
       (err) => {
-        assert.ok(err instanceof assert.AssertionError);
-        assert.strictEqual(err.message, 'axpected');
         assert.strictEqual(err.responseStatus, 404);
         assert.deepEqual(JSON.parse(err.responseText), {
           message: 'Could not find the resource you were looking for.',
