@@ -34,14 +34,16 @@ describe('standard', () => {
     await uploadForm('test-form.xml');
 
     // given
-    const goodSubmissionId = await uploadSubmission('good-id');
+    const goodSubmissionId = 'good-id';
+    await uploadSubmission(goodSubmissionId);
 
     // when
     const goodSubmissionOdata = await api.apiGet(`projects/${projectId}/forms/${xmlFormId}.svc/Submissions('${goodSubmissionId}')`);
     console.log('goodSubmissionOdata:', JSON.stringify(goodSubmissionOdata));
 
     // given
-    const badSubmissionId = await uploadSubmission('bad-id:');
+    const badSubmissionId = 'bad-id:';
+    await uploadSubmission(badSubmissionId);
 
     // when
     try {
