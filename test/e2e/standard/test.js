@@ -29,15 +29,15 @@ const attDir = './test-attachments';
 const BIGFILE = `${attDir}/big.bin`;
 
 describe('standard', () => {
-  let api, projectId, xmlFormId;
+  let api, projectId, xmlFormId, xmlFormVersion;
 
   it('should handle weird submission instanceId gracefully', async function() {
     // given
     api = await apiClient(SUITE_NAME, { serverUrl, userEmail, userPassword });
     projectId = await createProject();
-    xmlFormId = await uploadForm('test-form.xml');
+    await uploadForm('test-form.xml');
     // TODO upload submission with weird ID
-    await uploadSubmission('submission.xml');
+    await uploadSubmission('submission.xml', xmlFormVersion);
 
     // when
     await api.apiGet(`projects/${projectId}/forms/${xmlFormId}.svc/Submissions('double:')`);
@@ -57,12 +57,15 @@ describe('standard', () => {
   async function uploadForm(xmlFilePath) {
     const res = await api.apiPostFile(`projects/${projectId}/forms?publish=true`, xmlFilePath);
     console.log('form upload result:', JSON.stringify(res));
-    const { xmlFormId } = res;
-    return xmlFormId;
+    xmlFormId = res.xmlFormId;
+    xmlFormVersion = res.version;
   }
 
   async function uploadSubmission(xmlFilePath) {
-    const res = await api.apiPostFile(`projects/${projectId}/forms/${xmlFormId}/submissions?deviceID=testid`, xmlFilePath);
+    const xmlTemplate = fs.readFileSync(xmlFilePath, { encoding: 'utf8' });
+    const tempFile = 'TODO-generate-proper-tempfile-name.xml';
+    fs.writeFileSync(tempFile, xmlTemplate.replace('{{formVersion}}', xmlFormVersion));
+    const res = await api.apiPostFile(`projects/${projectId}/forms/${xmlFormId}/submissions?deviceID=testid`, tempFile);
     console.log('submission upload result:', JSON.stringify(res));
     return res;
   }
