@@ -44,10 +44,11 @@ describe('standard', () => {
     // given
     const badSubmissionId = 'bad-id:';
     await uploadSubmission(badSubmissionId);
+    const requestBadOdata = () => api.apiGet(`projects/${projectId}/forms/${encodeURIComponent(xmlFormId)}.svc/Submissions('${badSubmissionId}')?%24select=__id%2C__system%2Cmeta`);
 
     // when
     try {
-      await api.apiGet(`projects/${projectId}/forms/${encodeURIComponent(xmlFormId)}.svc/Submissions('${badSubmissionId}')`);
+      await requestBadOdata();
       assert.fail('expected');
     } catch (err) {
       if (err instanceof assert.AssertionError && err.message === 'expected') throw err;
@@ -66,30 +67,29 @@ describe('standard', () => {
 
     // when 20 requests are made simultaneously
     const allRes = await Promise.allSettled([
-      api.apiGet(`projects/${projectId}/forms/${encodeURIComponent(xmlFormId)}.svc/Submissions('${badSubmissionId}')`),
-      api.apiGet(`projects/${projectId}/forms/${encodeURIComponent(xmlFormId)}.svc/Submissions('${badSubmissionId}')`),
-      api.apiGet(`projects/${projectId}/forms/${encodeURIComponent(xmlFormId)}.svc/Submissions('${badSubmissionId}')`),
-      api.apiGet(`projects/${projectId}/forms/${encodeURIComponent(xmlFormId)}.svc/Submissions('${badSubmissionId}')`),
-      api.apiGet(`projects/${projectId}/forms/${encodeURIComponent(xmlFormId)}.svc/Submissions('${badSubmissionId}')`),
+      requestBadOdata(),
+      requestBadOdata(),
+      requestBadOdata(),
+      requestBadOdata(),
+      requestBadOdata(),
 
-      api.apiGet(`projects/${projectId}/forms/${encodeURIComponent(xmlFormId)}.svc/Submissions('${badSubmissionId}')`),
-      api.apiGet(`projects/${projectId}/forms/${encodeURIComponent(xmlFormId)}.svc/Submissions('${badSubmissionId}')`),
-      api.apiGet(`projects/${projectId}/forms/${encodeURIComponent(xmlFormId)}.svc/Submissions('${badSubmissionId}')`),
-      api.apiGet(`projects/${projectId}/forms/${encodeURIComponent(xmlFormId)}.svc/Submissions('${badSubmissionId}')`),
-      api.apiGet(`projects/${projectId}/forms/${encodeURIComponent(xmlFormId)}.svc/Submissions('${badSubmissionId}')`),
+      requestBadOdata(),
+      requestBadOdata(),
+      requestBadOdata(),
+      requestBadOdata(),
+      requestBadOdata(),
 
-      api.apiGet(`projects/${projectId}/forms/${encodeURIComponent(xmlFormId)}.svc/Submissions('${badSubmissionId}')`),
-      api.apiGet(`projects/${projectId}/forms/${encodeURIComponent(xmlFormId)}.svc/Submissions('${badSubmissionId}')`),
-      api.apiGet(`projects/${projectId}/forms/${encodeURIComponent(xmlFormId)}.svc/Submissions('${badSubmissionId}')`),
-      api.apiGet(`projects/${projectId}/forms/${encodeURIComponent(xmlFormId)}.svc/Submissions('${badSubmissionId}')`),
-      api.apiGet(`projects/${projectId}/forms/${encodeURIComponent(xmlFormId)}.svc/Submissions('${badSubmissionId}')`),
+      requestBadOdata(),
+      requestBadOdata(),
+      requestBadOdata(),
+      requestBadOdata(),
+      requestBadOdata(),
 
-      api.apiGet(`projects/${projectId}/forms/${encodeURIComponent(xmlFormId)}.svc/Submissions('${badSubmissionId}')`),
-      api.apiGet(`projects/${projectId}/forms/${encodeURIComponent(xmlFormId)}.svc/Submissions('${badSubmissionId}')`),
-      api.apiGet(`projects/${projectId}/forms/${encodeURIComponent(xmlFormId)}.svc/Submissions('${badSubmissionId}')`),
-      api.apiGet(`projects/${projectId}/forms/${encodeURIComponent(xmlFormId)}.svc/Submissions('${badSubmissionId}')`),
-      api.apiGet(`projects/${projectId}/forms/${encodeURIComponent(xmlFormId)}.svc/Submissions('${badSubmissionId}')`),
-
+      requestBadOdata(),
+      requestBadOdata(),
+      requestBadOdata(),
+      requestBadOdata(),
+      requestBadOdata(),
     ]);
 
     // then
