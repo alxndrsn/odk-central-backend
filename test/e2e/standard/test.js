@@ -123,7 +123,8 @@ describe('standard', () => {
     const tempFile = 'TODO-generate-proper-tempfile-name.xml';
     const formXml = xmlTemplate
       .replace('{{submissionId}}', submissionId)
-      .replace('{{formVersion}}', xmlFormVersion)
+      .replace('{{formId}}', xmlFormId)
+      .replace('{{formVersion}}', xmlFormVersion);
     fs.writeFileSync(tempFile, formXml);
     const res = await api.apiPostFile(`projects/${projectId}/forms/${encodeURIComponent(xmlFormId)}/submissions?deviceID=testid`, tempFile);
     console.log('submission upload result:', JSON.stringify(res));
