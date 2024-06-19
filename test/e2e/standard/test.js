@@ -44,6 +44,9 @@ describe('standard', () => {
 
     // then
     // assert service has not crashed
+    const rootRes = await fetch(serverUrl);
+    assert.equal(rootRes.status, 404);
+    assert.equal(await rootRes.text(), '{"message":"Expected an API version (eg /v1) at the start of the request URL.","code":404.2}');
   });
 
   async function createProject() {
