@@ -63,6 +63,43 @@ describe('standard', () => {
     const rootRes = await fetch(serverUrl);
     assert.equal(rootRes.status, 404);
     assert.equal(await rootRes.text(), '{"message":"Expected an API version (eg /v1) at the start of the request URL.","code":404.2}');
+
+    // when 20 requests are made simultaneously
+    const allRes = await Promise.allSettled([
+      api.apiGet(`projects/${projectId}/forms/${xmlFormId}.svc/Submissions('${badSubmissionId}')`),
+      api.apiGet(`projects/${projectId}/forms/${xmlFormId}.svc/Submissions('${badSubmissionId}')`),
+      api.apiGet(`projects/${projectId}/forms/${xmlFormId}.svc/Submissions('${badSubmissionId}')`),
+      api.apiGet(`projects/${projectId}/forms/${xmlFormId}.svc/Submissions('${badSubmissionId}')`),
+      api.apiGet(`projects/${projectId}/forms/${xmlFormId}.svc/Submissions('${badSubmissionId}')`),
+
+      api.apiGet(`projects/${projectId}/forms/${xmlFormId}.svc/Submissions('${badSubmissionId}')`),
+      api.apiGet(`projects/${projectId}/forms/${xmlFormId}.svc/Submissions('${badSubmissionId}')`),
+      api.apiGet(`projects/${projectId}/forms/${xmlFormId}.svc/Submissions('${badSubmissionId}')`),
+      api.apiGet(`projects/${projectId}/forms/${xmlFormId}.svc/Submissions('${badSubmissionId}')`),
+      api.apiGet(`projects/${projectId}/forms/${xmlFormId}.svc/Submissions('${badSubmissionId}')`),
+
+      api.apiGet(`projects/${projectId}/forms/${xmlFormId}.svc/Submissions('${badSubmissionId}')`),
+      api.apiGet(`projects/${projectId}/forms/${xmlFormId}.svc/Submissions('${badSubmissionId}')`),
+      api.apiGet(`projects/${projectId}/forms/${xmlFormId}.svc/Submissions('${badSubmissionId}')`),
+      api.apiGet(`projects/${projectId}/forms/${xmlFormId}.svc/Submissions('${badSubmissionId}')`),
+      api.apiGet(`projects/${projectId}/forms/${xmlFormId}.svc/Submissions('${badSubmissionId}')`),
+
+      api.apiGet(`projects/${projectId}/forms/${xmlFormId}.svc/Submissions('${badSubmissionId}')`),
+      api.apiGet(`projects/${projectId}/forms/${xmlFormId}.svc/Submissions('${badSubmissionId}')`),
+      api.apiGet(`projects/${projectId}/forms/${xmlFormId}.svc/Submissions('${badSubmissionId}')`),
+      api.apiGet(`projects/${projectId}/forms/${xmlFormId}.svc/Submissions('${badSubmissionId}')`),
+      api.apiGet(`projects/${projectId}/forms/${xmlFormId}.svc/Submissions('${badSubmissionId}')`),
+
+    ]);
+
+    // then
+    assert.ok(allRes.every(({ status, reason: err }) => {
+      assert.equal(err.responseStatus, 404);
+      assert.deepEqual(JSON.parse(err.responseText), {
+        message: 'Could not find the resource you were looking for.',
+        code: 404.1,
+      });
+    }));
   });
 
   async function createProject() {
