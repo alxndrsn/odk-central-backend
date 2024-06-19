@@ -4,7 +4,7 @@
     <h:title>instanceId Test</h:title>
     <model odk:xforms-version="1.0.0">
       <instance>
-        <data id="'=+/*-451%/%" version="20240506130956">
+        <data id="test-form" version="20240506130956">
           <meta>
             <instanceID/>
           </meta>
