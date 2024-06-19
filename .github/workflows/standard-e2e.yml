@@ -1,4 +1,4 @@
-name: S3 E2E Tests
+name: Standard E2E Tests
 
 on: push
 
