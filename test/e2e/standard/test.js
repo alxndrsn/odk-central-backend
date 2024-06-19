@@ -32,12 +32,20 @@ describe('standard', () => {
     api = await apiClient(SUITE_NAME, { serverUrl, userEmail, userPassword });
     projectId = await createProject();
     await uploadForm('test-form.xml');
-    // TODO upload submission with weird ID
-    await uploadSubmission('submission.xml', xmlFormVersion);
+
+    // given
+    const goodSubmissionId = await uploadSubmission('good-id');
+
+    // when
+    const goodSubmissionOdata = await api.apiGet(`projects/${projectId}/forms/${xmlFormId}.svc/Submissions('${goodSubmissionId}')`);
+    console.log('goodSubmissionOdata:', JSON.stringify(goodSubmissionOdata));
+
+    // given
+    const badSubmissionId = await uploadSubmission('bad-id:');
 
     // when
     try {
-      await api.apiGet(`projects/${projectId}/forms/${xmlFormId}.svc/Submissions('double:')`);
+      await api.apiGet(`projects/${projectId}/forms/${xmlFormId}.svc/Submissions('${badSubmissionId}')`);
       assert.fail('expected');
     } catch (err) {
       if (err instanceof assert.AssertionError && err.message === 'expected') throw err;
@@ -70,10 +78,13 @@ describe('standard', () => {
     xmlFormVersion = res.version;
   }
 
-  async function uploadSubmission(xmlFilePath) {
-    const xmlTemplate = fs.readFileSync(xmlFilePath, { encoding: 'utf8' });
+  async function uploadSubmission(submissionId) {
+    const xmlTemplate = fs.readFileSync('submission.xml', { encoding: 'utf8' });
     const tempFile = 'TODO-generate-proper-tempfile-name.xml';
-    fs.writeFileSync(tempFile, xmlTemplate.replace('{{formVersion}}', xmlFormVersion));
+    const formXml = xmlTemplate
+      .replace('{{submissionId}}', submissionId)
+      .replace('{{formVersion}}', xmlFormVersion)
+    fs.writeFileSync(tempFile, formXml);
     const res = await api.apiPostFile(`projects/${projectId}/forms/${xmlFormId}/submissions?deviceID=testid`, tempFile);
     console.log('submission upload result:', JSON.stringify(res));
     return res;
