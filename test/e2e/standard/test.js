@@ -37,6 +37,7 @@ describe('standard', () => {
     projectId = await createProject();
     xmlFormId = await uploadForm('test-form.xml');
     // TODO upload submission with weird ID
+    await uploadSubmission('submission.xml');
 
     // when
     // TODO download formName.svc/Submissions(instanceId)
@@ -54,7 +55,15 @@ describe('standard', () => {
   }
 
   async function uploadForm(xmlFilePath) {
-    const { xmlFormId } = await api.apiPostFile(`projects/${projectId}/forms`, xmlFilePath);
+    const res = await api.apiPostFile(`projects/${projectId}/forms?publish=true`, xmlFilePath);
+    console.log('form upload result:', JSON.stringify(res));
+    const { xmlFormId } = res;
     return xmlFormId;
+  }
+
+  async function uploadSubmission(xmlFilePath) {
+    const res = await api.apiPostFile(`projects/${projectId}/forms/${xmlFormId}/submissions?deviceID=testid`, xmlFilePath);
+    console.log('submission upload result:', JSON.stringify(res));
+    return res;
   }
 });
