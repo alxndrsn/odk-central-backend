@@ -45,22 +45,23 @@ describe('standard', () => {
     await uploadSubmission(badSubmissionId);
 
     // when
-    try {
-      await api.apiGet(`projects/${projectId}/forms/${encodeURIComponent(xmlFormId)}.svc/Submissions('${badSubmissionId}')?%24select=__id%2C__system%2Cmeta`);
-      assert.fail('expected');
-    } catch (err) {
-      if (err instanceof assert.AssertionError && err.message === 'expected') throw err;
-      assert.equal(err.responseStatus, 404);
-      assert.deepEqual(JSON.parse(err.responseText), {
-        message: 'Could not find the resource you were looking for.',
-        code: 404.1,
-      });
-    }
+    await assert.rejects(
+      () => api.apiGet(`projects/${projectId}/forms/${encodeURIComponent(xmlFormId)}.svc/Submissions('${badSubmissionId}')?%24select=__id%2C__system%2Cmeta`),
+      (err) => {
+        assert.ok(err instanceof assert.AssertionError);
+        assert.strictEqual(err.message, 'axpected');
+        assert.strictEqual(err.responseStatus, 404);
+        assert.deepEqual(JSON.parse(err.responseText), {
+          message: 'Could not find the resource you were looking for.',
+          code: 404.1,
+        });
+      },
+    );
 
     // then service has not crashed
     const rootRes = await fetch(serverUrl);
-    assert.equal(rootRes.status, 404);
-    assert.equal(await rootRes.text(), '{"message":"Expected an API version (eg /v1) at the start of the request URL.","code":404.2}');
+    assert.strictEqual(rootRes.status, 404);
+    assert.strictEqual(await rootRes.text(), '{"message":"Expected an API version (eg /v1) at the start of the request URL.","code":404.2}');
   });
 
   async function createProject() {
