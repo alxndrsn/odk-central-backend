@@ -40,7 +40,14 @@ describe('standard', () => {
     await uploadSubmission('submission.xml', xmlFormVersion);
 
     // when
-    await api.apiGet(`projects/${projectId}/forms/${xmlFormId}.svc/Submissions('double:')`);
+    try {
+      await api.apiGet(`projects/${projectId}/forms/${xmlFormId}.svc/Submissions('double:')`);
+      assert.fail('expected');
+    } catch (err) {
+      if (err instanceof assert.AssertionError && err.message === 'expected') throw err;
+      assert.equal(err.responseStatus, 404);
+      assert.deepEqual(JSON.parse(err.responseText), {});
+    }
 
     // then
     // assert service has not crashed
