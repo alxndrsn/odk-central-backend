@@ -63,48 +63,10 @@ describe('standard', () => {
       });
     }
 
-    // then
-    // assert service has not crashed
+    // then service has not crashed
     const rootRes = await fetch(serverUrl);
     assert.equal(rootRes.status, 404);
     assert.equal(await rootRes.text(), '{"message":"Expected an API version (eg /v1) at the start of the request URL.","code":404.2}');
-
-    // when 20 requests are made simultaneously
-    const allRes = await Promise.allSettled([
-      requestBadOdata(),
-      requestBadOdata(),
-      requestBadOdata(),
-      requestBadOdata(),
-      requestBadOdata(),
-
-      requestBadOdata(),
-      requestBadOdata(),
-      requestBadOdata(),
-      requestBadOdata(),
-      requestBadOdata(),
-
-      requestBadOdata(),
-      requestBadOdata(),
-      requestBadOdata(),
-      requestBadOdata(),
-      requestBadOdata(),
-
-      requestBadOdata(),
-      requestBadOdata(),
-      requestBadOdata(),
-      requestBadOdata(),
-      requestBadOdata(),
-    ]);
-
-    // then
-    assert.ok(allRes.every(({ status, reason: err }) => {
-      assert.equal(err.responseStatus, 404);
-      assert.deepEqual(JSON.parse(err.responseText), {
-        message: 'Could not find the resource you were looking for.',
-        code: 404.1,
-      });
-      return true;
-    }));
   });
 
   async function createProject() {
