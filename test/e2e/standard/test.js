@@ -39,20 +39,14 @@ describe('standard', () => {
 
     // when
     const goodSubmissionOdata = await api.apiGet(`projects/${projectId}/forms/${encodeURIComponent(xmlFormId)}.svc/Submissions('${goodSubmissionId}')`);
-    console.log('goodSubmissionOdata:', JSON.stringify(goodSubmissionOdata));
 
     // given
     const badSubmissionId = 'bad-id:';
     await uploadSubmission(badSubmissionId);
-    let badRequests = 0;
-    const requestBadOdata = () => {
-      console.log('requestBadOdata()', ++badRequests);
-      return api.apiGet(`projects/${projectId}/forms/${encodeURIComponent(xmlFormId)}.svc/Submissions('${badSubmissionId}')?%24select=__id%2C__system%2Cmeta`);
-    };
 
     // when
     try {
-      await requestBadOdata();
+      await api.apiGet(`projects/${projectId}/forms/${encodeURIComponent(xmlFormId)}.svc/Submissions('${badSubmissionId}')?%24select=__id%2C__system%2Cmeta`);
       assert.fail('expected');
     } catch (err) {
       if (err instanceof assert.AssertionError && err.message === 'expected') throw err;
@@ -79,12 +73,11 @@ describe('standard', () => {
 
   async function uploadForm(xmlFilePath) {
     const res = await api.apiPostFile(`projects/${projectId}/forms?publish=true`, xmlFilePath);
-    console.log('form upload result:', JSON.stringify(res));
     xmlFormId = res.xmlFormId;
     xmlFormVersion = res.version;
   }
 
-  async function uploadSubmission(submissionId) {
+  function uploadSubmission(submissionId) {
     const xmlTemplate = fs.readFileSync('submission.xml', { encoding: 'utf8' });
     const tempFile = 'TODO-generate-proper-tempfile-name.xml';
     const formXml = xmlTemplate
@@ -92,8 +85,6 @@ describe('standard', () => {
       .replace('{{formId}}', xmlFormId)
       .replace('{{formVersion}}', xmlFormVersion);
     fs.writeFileSync(tempFile, formXml);
-    const res = await api.apiPostFile(`projects/${projectId}/forms/${encodeURIComponent(xmlFormId)}/submissions?deviceID=testid`, tempFile);
-    console.log('submission upload result:', JSON.stringify(res));
-    return res;
+    return api.apiPostFile(`projects/${projectId}/forms/${encodeURIComponent(xmlFormId)}/submissions?deviceID=testid`, tempFile);
   }
 });
