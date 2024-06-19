@@ -40,7 +40,7 @@ describe('standard', () => {
     await uploadSubmission('submission.xml');
 
     // when
-    // TODO download formName.svc/Submissions(instanceId)
+    await api.apiGet(`projects/${projectId}/forms/${xmlFormId}.svc/Submissions('double:')`);
 
     // then
     // assert service has not crashed
