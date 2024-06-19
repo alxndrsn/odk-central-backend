@@ -99,6 +99,7 @@ describe('standard', () => {
         message: 'Could not find the resource you were looking for.',
         code: 404.1,
       });
+      return true;
     }));
   });
 
