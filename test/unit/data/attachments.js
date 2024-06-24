@@ -16,7 +16,7 @@ describe('.zip attachments streaming', () => {
           { row: { instanceId: 'subone', name: 'secondfile.ext', content: 'this is my second file' } },
           { row: { instanceId: 'subtwo', name: 'thirdfile.ext', content: 'this is my third file' } }
         ]);
-        zipStreamToFiles(zipStreamFromParts(streamAttachments(mockS3, inStream)), (err, result) => {
+        zipStreamToFiles(zipStreamFromParts(streamAttachments(inStream)), (err, result) => {
           // eslint-disable-next-line keyword-spacing
           if(err) return done(err);
 
@@ -40,7 +40,7 @@ describe('.zip attachments streaming', () => {
           { row: { instanceId: 'subone', name: '../secondfile.ext', content: 'this is my second file' } },
           { row: { instanceId: 'subone', name: './.secondfile.ext', content: 'this is my duplicate second file' } },
         ]);
-        zipStreamToFiles(zipStreamFromParts(streamAttachments(mockS3, inStream)), (err, result) => {
+        zipStreamToFiles(zipStreamFromParts(streamAttachments(inStream)), (err, result) => {
           // eslint-disable-next-line keyword-spacing
           if(err) return done(err);
 
@@ -58,7 +58,7 @@ describe('.zip attachments streaming', () => {
         const inStream = streamTest.fromObjects([
           { row: { instanceId: 'subone', name: 'firstfile.ext.enc', content: 'this is my first file' } }
         ]);
-        zipStreamToFiles(zipStreamFromParts(streamAttachments(mockS3, inStream)), (err, result) => {
+        zipStreamToFiles(zipStreamFromParts(streamAttachments(inStream)), (err, result) => {
           // eslint-disable-next-line keyword-spacing
           if(err) return done(err);
 
@@ -71,7 +71,7 @@ describe('.zip attachments streaming', () => {
         const inStream = streamTest.fromObjects([
           { row: { instanceId: 'subone', name: 'firstfile.ext.enc', content: 'this is my first file' } }
         ]);
-        zipStreamToFiles(zipStreamFromParts(streamAttachments(mockS3, inStream, () => {})), (err, result) => {
+        zipStreamToFiles(zipStreamFromParts(streamAttachments(inStream, () => {})), (err, result) => {
           // eslint-disable-next-line keyword-spacing
           if(err) return done(err);
 
