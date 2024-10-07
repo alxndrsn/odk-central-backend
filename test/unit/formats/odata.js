@@ -813,7 +813,7 @@ describe('odata message composition', () => {
       });
 
       it('should offset subtable row data by skipToken', (done) => {
-        const query = { $skiptoken: QueryOptions.getSkiptoken({ instanceId: 'two', repeatId: 'cf9a1b5cc83c6d6270c1eb98860d294eac5d526d' }) };
+        const query = { $skiptoken: QueryOptions.getSkiptoken({ repeatId: 'cf9a1b5cc83c6d6270c1eb98860d294eac5d526d' }) };
         const inRows = streamTest.fromObjects([
           mockSubmission('one', testData.instances.withrepeat.one),
           mockSubmission('two', testData.instances.withrepeat.two),
