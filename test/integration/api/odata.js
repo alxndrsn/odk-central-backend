@@ -799,7 +799,7 @@ describe('api: /forms/:id.svc', () => {
             instanceId: body.value[0].__id,
           };
           const token = encodeURIComponent(QueryOptions.getSkiptoken(tokenData));
-          body['@odata.nextLink'].should.be.eql(`http://localhost:8989/v1/projects/1/forms/withrepeat.svc/Submissions?%24top=1&%24skiptoken=${(token)}`);
+          body['@odata.nextLink'].should.be.eql(`http://localhost:8989/v1/projects/1/forms/withrepeat.svc/Submissions?%24top=1&%24skiptoken=${token}`);
         });
     }));
 
@@ -817,7 +817,7 @@ describe('api: /forms/:id.svc', () => {
           };
           const token = encodeURIComponent(QueryOptions.getSkiptoken(tokenData));
 
-          const expectedNextLink = `http://localhost:8989/v1/projects/1/forms/withrepeat.svc/Submissions?%24top=1&%24skiptoken=${(token)}`;
+          const expectedNextLink = `http://localhost:8989/v1/projects/1/forms/withrepeat.svc/Submissions?%24top=1&%24skiptoken=${token}`;
           body['@odata.nextLink'].should.eql(expectedNextLink);
           return body['@odata.nextLink'];
         });
@@ -847,7 +847,7 @@ describe('api: /forms/:id.svc', () => {
           };
           const token = encodeURIComponent(QueryOptions.getSkiptoken(tokenData));
 
-          const expectedNextLink = `http://localhost:8989/v1/projects/1/forms/withrepeat.svc/Submissions?%24top=2&%24skiptoken=${(token)}`;
+          const expectedNextLink = `http://localhost:8989/v1/projects/1/forms/withrepeat.svc/Submissions?%24top=2&%24skiptoken=${token}`;
           body['@odata.nextLink'].should.eql(expectedNextLink);
           return body['@odata.nextLink'];
         });
