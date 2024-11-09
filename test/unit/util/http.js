@@ -38,8 +38,16 @@ describe('util/http', () => {
     });
   });
 
-  describe('url()', () => {
+  describe.only('url()', () => {
     const { url } = http;
+
+    it('should reject being called as a normal function with no args', () => {
+      (() => url()).should.throw('Cannot be called directly as a function.');
+    });
+
+    it('should reject being called as a normal function (first arg non-array, missing second arg)', () => {
+      (() => url('/some-path')).should.throw('Cannot be called directly as a function.');
+    });
 
     const a = 'a space';
     const b = 'funnyȩ¸iê';
