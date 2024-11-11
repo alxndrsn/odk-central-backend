@@ -419,33 +419,33 @@ describe('preprocessors', () => {
 
   describe('queryOptionsHandler', () => {
     const { queryOptionsHandler } = preprocessors;
-    it('should set extended if the header is given', () => {
+    it('should set extended if the header is given', async () => {
       const request = createRequest({ method: 'GET', headers: { 'X-Extended-Metadata': 'true' } });
-      const result = queryOptionsHandler(null, new Context(request));
+      const result = await queryOptionsHandler(null, new Context(request));
       result.queryOptions.extended.should.equal(true);
     });
 
-    it('should set extended to false given false', () => {
+    it('should set extended to false given false', async () => {
       const request = createRequest({ method: 'GET', headers: { 'X-Extended-Metadata': 'false' } });
-      const result = queryOptionsHandler(null, new Context(request));
+      const result = await queryOptionsHandler(null, new Context(request));
       result.queryOptions.extended.should.equal(false);
     });
 
-    it('should set extended to false given nothing', () => {
+    it('should set extended to false given nothing', async () => {
       const request = createRequest({ method: 'GET' });
-      const result = queryOptionsHandler(null, new Context(request));
+      const result = await queryOptionsHandler(null, new Context(request));
       result.queryOptions.extended.should.equal(false);
     });
 
-    it('should set offset if a value is given', () => {
+    it('should set offset if a value is given', async () => {
       const request = createRequest({ method: 'GET', query: { offset: '42' } });
-      const result = queryOptionsHandler(null, new Context(request));
+      const result = await queryOptionsHandler(null, new Context(request));
       result.queryOptions.offset.should.equal(42);
     });
 
-    it('should set no offset if no value is given', () => {
+    it('should set no offset if no value is given', async () => {
       const request = createRequest({ method: 'GET', query: { offset: null } });
-      const result = queryOptionsHandler(null, new Context(request));
+      const result = await queryOptionsHandler(null, new Context(request));
       should(result.queryOptions.offset).equal(undefined);
     });
 
@@ -459,15 +459,15 @@ describe('preprocessors', () => {
         });
     });
 
-    it('should set limit if a value is given', () => {
+    it('should set limit if a value is given', async () => {
       const request = createRequest({ method: 'GET', query: { limit: '42' } });
-      const result = queryOptionsHandler(null, new Context(request));
+      const result = await queryOptionsHandler(null, new Context(request));
       result.queryOptions.limit.should.equal(42);
     });
 
-    it('should set no limit if no value is given', () => {
+    it('should set no limit if no value is given', async () => {
       const request = createRequest({ method: 'GET', query: { limit: null } });
-      const result = queryOptionsHandler(null, new Context(request));
+      const result = await queryOptionsHandler(null, new Context(request));
       should(result.queryOptions.limit).equal(undefined);
     });
 
@@ -481,15 +481,15 @@ describe('preprocessors', () => {
         });
     });
 
-    it('should not re-decode query parameters in argData', () => {
+    it('should not re-decode query parameters in argData', async () => {
       const request = createRequest({ method: 'GET', query: { type: 'xyz', q: 'test%20search' } });
-      const result = queryOptionsHandler(null, new Context(request));
+      const result = await queryOptionsHandler(null, new Context(request));
       result.queryOptions.argData.should.eql({ type: 'xyz', q: 'test%20search' });
     });
 
-    it('should not store query parameters as allowed args', () => {
+    it('should not store query parameters as allowed args', async () => {
       const request = createRequest({ method: 'GET', query: { type: 'xyz', q: 'test%20search' } });
-      const result = queryOptionsHandler(null, new Context(request));
+      const result = await queryOptionsHandler(null, new Context(request));
       should.not.exist(result.queryOptions.args);
     });
   });
