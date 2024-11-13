@@ -23,8 +23,16 @@ const qs = (() => {
   }
 })();
 
+const withProtectedProps = req => new Proxy(req, {
+  set(obj, prop, value) {
+    if (prop === 'originalUrl') throw new Error('Attempted to write originalUrl.  See: https://expressjs.com/en/api.html');
+    obj[prop] = value; // eslint-disable-line no-param-reassign
+    return true;
+  }
+});
+
 const createRequest = options => {
-  if (!options?.url) return wrapped.createRequest(options);
+  if (!options?.url) return withProtectedProps(wrapped.createRequest(options));
 
   const { search } = new URL(options.url, 'http://example.test');
   const { query } = options;
@@ -33,7 +41,7 @@ const createRequest = options => {
 
   if (query != null) throw new Error('Unsupported: .query option and query string in .url simultaneously.');
 
-  return wrapped.createRequest({ ...options, query: qs.parse(search.substr(1)) });
+  return withProtectedProps(wrapped.createRequest({ ...options, query: qs.parse(search.substr(1)) }));
 };
 
 const createResponse = options => wrapped.createResponse({ eventEmitter: EventEmitter, ...options });
