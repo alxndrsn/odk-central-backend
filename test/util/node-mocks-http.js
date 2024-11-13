@@ -25,7 +25,7 @@ const qs = (() => {
 
 const withProtectedProps = req => new Proxy(req, {
   set(obj, prop, value) {
-    if (prop === 'originalUrl') throw new Error('Attempted to write originalUrl.  See: https://expressjs.com/en/api.html');
+    if (prop === 'originalUrl') throw new Error('Attempted to write originalUrl.  See: https://expressjs.com/en/api.html#req.originalUrl');
     obj[prop] = value; // eslint-disable-line no-param-reassign
     return true;
   }
