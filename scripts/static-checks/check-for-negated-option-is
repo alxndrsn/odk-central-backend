@@ -4,7 +4,10 @@ log() { echo "[$(basename "$0")] $*"; }
 
 log "Checking negated calls to Option.isDefined()/Option.isEmpty()..."
 
-if git grep -En '!.*is(Defined|Empty)'; then
+if git grep -En '!.*is(Defined|Empty)' lib/ test/ |
+    grep -v lib/model/migrations/20191007-01-backfill-client-audits.js | # don't change legacy migrations
+    grep -v lib/util/option.js # likely acceptable
+    then
   log "!!!"
   log "!!! Negated calls to Option.is*() found."
   log "!!!"

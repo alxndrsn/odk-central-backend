@@ -21,7 +21,7 @@ const skip = [
   'pm2.config.js'
 ];
 
-const files = (process.argv.length > 2 ? process.argv.slice(2) : fs.readFileSync(0, { encoding:'utf8' }).split('\n'))
+const files = (process.argv.length > 2 ? process.argv.slice(2) : fs.readFileSync(0, { encoding: 'utf8' }).split('\n'))
   .filter(f => f.endsWith('.js'))
   .filter(f => !skip.some(skipEntry => {
     if (skipEntry.endsWith('.js')) return f === skipEntry;
