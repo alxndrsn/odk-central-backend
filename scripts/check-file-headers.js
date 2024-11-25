@@ -14,14 +14,14 @@ const header = `// Copyright 2017 ODK Central Developers
 const thisYearHeader = header.replace('2017', new Date().getFullYear());
 
 const skip = [
+  'scripts/',
   'test/',
   'lib/bin/.eslintrc.js',
   'lib/util/quarantine/pkcs7.js',
   'pm2.config.js'
 ];
 
-const files = (process.argv.length > 2 ? process.argv.slice(2) : fs.readFileSync(0).split('\n'));
-  .split('\n')
+const files = (process.argv.length > 2 ? process.argv.slice(2) : fs.readFileSync(0, { encoding:'utf8' }).split('\n'))
   .filter(f => f.endsWith('.js'))
   .filter(f => !skip.some(skipEntry => {
     if (skipEntry.endsWith('.js')) return f === skipEntry;
