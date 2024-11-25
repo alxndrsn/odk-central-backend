@@ -1,0 +1,14 @@
+#!/bin/bash -eu
+set -o pipefail
+log() { echo "[$(basename "$0")] $*"; }
+
+log "Checking for knex in migrations newer than 2021..."
+if git grep -E '(db|knex)[.(]' lib/model/migrations/ |
+    grep -Ev '(db|knex)\.raw\(' |
+    grep -Ev '^lib/model/migrations/(200|201|202[0-3])'; then
+  log "!!!"
+  log "!!! knex found in new migration(s)!"
+  log "!!!"
+  exit 1
+fi
+log "All OK."
