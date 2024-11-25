@@ -1,0 +1,3 @@
+#!/bin/bash -eu
+set -o pipefail
+git ls-files | ./scripts/check-file-headers.js
