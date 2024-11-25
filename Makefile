@@ -155,10 +155,6 @@ rm-docker-postgres: stop-docker-postgres
 ################################################################################
 # OTHER
 
-.PHONY: check-file-headers
-check-file-headers:
-	git ls-files | node lib/bin/check-file-headers.js
-
 .PHONY: api-docs
 api-docs:
 	(test "$(docker images -q odk-docs)" || docker build --file odk-docs.dockerfile -t odk-docs .) && \
