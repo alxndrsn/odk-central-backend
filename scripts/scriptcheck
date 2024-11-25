@@ -1,0 +1,82 @@
+#!/bin/bash -eu
+set -o pipefail
+
+log() {
+  echo >&2 "[scriptcheck] $*"
+}
+
+awklint() {
+  # See: https://stackoverflow.com/questions/7165167/are-there-any-awk-syntax-checkers
+  awk --source 'BEGIN { exit(0) } END { exit(0) }' --file "$1"
+}
+
+eslint() {
+  ESLINT_USE_FLAT_CONFIG=false ./node_modules/.bin/eslint "$1"
+}
+
+getExecutable() {
+  path="$1"
+
+  filename="$(basename -- "$path")"
+  extension="${filename##*.}"
+
+  case "$extension" in
+    awk) echo "awk"; return ;;
+  esac
+
+  shebang="$(head -n1 "$path")"
+  if grep -q "/bin/env" <<< "$shebang"; then
+    executable="$(sed -E -e 's:#!\s*(/usr)?/bin/env\s+\b([a-z]+)\b.*:\2:' <<< "$shebang")"
+  else
+    executable="$(basename "$(sed -E -e 's:#!\s*([a-z/]+).*:\1:' <<< "$shebang")")"
+  fi
+  echo "$executable"
+}
+
+checkfile() {
+  local path
+  path="$1"
+
+  log "  Processing: $path..."
+
+  if [[ "$path" = *.json ]]; then
+    log "    skipping JSON file."
+    return
+  fi
+
+  executable="$(getExecutable "$path")"
+  case "$executable" in
+    awk)  log "    processing with awklint...";    awklint    "$path" ;;
+    bash) log "    processing with shellcheck..."; shellcheck "$path" ;;
+    node) log "    processing with eslint..."    ; eslint     "$path" ;;
+    *)
+      log "    !!! unsupported executable type: $executable !!!"
+      exit 1 ;;
+  esac
+  log "    OK."
+}
+
+shopt -s globstar nullglob # see https://www.shellcheck.net/wiki/SC2044
+
+while [[ $# -gt 0 ]]; do
+  log "Checking $1..."
+
+  if [[ -d "$1" ]]; then
+    for path in "$1"/**/*; do
+      if [[ -d "$path" ]]; then continue; fi
+
+      # ignore 3rd-party script(s) here, e.g.:
+      # if [[ "$path" = ./scripts/wait-for-it.sh ]]; then continue; fi
+
+      checkfile "$path"
+    done
+  elif [[ -f "$1" ]]; then
+    checkfile "$1"
+  else
+    log "!!! Path not found: $1"
+    exit 1
+  fi
+
+  log "$1 OK."
+  shift
+done
