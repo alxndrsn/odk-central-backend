@@ -1,0 +1,17 @@
+#!/bin/bash -eu
+set -o pipefail
+log() { echo "[$(basename "$0")] $*"; }
+
+log "Checking negated calls to Option.isDefined()/Option.isEmpty()..."
+
+if git grep -En '!.*is(Defined|Empty)'; then
+  log "!!!"
+  log "!!! Negated calls to Option.is*() found."
+  log "!!!"
+  log "!!! * !Option.isEmpty() can be replaced with Option.isDefined()"
+  log "!!! * !Option.isDefined() can be replaced with Option.isEmpty()"
+  log "!!!"
+  exit 1
+fi
+
+log "Everything looks OK."

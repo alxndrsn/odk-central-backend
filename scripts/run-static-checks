@@ -1,0 +1,6 @@
+#!/bin/bash -eu
+set -o pipefail
+
+for check in ./scripts/static-checks/*; do
+  "$check"
+done

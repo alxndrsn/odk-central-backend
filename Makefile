@@ -100,11 +100,15 @@ debug: base
 # TEST & LINT
 
 .PHONY: test
-test: lint
+test: test-static
 	BCRYPT=insecure npx mocha --recursive
 
+.PHONY: test
+test-static: lint
+	./scripts/run-static-checks
+
 .PHONY: test-ci
-test-ci: lint
+test-ci: test-static
 	BCRYPT=insecure npx mocha --recursive --reporter test/ci-mocha-reporter.js
 
 .PHONY: test-fast
