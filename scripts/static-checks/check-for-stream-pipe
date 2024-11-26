@@ -2,10 +2,6 @@
 set -o pipefail
 log() { echo "[$(basename "$0")] $*"; }
 
-if [[ "${CI-}" != "" ]]; then
-  exit # FIXME disabled on CI to check test failures; re-enable
-fi
-
 log "Checking for stream.pipe()..."
 
 if git grep -En '\bpipe\s*\([^)]+\)' lib/ | grep -v -- 'slint-ignore:pipe'; then
