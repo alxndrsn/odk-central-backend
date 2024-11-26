@@ -1,0 +1,21 @@
+#!/bin/bash -eu
+set -o pipefail
+log() { echo "[$(basename "$0")] $*"; }
+
+log "Checking for stream.pipe()..."
+
+if git grep -En '\bpipe\s*\([^)]+\)' lib/ | grep -v -- 'slint-ignore:pipe'; then
+  log "!!!"
+  log "!!! Possible call(s) to stream.pipe() found."
+  log "!!! This function may cause memory leaks, so take care."
+  log "!!! Consider changing to stream.pipeline()."
+  log "!!!"
+  log "!!! See:"
+  log "!!!"
+  log "!!!   * https://nodejs.org/api/stream.html#readablepipedestination-options"
+  log "!!!   * https://stackoverflow.com/questions/58875655/whats-the-difference-between-pipe-and-pipeline-on-streams"
+  log "!!!"
+  exit 1
+fi
+
+log "Everything looks OK."
