@@ -220,8 +220,7 @@ describe('util/crypto', () => {
         chunks.push(ciphertext.subarray(288, 328));
         chunks.push(ciphertext.subarray(328, 336));
 
-        streamSubmissionCleartext(aesKey, ivs(1), streamTest.fromChunks(chunks))
-          .pipe(streamTest.toText((_, result) => {
+          ._pipe(streamTest.toText((_, result) => {
             result.should.equal(plaintext);
             done();
           }));
@@ -241,7 +240,7 @@ describe('util/crypto', () => {
         chunks.push(ciphertext.subarray(332, 336));
 
         streamSubmissionCleartext(aesKey, ivs(1), streamTest.fromChunks(chunks))
-          .pipe(streamTest.toText((_, result) => {
+          ._pipe(streamTest.toText((_, result) => {
             result.should.equal(plaintext);
             done();
           }));
