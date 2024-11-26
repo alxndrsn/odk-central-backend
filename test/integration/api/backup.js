@@ -10,8 +10,9 @@ describe.only('api: /backup', () => {
 
     it('should return TODO if the user can backup @slow', testService((service) => {
       return service.login('alice', (asAlice) =>
-        httpZipResponseToFiles(asAlice.post('/v1/backup'))
-          .then(res => console.log('res:', res)));
+        httpZipResponseToFiles(asAlice.post('/v1/backup').expect(200))
+          .then(res => {
+          }));
     }));
   });
 });
