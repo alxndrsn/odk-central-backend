@@ -2,7 +2,8 @@ name: Full Standard Test Suite
 
 on: push
 
-permissions: {}
+permissions:
+  contents: none
 
 jobs:
   standard-tests:
