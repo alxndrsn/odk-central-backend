@@ -2,6 +2,8 @@ name: OIDC integration tests
 
 on: push
 
+permissions: {}
+
 jobs:
   oidc-integration-test:
     timeout-minutes: 6

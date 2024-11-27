@@ -2,6 +2,8 @@ name: Full Standard Test Suite
 
 on: push
 
+permissions: {}
+
 jobs:
   standard-tests:
     timeout-minutes: 20

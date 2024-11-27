@@ -2,6 +2,8 @@ name: Soak Test
 
 on: push
 
+permissions: {}
+
 jobs:
   soak-test:
     timeout-minutes: 15

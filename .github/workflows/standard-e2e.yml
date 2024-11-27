@@ -2,6 +2,8 @@ name: Standard E2E Tests
 
 on: push
 
+permissions: {}
+
 env:
   LOG_LEVEL: DEBUG
 

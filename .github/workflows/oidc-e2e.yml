@@ -2,6 +2,8 @@ name: OIDC e2e tests
 
 on: push
 
+permissions: {}
+
 env:
   DEBUG: pw:api
   ODK_PLAYWRIGHT_BROWSERS: chromium,firefox,webkit
