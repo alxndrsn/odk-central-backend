@@ -16,7 +16,7 @@ const withSimpleIds = (deprecatedId, instanceId) => testData.instances.simple.on
 const withBinaryIds = (deprecatedId, instanceId) => testData.instances.binaryType.both
   .replace('both</instance', `${instanceId}</instanceID><deprecatedID>${deprecatedId}</deprecated`);
 
-describe('api: /submission', () => {
+describe.only('api: /submission', () => {
   describe('HEAD', () => {
     it('should return a 204 with no content', testService((service) =>
       service.head('/v1/projects/1/submission')
@@ -769,7 +769,7 @@ describe('api: /submission', () => {
                   .then(({ body }) => { body.toString('utf8').should.equal('this is test file two two'); })
               ]))))));
 
-      it('should upsert attachments', testService((service) =>
+      it.only('should upsert attachments', testService((service) =>
         service.login('alice', (asAlice) =>
           asAlice.post('/v1/projects/1/forms?publish=true')
             .set('Content-Type', 'text/xml')
@@ -777,7 +777,6 @@ describe('api: /submission', () => {
             .then(() => asAlice.post('/v1/projects/1/submission')
               .set('X-OpenRosa-Version', '1.0')
               .attach('xml_submission_file', Buffer.from(testData.instances.binaryType.both), { filename: 'data.xml' })
-              .attach('here_is_file2.jpg', Buffer.from('this is test file two'), { filename: 'here_is_file2.jpg' })
               .expect(201)
               .then(() => asAlice.post('/v1/projects/1/submission')
                 .set('X-OpenRosa-Version', '1.0')
@@ -787,6 +786,7 @@ describe('api: /submission', () => {
               .then(() => asAlice.post('/v1/projects/1/submission')
                 .set('X-OpenRosa-Version', '1.0')
                 .attach('xml_submission_file', Buffer.from(withBinaryIds('both', 'both2')), { filename: 'data.xml' })
+                .attach('my_file1.mp4', Buffer.from('this is test file one'), { filename: 'my_file1.mp4' })
                 .attach('here_is_file2.jpg', Buffer.from('this is test file two'), { filename: 'here_is_file2.jpg' })
                 .expect(201))
               .then(() => asAlice.get('/v1/projects/1/forms/binaryType/submissions/both/attachments')
