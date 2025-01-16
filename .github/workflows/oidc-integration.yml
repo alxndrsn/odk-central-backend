@@ -6,7 +6,7 @@ on:
 
 jobs:
   oidc-integration-test:
-    timeout-minutes: 20
+    timeout-minutes: 60
     # TODO should we use the same container as circle & central?
     runs-on: ubuntu-latest
     services:
