@@ -164,6 +164,9 @@ const testServiceFullTrx = (test) => function() {
   return test(augment(request(service(baseContainer))), baseContainer);
 };
 
+// some tests handle their own database setup & teardown.  for these cases, we offer testServiceRaw:
+const testServiceRaw = (test) => () => test(augment(request(service(baseContainer))), baseContainer);
+
 // for some tests we just want a container, without any of the webservice stuffs between.
 // this is that, with the same transaction trickery as a normal test.
 const testContainer = (test) => () => new Promise((resolve, reject) => {
@@ -178,6 +181,9 @@ const testContainerFullTrx = (test) => function() {
   mustReinitAfter = this.test.fullTitle();
   return test(baseContainer);
 };
+
+// complete the cube of options:
+const testContainerRaw = (test) => () => test(baseContainer);
 
 // called to get a container context per task. ditto all // from testService.
 // here instead our weird hijack work involves injecting our own constructed
@@ -226,4 +232,4 @@ const withClosedForm = (f) => async (service) => {
   return f(service);
 };
 
-module.exports = { testService, testServiceFullTrx, testContainer, testContainerFullTrx, testTask, testTaskFullTrx, withClosedForm };
+module.exports = { testService, testServiceFullTrx, testServiceRaw, testContainer, testContainerFullTrx, testContainerRaw, testTask, testTaskFullTrx, withClosedForm, initialize };
