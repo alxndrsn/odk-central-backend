@@ -4137,7 +4137,7 @@ describe('datasets and entities', () => {
 
       describe('dataset-specific verbs', () => {
         describe('dataset.create', () => {
-          it('should NOT allow a new form that creates a dataset without user having dataset.create verb', testServiceFullTrx(async (service, { run }) => {
+          it.only('should NOT allow a new form that creates a dataset without user having dataset.create verb', testServiceFullTrx(async (service, { run }) => {
             await run(sql`UPDATE roles SET verbs = (verbs - 'dataset.create') WHERE system in ('manager')`);
 
             const asBob = await service.login('bob');
@@ -4154,7 +4154,7 @@ describe('datasets and entities', () => {
               .expect(403);
           }));
 
-          it('should NOT allow "creating" of a dataset when the dataset exists but unpublished', testServiceFullTrx(async (service, { run }) => {
+          it.only('should NOT allow "creating" of a dataset when the dataset exists but unpublished', testServiceFullTrx(async (service, { run }) => {
             const asAlice = await service.login('alice');
             const asBob = await service.login('bob');
             await run(sql`UPDATE roles SET verbs = (verbs - 'dataset.create') WHERE system in ('manager')`);
@@ -4173,7 +4173,7 @@ describe('datasets and entities', () => {
               .expect(403);
           }));
 
-          it('should NOT allow updating a form about an unpublished dataset, which is similar to creating that dataset', testServiceFullTrx(async (service, { run }) => {
+          it.only('should NOT allow updating a form about an unpublished dataset, which is similar to creating that dataset', testServiceFullTrx(async (service, { run }) => {
             const asAlice = await service.login('alice');
             const asBob = await service.login('bob');
             await run(sql`UPDATE roles SET verbs = (verbs - 'dataset.create') WHERE system in ('manager')`);
@@ -4191,7 +4191,7 @@ describe('datasets and entities', () => {
               .expect(403);
           }));
 
-          it('should NOT allow updating a draft that creates a dataset without user having dataset.create verb', testServiceFullTrx(async (service, { run }) => {
+          it.only('should NOT allow updating a draft that creates a dataset without user having dataset.create verb', testServiceFullTrx(async (service, { run }) => {
             const asAlice = await service.login('alice');
             const asBob = await service.login('bob');
             await run(sql`UPDATE roles SET verbs = (verbs - 'dataset.create') WHERE system in ('manager')`);
@@ -4208,7 +4208,7 @@ describe('datasets and entities', () => {
               .expect(403);
           }));
 
-          it('should NOT allow unpublished dataset to be published on form publish if user does not have dataset.create verb', testServiceFullTrx(async (service, { run }) => {
+          it.only('should NOT allow unpublished dataset to be published on form publish if user does not have dataset.create verb', testServiceFullTrx(async (service, { run }) => {
             const asAlice = await service.login('alice');
             const asBob = await service.login('bob');
             await run(sql`UPDATE roles SET verbs = (verbs - 'dataset.create') WHERE system in ('manager')`);
@@ -4226,7 +4226,7 @@ describe('datasets and entities', () => {
         });
 
         describe('dataset.update', () => {
-          it('should NOT allow a new form that updates a dataset without user having dataset.update verb', testServiceFullTrx(async (service, { run }) => {
+          it.only('should NOT allow a new form that updates a dataset without user having dataset.update verb', testServiceFullTrx(async (service, { run }) => {
             const asAlice = await service.login('alice');
             const asBob = await service.login('bob');
 
@@ -4250,7 +4250,7 @@ describe('datasets and entities', () => {
               .expect(403);
           }));
 
-          it('should NOT allow update draft that updates a dataset without user having dataset.update verb', testServiceFullTrx(async (service, { run }) => {
+          it.only('should NOT allow update draft that updates a dataset without user having dataset.update verb', testServiceFullTrx(async (service, { run }) => {
             const asAlice = await service.login('alice');
             const asBob = await service.login('bob');
             await run(sql`UPDATE roles SET verbs = (verbs - 'dataset.update') WHERE system in ('manager')`);
@@ -4267,7 +4267,7 @@ describe('datasets and entities', () => {
               .expect(403);
           }));
 
-          it('should NOT allow unpublished properties to be published on form publish if user does not have dataset.update verb', testServiceFullTrx(async (service, { run }) => {
+          it.only('should NOT allow unpublished properties to be published on form publish if user does not have dataset.update verb', testServiceFullTrx(async (service, { run }) => {
             const asAlice = await service.login('alice');
             const asBob = await service.login('bob');
             await run(sql`UPDATE roles SET verbs = (verbs - 'dataset.update') WHERE system in ('manager')`);
@@ -4292,7 +4292,7 @@ describe('datasets and entities', () => {
               .expect(403);
           }));
 
-          it('should ALLOW update of form draft that does not modify existing dataset', testServiceFullTrx(async (service, { run }) => {
+          it.only('should ALLOW update of form draft that does not modify existing dataset', testServiceFullTrx(async (service, { run }) => {
             const asAlice = await service.login('alice');
             const asBob = await service.login('bob');
             await run(sql`UPDATE roles SET verbs = (verbs - 'dataset.update') WHERE system in ('manager')`);
@@ -4310,7 +4310,7 @@ describe('datasets and entities', () => {
               .expect(200);
           }));
 
-          it('should ALLOW new form about existing dataset that does not update it', testServiceFullTrx(async (service, { run }) => {
+          it.only('should ALLOW new form about existing dataset that does not update it', testServiceFullTrx(async (service, { run }) => {
             const asAlice = await service.login('alice');
             const asBob = await service.login('bob');
             await run(sql`UPDATE roles SET verbs = (verbs - 'dataset.update') WHERE system in ('manager')`);

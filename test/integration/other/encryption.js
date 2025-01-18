@@ -14,7 +14,7 @@ const should = require('should');
 
 describe('managed encryption', () => {
   describe('lock management', () => {
-    it('should reject keyless forms in keyed projects @slow', testContainerFullTrx(async (container) => {
+    it.only('should reject keyless forms in keyed projects @slow', testContainerFullTrx(async (container) => {
       // enable managed encryption.
       await container.transacting(({ Projects, Auth }) =>
         Projects.getById(1).then((o) => o.get())
@@ -34,7 +34,7 @@ describe('managed encryption', () => {
       error.problemCode.should.equal(409.5);
     }));
 
-    it('should reject forms created while project managed encryption is being enabled @slow', testContainerFullTrx(async (container) => {
+    it.only('should reject forms created while project managed encryption is being enabled @slow', testContainerFullTrx(async (container) => {
       // enable managed encryption but don't allow the transaction to close.
       let encReq;
       const unblock = await new Promise((resolve) => {

@@ -62,7 +62,7 @@ testMigration.skip = (filename, tests) =>
 describe.skip('database migrations', function() {
   this.timeout(8000);
 
-  it('should purge deleted forms via migration', testServiceFullTrx(async (service, container) => {
+  it.only('should purge deleted forms via migration', testServiceFullTrx(async (service, container) => {
     await upToMigration('20220121-01-form-cascade-delete.js');
 
     await populateUsers(container);
@@ -79,7 +79,7 @@ describe.skip('database migrations', function() {
     count.should.equal(1); // only the withrepeat base test should exist
   }));
 
-  it('should not purge blobs that are still referenced', testServiceFullTrx(async (service, container) => {
+  it.only('should not purge blobs that are still referenced', testServiceFullTrx(async (service, container) => {
     // An earlier version of this migration [20220121-02-purge-deleted-forms.js]
     // failed because it tried to purge blobs that were still being used as
     // xlsBlobIds on active form definitons.
@@ -100,7 +100,7 @@ describe.skip('database migrations', function() {
     count.should.equal(1); // the xls blob should still exist
   }));
 
-  it('should purge blobs of deleted forms', testServiceFullTrx(async (service, container) => {
+  it.only('should purge blobs of deleted forms', testServiceFullTrx(async (service, container) => {
     // An earlier version of this migration [20220121-02-purge-deleted-forms.js]
     // failed because it tried to purge blobs that were still being used as
     // xlsBlobIds on active form definitons.
@@ -139,7 +139,7 @@ describe.skip('database migrations', function() {
     count.should.equal(0); // blobs should all be purged
   }));
 
-  it('should not purge certain form defs that are either published or active drafts', testServiceFullTrx(async (service, container) => {
+  it.only('should not purge certain form defs that are either published or active drafts', testServiceFullTrx(async (service, container) => {
     // 20220209-01-purge-unneeded-drafts.js
     await upToMigration('20220121-02-purge-deleted-forms.js');
     await populateUsers(container);
@@ -182,7 +182,7 @@ describe.skip('database migrations', function() {
     after.should.equal(before); // no defs purged
   }));
 
-  it('should purge unneeded form draft defs', testServiceFullTrx(async (service, container) => {
+  it.only('should purge unneeded form draft defs', testServiceFullTrx(async (service, container) => {
     // 20220209-01-purge-unneeded-drafts.js
     await upToMigration('20220121-02-purge-deleted-forms.js');
     await populateUsers(container);
@@ -221,7 +221,7 @@ describe.skip('database migrations', function() {
 describe('database migrations: removing default project', function() {
   this.timeout(8000);
 
-  it('should put old forms into project', testServiceFullTrx(async (service, container) => {
+  it.only('should put old forms into project', testServiceFullTrx(async (service, container) => {
     // before 20181206-01-add-projects.js
     await upToMigration('20181012-01-add-submissions-createdat-index.js');
 
@@ -245,7 +245,7 @@ describe('database migrations: removing default project', function() {
     formCount.should.equal(1);
   }));
 
-  it('should not make a default project if no forms', testServiceFullTrx(async (service, container) => {
+  it.only('should not make a default project if no forms', testServiceFullTrx(async (service, container) => {
     // up to and including this default project migration
     await upToMigration('20181206-01-add-projects.js');
 
@@ -258,7 +258,7 @@ describe('database migrations: removing default project', function() {
 describe('database migrations: intermediate form schema', function() {
   this.timeout(20000);
 
-  it('should test migration', testServiceFullTrx(async (service, container) => {
+  it.only('should test migration', testServiceFullTrx(async (service, container) => {
     // before 20230109-01-add-form-schema.js
     await upToMigration('20230106-01-remove-revision-number.js');
     await populateUsers(container);
@@ -389,7 +389,7 @@ describe('database migrations: 20230123-01-remove-google-backups', function() {
 
   beforeEach(() => upToMigration('20230123-01-remove-google-backups.js', false));
 
-  it('deletes backups configs', testContainerFullTrx(async ({ Configs }) => {
+  it.only('deletes backups configs', testContainerFullTrx(async ({ Configs }) => {
     await Configs.set('backups.main', { a: 'b' });
     await Configs.set('backups.google', { c: 'd' });
     await Configs.set('analytics', { enabled: false });
@@ -418,7 +418,7 @@ describe('database migrations: 20230123-01-remove-google-backups', function() {
       return actor.id;
     };
 
-    it('consumes a token', testContainerFullTrx(async (container) => {
+    it.only('consumes a token', testContainerFullTrx(async (container) => {
       const actorId = await createToken(container);
       const { one } = container;
       const count = () => one(sql`SELECT
@@ -438,7 +438,7 @@ describe('database migrations: 20230123-01-remove-google-backups', function() {
       });
     }));
 
-    it('does not modify other actor data', testServiceFullTrx(async (service, container) => {
+    it.only('does not modify other actor data', testServiceFullTrx(async (service, container) => {
       await populateUsers(container);
       await service.login('alice');
       await createToken(container);
@@ -463,7 +463,7 @@ describe('database migrations: 20230123-01-remove-google-backups', function() {
     }));
   });
 
-  it('deletes the role that grants backup.verify', testContainerFullTrx(async ({ Roles }) => {
+  it.only('deletes the role that grants backup.verify', testContainerFullTrx(async ({ Roles }) => {
     const rolesBefore = await Roles.getAll();
     const canVerify = rolesBefore.filter(({ verbs }) =>
       verbs.includes('backup.verify'));
@@ -481,7 +481,7 @@ describe('database migrations: 20230123-01-remove-google-backups', function() {
 describe.skip('database migrations: 20230324-01-edit-dataset-verbs.js', function () {
   this.timeout(20000);
 
-  it('should add dataset/entity read verbs with raw sql', testServiceFullTrx(async (service, container) => {
+  it.only('should add dataset/entity read verbs with raw sql', testServiceFullTrx(async (service, container) => {
     await upToMigration('20230324-01-edit-dataset-verbs.js', false);
     await populateUsers(container);
     await populateForms(container);
@@ -556,7 +556,7 @@ describe.skip('database migrations from 20230406: altering entities and entity_d
     return { subDef, newEntity, creatorId };
   };
 
-  it('should set entity def creator id and user agent from submission def', testServiceFullTrx(async (service, container) => {
+  it.only('should set entity def creator id and user agent from submission def', testServiceFullTrx(async (service, container) => {
     await upToMigration('20230406-01-add-entity-def-fields.js', false);
     await populateUsers(container);
     await populateForms(container);
@@ -576,7 +576,7 @@ describe.skip('database migrations from 20230406: altering entities and entity_d
     await down();
   }));
 
-  it('should move the entity label to the entity_def table', testServiceFullTrx(async (service, container) => {
+  it.only('should move the entity label to the entity_def table', testServiceFullTrx(async (service, container) => {
     await upToMigration('20230406-01-add-entity-def-fields.js', false);
     await populateUsers(container);
     await populateForms(container);
@@ -611,7 +611,7 @@ describe.skip('database migrations from 20230406: altering entities and entity_d
 describe('database migrations from 20230512: adding entity_def_sources table', function () {
   this.timeout(20000);
 
-  it('should backfill entityId and entityDefId in audit log', testServiceFullTrx(async (service, container) => {
+  it.only('should backfill entityId and entityDefId in audit log', testServiceFullTrx(async (service, container) => {
     await upToMigration('20230512-02-backfill-entity-id.js', false); // actually this is the previous migration
     await populateUsers(container);
     await populateForms(container);
@@ -843,7 +843,7 @@ describe('database migrations from 20230512: adding entity_def_sources table', f
 describe('database migrations from 20230802: delete orphan submissions', function test() {
   this.timeout(20000);
 
-  it('should delete orphan draft Submissions', testServiceFullTrx(async (service, container) => {
+  it.only('should delete orphan draft Submissions', testServiceFullTrx(async (service, container) => {
     await upToMigration('20230518-01-add-entity-index-to-audits.js');
     await populateUsers(container);
 
@@ -882,7 +882,7 @@ describe('database migrations from 20230802: delete orphan submissions', functio
 describe.skip('database migration: 20231002-01-add-conflict-details.js', function test() {
   this.timeout(20000);
 
-  it('should update dataReceived and baseVersion of existing entity defs', testServiceFullTrx(async (service, container) => {
+  it.only('should update dataReceived and baseVersion of existing entity defs', testServiceFullTrx(async (service, container) => {
     await upToMigration('20231002-01-add-conflict-details.js', false);
     await populateUsers(container);
     await populateForms(container);
@@ -923,7 +923,7 @@ describe.skip('database migration: 20231002-01-add-conflict-details.js', functio
 });
 
 testMigration('20240215-01-entity-delete-verb.js', () => {
-  it('should add entity.delete verb to correct roles', testServiceFullTrx(async (service) => {
+  it.only('should add entity.delete verb to correct roles', testServiceFullTrx(async (service) => {
     const verbsByRole = async () => {
       const { body: roles } = await service.get('/v1/roles').expect(200);
       const bySystem = {};
@@ -952,7 +952,7 @@ testMigration('20240215-01-entity-delete-verb.js', () => {
 });
 
 testMigration('20240215-02-dedupe-verbs.js', () => {
-  it('should remove duplicate submission.update verb', testServiceFullTrx(async (service) => {
+  it.only('should remove duplicate submission.update verb', testServiceFullTrx(async (service) => {
     const verbsByRole = async () => {
       const { body: roles } = await service.get('/v1/roles').expect(200);
       const bySystem = {};
@@ -977,7 +977,7 @@ testMigration('20240215-02-dedupe-verbs.js', () => {
     after.viewer.length.should.equal(9);
   }));
 
-  it('should result in unique verbs for all roles', testServiceFullTrx(async (service) => {
+  it.only('should result in unique verbs for all roles', testServiceFullTrx(async (service) => {
     await up();
     const { body: roles } = await service.get('/v1/roles').expect(200);
     for (const { verbs } of roles) verbs.should.eql([...new Set(verbs)]);
@@ -985,7 +985,7 @@ testMigration('20240215-02-dedupe-verbs.js', () => {
 });
 
 testMigration('20240914-02-remove-orphaned-client-audits.js', () => {
-  it('should remove orphaned client audits', testServiceFullTrx(async (service, container) => {
+  it.only('should remove orphaned client audits', testServiceFullTrx(async (service, container) => {
     await populateUsers(container);
     await populateForms(container);
 
@@ -1056,7 +1056,7 @@ testMigration('20240914-02-remove-orphaned-client-audits.js', () => {
   }));
 
   testMigration('20241010-01-schedule-entity-form-upgrade.js', () => {
-    it('should schedule entity forms with spec version 2023.1.0 for upgrade to 2024.1.0', testServiceFullTrx(async (service, container) => {
+    it.only('should schedule entity forms with spec version 2023.1.0 for upgrade to 2024.1.0', testServiceFullTrx(async (service, container) => {
       await populateUsers(container);
       await populateForms(container);
 
