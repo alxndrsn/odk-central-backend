@@ -54,7 +54,7 @@ testMigration.only = (filename, tests) =>
 testMigration.skip = (filename, tests) =>
   testMigration(filename, tests, { skip: true });
 
-describe('database migrations', () => {
+describe.only('database migrations', () => {
   after(async function() {
     this.timeout(0);
     await initialize();
