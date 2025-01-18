@@ -1,3 +1,4 @@
+const { execSync } = require('node:child_process');
 const { readFileSync } = require('fs');
 const appRoot = require('app-root-path');
 const { mergeRight } = require('ramda');
@@ -5,7 +6,6 @@ const { sql } = require('slonik');
 const { readdirSync } = require('fs');
 const { join } = require('path');
 const request = require('supertest');
-const { noop } = require(appRoot + '/lib/util/util');
 const { task } = require(appRoot + '/lib/task/task');
 const authenticateUser = require('../util/authenticate-user');
 const testData = require('../data/xml');
@@ -16,7 +16,8 @@ const { knexConnect } = require(appRoot + '/lib/model/migrate');
 
 // slonik connection pool
 const { slonikPool } = require(appRoot + '/lib/external/slonik');
-const db = slonikPool(config.get('test.database'));
+const dbConfig = config.get('test.database');
+const db = slonikPool(dbConfig);
 
 // set up our mailer.
 const env = config.get('default.env');
@@ -73,16 +74,13 @@ const populate = (container, [ head, ...tail ] = fixtures) =>
 // in that case.
 const initialize = async () => {
   const migrator = knexConnect(config.get('test.database'));
-  const { log } = console;
   try {
     await migrator.raw('drop owned by current_user');
-    // Silence logging from migrations.
-    console.log = noop; // eslint-disable-line no-console
-    await migrator.migrate.latest({ directory: appRoot + '/lib/model/migrations' });
   } finally {
-    console.log = log; // eslint-disable-line no-console
     await migrator.destroy();
   }
+
+  execSync('make migrations', { env: { ...process.env, NODE_CONFIG: JSON.stringify({ default: { database: dbConfig } }) } });
 
   return withDefaults({ db, context, enketo, env, s3 }).transacting(populate);
 };
