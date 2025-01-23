@@ -118,11 +118,8 @@ function assertIncludes(actual, expected) {
 async function rowsExistFor(tableName, ...rows) {
   if (!rows.length) throw new Error(`Attempted to insert 0 rows into table ${tableName}`);
 
-  assertAllHaveSameProps(rows); // eslint-disable-line no-use-before-define
-  const colNames = Object.keys(rows[0]);
-  if (!colNames.length) throw new Error(`Attempted to insert data with 0 defined columns`);
-
   const table = sql.identifier([tableName]);
+  const colNames = colNamesFrom(rows); // eslint-disable-line no-use-before-define
   const cols = sql.join(colNames.map(k => sql.identifier([k])), sql`,`);
 
   return db.query(
@@ -132,6 +129,33 @@ async function rowsExistFor(tableName, ...rows) {
           FROM JSON_POPULATE_RECORDSET(NULL::${table}, ${JSON.stringify(rows)})
     `,
   );
+}
+
+function colNamesFrom(objects) {
+  assertAllHaveSameProps(objects); // eslint-disable-line no-use-before-define
+
+  const colNames = Object.keys(objects[0]);
+  if (!colNames.length) throw new Error('0 columns defined!');
+
+  return colNames;
+}
+
+async function assertRowCount(tableName, expectedCount) {
+  const actualCount = await db.oneFirst(sql`SELECT COUNT(*) FROM ${sql.identifier([tableName])}`);
+  assert.equal(actualCount, expectedCount);
+}
+
+async function assertTableIncludes(tableName, ...expected) {
+  const table = sql.identifier([tableName]);
+  const colNames = colNamesFrom(expected);
+
+  const actualLength = await db.oneFirst(sql`
+    SELECT COUNT(*)
+      FROM ${table} AS a
+      INNER JOIN JSON_POPULATE_RECORDSET(NULL::${table}, ${JSON.stringify(expected)}) AS b
+        ON    ${sql.join(colNames.map(k => sql`${sql.identifier(['a', k])} = ${sql.identifier(['b', k])}`), sql` AND `)}
+  `);
+  assert.equal(actualLength, expected.length, `Expected ${expected.length} matching rows, but got ${actualLength}`);
 }
 
 async function assertTableContents(tableName, ...expected) {
@@ -176,8 +200,10 @@ function assertAllHaveSameProps(list) {
 
 module.exports = {
   assertIndexExists,
+  assertRowCount,
   assertTableContents,
   assertTableDoesNotExist,
+  assertTableIncludes,
   assertTableSchema,
 
   describeMigration,
