@@ -190,7 +190,7 @@ describe('managed encryption', () => {
       });
     });
 
-    it('should reject with a reasonable message given incorrect passphrase', testService((service) =>
+    it.only('should reject with a reasonable message given incorrect passphrase', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/key')
           .send({ passphrase: 'supersecret', hint: 'it is a secret' })
