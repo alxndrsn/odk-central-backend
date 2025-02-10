@@ -10,7 +10,7 @@ const { exhaust } = require(appRoot + '/lib/worker/worker');
 
 describe('worker: entity', () => {
   describe('should not make an entity or log anything about entities', () => {
-    it.only('should not make entity for approved submission for non-entity form', testService(async (service, container) => {
+    it('should not make entity for approved submission for non-entity form', testService(async (service, container) => {
       // This submission contains no entity data. The worker will look at it anyway
       // to establish that it isn't about an entity, but it should not log any entity-related event.
       await service.login('alice', (asAlice) =>
