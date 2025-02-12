@@ -1994,8 +1994,16 @@ describe('Entities API', () => {
     // `getById` creates an advisory lock which blocks other transactions to do the same.
     // Once first transaction updates the Entity, only then second transaction is able
     // to get the Entity.
-    it.only('should not allow parallel updates to the same Entity', testServiceFullTrx(async (service, container) => {
+    it.only('should not allow parallel updates to the same Entity', testServiceFullTrx(async function(service, container) {
+      this.timeout(20000);
+
       let testFinished;
+
+      const sleep = ms => new Promise(resolve => {
+        console.log('Snoozing for', ms, 'ms...');
+        setTimeout(resolve, ms);
+      });
+      const randomSleep = () => sleep(Math.ceil(Math.random() * 100));
 
       const logBlockingPids = async () => {
         let client;
@@ -2051,11 +2059,14 @@ describe('Entities API', () => {
         let entityLocked = false;
 
         const transaction1 = container.db.connect(connection => connection.transaction(async tx1 => {
+          await randomSleep();
           const containerTx1 = { context: { auth: { actor: Option.of({ id: actorId }) }, headers: [] } };
           queryFuncs(tx1, containerTx1);
 
+          await randomSleep();
           const logger = (action, actee, details) => log(containerTx1.context.auth.actor, action, actee, details);
 
+          await randomSleep();
           const entity = await getById(dataset.id, '12345678-1234-4123-8234-123456789abc', QueryOptions.forUpdate)(containerTx1).then(getOrNotFound);
 
           entityLocked = true;
@@ -2072,6 +2083,7 @@ describe('Entities API', () => {
           });
 
           // Assert that other transaction is blocked
+          await randomSleep();
           await tx1.any(sql`SELECT 1 FROM pg_stat_activity WHERE state = 'active' AND wait_event_type ='Lock'`)
             .then(r => {
               r.should.not.be.null();
@@ -2079,16 +2091,20 @@ describe('Entities API', () => {
 
           const updatedEntity = Entity.fromJson({ label: 'Jane', data: { first_name: 'Jane' } }, [{ name: 'first_name' }], dataset, entity);
 
+          await randomSleep();
           const savedEntity = await createVersion(dataset, updatedEntity, null, entity.aux.currentVersion.version + 1, null, 1)(containerTx1);
           console.log('Tx1: entity updated');
+          await randomSleep();
           await createVersion.audit(savedEntity, dataset, null, false)(logger)(containerTx1);
           console.log('Tx1: audit created');
         }));
 
         const transaction2 = container.db.connect(connection => connection.transaction(async tx2 => {
           const containerTx2 = { context: { auth: { actor: Option.of({ id: actorId }) }, headers: [] } };
+          await randomSleep();
           queryFuncs(tx2, containerTx2);
 
+          await randomSleep();
           const logger = (action, actee, details) => log(containerTx2.context.auth.actor, action, actee, details);
 
           console.log('Tx2: waiting for 1st Tx to lock the row');
@@ -2104,6 +2120,7 @@ describe('Entities API', () => {
 
           console.log('Tx2: looks like 1st tx has locked the row');
 
+          await randomSleep();
           const promise = getById(dataset.id, '12345678-1234-4123-8234-123456789abc', QueryOptions.forUpdate)(containerTx2).then(getOrNotFound)
             .then(async (entity) => {
               console.log('Tx2: entity fetched');
@@ -2111,10 +2128,12 @@ describe('Entities API', () => {
               entity.aux.currentVersion.version.should.be.eql(2);
               const updatedEntity = Entity.fromJson({ label: 'Robert', data: { first_name: 'Robert' } }, [{ name: 'first_name' }], dataset, entity);
 
+              await randomSleep();
               const savedEntity = await createVersion(dataset, updatedEntity, null, entity.aux.currentVersion.version + 1, null, 1)(containerTx2);
 
               console.log('Tx2: entity updated');
 
+              await randomSleep();
               await createVersion.audit(savedEntity, dataset, null, false)(logger)(containerTx2);
 
               console.log('Tx2: audit created');
