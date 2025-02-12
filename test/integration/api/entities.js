@@ -2047,6 +2047,7 @@ describe('Entities API', () => {
         const savedEntity = await createVersion(dataset, updatedEntity, null, entity.aux.currentVersion.version + 1, null, 1)(containerTx1);
         console.log('Tx1: entity updated');
         await createVersion.audit(savedEntity, dataset, null, false)(logger)(containerTx1);
+        console.log('Tx1: audit created');
       }));
 
       const transaction2 = container.db.connect(connection => connection.transaction(async tx2 => {
@@ -2080,6 +2081,8 @@ describe('Entities API', () => {
             console.log('Tx2: entity updated');
 
             await createVersion.audit(savedEntity, dataset, null, false)(logger)(containerTx2);
+
+            console.log('Tx2: audit created');
           });
 
         secondTxWaiting = true;
