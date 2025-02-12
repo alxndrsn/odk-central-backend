@@ -72,19 +72,26 @@ const populate = (container, [ head, ...tail ] = fixtures) =>
 // this hook won't run if `test-unit` is called, as this directory is skipped
 // in that case.
 const initialize = async () => {
+  console.log('initialize()', 'ENTRY');
   const migrator = knexConnect(config.get('test.database'));
+  console.log('initialize()', 'migrator done');
   const { log } = console;
   try {
+    console.log('initialize()', 'dropping owned');
     await migrator.raw('drop owned by current_user');
     // Silence logging from migrations.
-    console.log = noop; // eslint-disable-line no-console
+    console.log('migrating...');
     await migrator.migrate.latest({ directory: appRoot + '/lib/model/migrations' });
+    console.log('migrated.');
   } finally {
     console.log = log; // eslint-disable-line no-console
     await migrator.destroy();
   }
 
-  return withDefaults({ db, context, enketo, env, s3 }).transacting(populate);
+  console.log('initialize()', 'Calling withDefaults()...');
+  const res = await withDefaults({ db, context, enketo, env, s3 }).transacting(populate);
+  console.log('initialize()', 'Returning...');
+  return res;
 };
 
 before(function() {
