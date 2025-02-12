@@ -1995,117 +1995,155 @@ describe('Entities API', () => {
     // Once first transaction updates the Entity, only then second transaction is able
     // to get the Entity.
     it.only('should not allow parallel updates to the same Entity', testServiceFullTrx(async (service, container) => {
+      let testFinished;
 
-      const asAlice = await service.login('alice');
+      const logBlockingPids = async () => {
+        let client;
+        try {
+          if (testFinished) return console.log('[logBlockingPids()]', 'Test has finished.  Not repeating.');
 
-      await asAlice.post('/v1/projects/1/forms?publish=true')
-        .send(testData.forms.simpleEntity)
-        .expect(200);
+          console.log('[logBlockingPids()]', 'Querying...');
 
-      await asAlice.post('/v1/projects/1/forms/simpleEntity/submissions')
-        .send(testData.instances.simpleEntity.one)
-        .set('Content-Type', 'application/xml')
-        .expect(200);
+          const config = require('config').test.database;
+          const { Client } = require('pg');
 
-      await exhaust(container);
+          client = new Client(config);
+          await client.connect();
+          const res = await client.query(`
+            SELECT pid
+                 , usename
+                 , pg_blocking_pids(pid) as blocked_by
+                 , query as blocked_query
+              FROM pg_stat_activity
+              WHERE CARDINALITY(PG_BLOCKING_PIDS(pid)) > 0
+          `);
+          console.log('[logBlockingPids()]', res.rows);
 
-      const dataset = await container.Datasets.get(1, 'people', true).then(getOrNotFound);
-      const actorId = await container.oneFirst(sql`SELECT id FROM actors WHERE "displayName" = 'Alice'`);
+          setTimeout(logBlockingPids, 100);
+        } catch (err) {
+          console.log('[logBlockingPids()]', 'error:', err);
+        } finally {
+          try { await client?.end(); } catch (_) { /*ignore*/ }
+        }
+      };
+      logBlockingPids();
 
-      let secondTxWaiting = false;
-      let entityLocked = false;
+      try {
+        await new Promise(resolve => { setTimeout(resolve, 50); });
 
-      const transaction1 = container.db.connect(connection => connection.transaction(async tx1 => {
-        const containerTx1 = { context: { auth: { actor: Option.of({ id: actorId }) }, headers: [] } };
-        queryFuncs(tx1, containerTx1);
+        const asAlice = await service.login('alice');
 
-        const logger = (action, actee, details) => log(containerTx1.context.auth.actor, action, actee, details);
+        await asAlice.post('/v1/projects/1/forms?publish=true')
+          .send(testData.forms.simpleEntity)
+          .expect(200);
 
-        const entity = await getById(dataset.id, '12345678-1234-4123-8234-123456789abc', QueryOptions.forUpdate)(containerTx1).then(getOrNotFound);
+        await asAlice.post('/v1/projects/1/forms/simpleEntity/submissions')
+          .send(testData.instances.simpleEntity.one)
+          .set('Content-Type', 'application/xml')
+          .expect(200);
 
-        entityLocked = true;
-        console.log('Tx1: entity fetched');
+        await exhaust(container);
 
-        console.log('Tx1: waiting for 2nd tx to get started');
-        await new Promise(resolve => {
-          const intervalId = setInterval(async () => {
-            if (secondTxWaiting) {
-              clearInterval(intervalId);
-              resolve();
-            }
-          }, 1);
-        });
+        const dataset = await container.Datasets.get(1, 'people', true).then(getOrNotFound);
+        const actorId = await container.oneFirst(sql`SELECT id FROM actors WHERE "displayName" = 'Alice'`);
 
-        // Assert that other transaction is blocked
-        await tx1.any(sql`SELECT 1 FROM pg_stat_activity WHERE state = 'active' AND wait_event_type ='Lock'`)
-          .then(r => {
-            r.should.not.be.null();
+        let secondTxWaiting = false;
+        let entityLocked = false;
+
+        const transaction1 = container.db.connect(connection => connection.transaction(async tx1 => {
+          const containerTx1 = { context: { auth: { actor: Option.of({ id: actorId }) }, headers: [] } };
+          queryFuncs(tx1, containerTx1);
+
+          const logger = (action, actee, details) => log(containerTx1.context.auth.actor, action, actee, details);
+
+          const entity = await getById(dataset.id, '12345678-1234-4123-8234-123456789abc', QueryOptions.forUpdate)(containerTx1).then(getOrNotFound);
+
+          entityLocked = true;
+          console.log('Tx1: entity fetched');
+
+          console.log('Tx1: waiting for 2nd tx to get started');
+          await new Promise(resolve => {
+            const intervalId = setInterval(async () => {
+              if (secondTxWaiting) {
+                clearInterval(intervalId);
+                resolve();
+              }
+            }, 1);
           });
 
-        const updatedEntity = Entity.fromJson({ label: 'Jane', data: { first_name: 'Jane' } }, [{ name: 'first_name' }], dataset, entity);
+          // Assert that other transaction is blocked
+          await tx1.any(sql`SELECT 1 FROM pg_stat_activity WHERE state = 'active' AND wait_event_type ='Lock'`)
+            .then(r => {
+              r.should.not.be.null();
+            });
 
-        const savedEntity = await createVersion(dataset, updatedEntity, null, entity.aux.currentVersion.version + 1, null, 1)(containerTx1);
-        console.log('Tx1: entity updated');
-        await createVersion.audit(savedEntity, dataset, null, false)(logger)(containerTx1);
-        console.log('Tx1: audit created');
-      }));
+          const updatedEntity = Entity.fromJson({ label: 'Jane', data: { first_name: 'Jane' } }, [{ name: 'first_name' }], dataset, entity);
 
-      const transaction2 = container.db.connect(connection => connection.transaction(async tx2 => {
-        const containerTx2 = { context: { auth: { actor: Option.of({ id: actorId }) }, headers: [] } };
-        queryFuncs(tx2, containerTx2);
+          const savedEntity = await createVersion(dataset, updatedEntity, null, entity.aux.currentVersion.version + 1, null, 1)(containerTx1);
+          console.log('Tx1: entity updated');
+          await createVersion.audit(savedEntity, dataset, null, false)(logger)(containerTx1);
+          console.log('Tx1: audit created');
+        }));
 
-        const logger = (action, actee, details) => log(containerTx2.context.auth.actor, action, actee, details);
+        const transaction2 = container.db.connect(connection => connection.transaction(async tx2 => {
+          const containerTx2 = { context: { auth: { actor: Option.of({ id: actorId }) }, headers: [] } };
+          queryFuncs(tx2, containerTx2);
 
-        console.log('Tx2: waiting for 1st Tx to lock the row');
+          const logger = (action, actee, details) => log(containerTx2.context.auth.actor, action, actee, details);
 
-        await new Promise(resolve => {
-          const intervalId = setInterval(() => {
-            if (entityLocked) {
-              clearInterval(intervalId);
-              resolve();
-            }
-          }, 1);
-        });
+          console.log('Tx2: waiting for 1st Tx to lock the row');
 
-        console.log('Tx2: looks like 1st tx has locked the row');
-
-        const promise = getById(dataset.id, '12345678-1234-4123-8234-123456789abc', QueryOptions.forUpdate)(containerTx2).then(getOrNotFound)
-          .then(async (entity) => {
-            console.log('Tx2: entity fetched');
-
-            entity.aux.currentVersion.version.should.be.eql(2);
-            const updatedEntity = Entity.fromJson({ label: 'Robert', data: { first_name: 'Robert' } }, [{ name: 'first_name' }], dataset, entity);
-
-            const savedEntity = await createVersion(dataset, updatedEntity, null, entity.aux.currentVersion.version + 1, null, 1)(containerTx2);
-
-            console.log('Tx2: entity updated');
-
-            await createVersion.audit(savedEntity, dataset, null, false)(logger)(containerTx2);
-
-            console.log('Tx2: audit created');
+          await new Promise(resolve => {
+            const intervalId = setInterval(() => {
+              if (entityLocked) {
+                clearInterval(intervalId);
+                resolve();
+              }
+            }, 1);
           });
 
-        secondTxWaiting = true;
+          console.log('Tx2: looks like 1st tx has locked the row');
 
-        return promise;
-      }));
+          const promise = getById(dataset.id, '12345678-1234-4123-8234-123456789abc', QueryOptions.forUpdate)(containerTx2).then(getOrNotFound)
+            .then(async (entity) => {
+              console.log('Tx2: entity fetched');
 
-      await Promise.all([transaction1, transaction2]);
+              entity.aux.currentVersion.version.should.be.eql(2);
+              const updatedEntity = Entity.fromJson({ label: 'Robert', data: { first_name: 'Robert' } }, [{ name: 'first_name' }], dataset, entity);
 
-      await asAlice.get('/v1/projects/1/datasets/people/entities/12345678-1234-4123-8234-123456789abc/versions')
-        .then(({ body: versions }) => {
-          versions[0].data.first_name.should.eql('Alice');
-          versions[0].version.should.eql(1);
+              const savedEntity = await createVersion(dataset, updatedEntity, null, entity.aux.currentVersion.version + 1, null, 1)(containerTx2);
 
-          // Created by Tx1
-          versions[1].data.first_name.should.eql('Jane');
-          versions[1].version.should.eql(2);
+              console.log('Tx2: entity updated');
 
-          // Created by Tx2
-          versions[2].data.first_name.should.eql('Robert');
-          versions[2].version.should.eql(3);
-        });
+              await createVersion.audit(savedEntity, dataset, null, false)(logger)(containerTx2);
 
+              console.log('Tx2: audit created');
+            });
+
+          secondTxWaiting = true;
+
+          return promise;
+        }));
+
+        await Promise.all([transaction1, transaction2]);
+
+        await asAlice.get('/v1/projects/1/datasets/people/entities/12345678-1234-4123-8234-123456789abc/versions')
+          .then(({ body: versions }) => {
+            versions[0].data.first_name.should.eql('Alice');
+            versions[0].version.should.eql(1);
+
+            // Created by Tx1
+            versions[1].data.first_name.should.eql('Jane');
+            versions[1].version.should.eql(2);
+
+            // Created by Tx2
+            versions[2].data.first_name.should.eql('Robert');
+            versions[2].version.should.eql(3);
+          });
+
+      } finally {
+        testFinished = true;
+      }
     }));
     /* eslint-enable no-console */
   });
