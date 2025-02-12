@@ -5,10 +5,11 @@ const { sql } = require('slonik');
 const { readdirSync } = require('fs');
 const { join } = require('path');
 const request = require('supertest');
-const { noop } = require(appRoot + '/lib/util/util');
 const { task } = require(appRoot + '/lib/task/task');
 const authenticateUser = require('../util/authenticate-user');
 const testData = require('../data/xml');
+
+/* eslint-disable no-console */
 
 // knex things.
 const config = require('config');

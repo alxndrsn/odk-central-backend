@@ -14,6 +14,8 @@ const { omit } = require('ramda');
 const { exhaust } = require(appRoot + '/lib/worker/worker');
 const Option = require(appRoot + '/lib/util/option');
 
+/* eslint-disable no-console */
+
 describe('datasets and entities', () => {
 
   describe('creating datasets and properties via the API', () => {
@@ -4083,7 +4085,7 @@ describe('datasets and entities', () => {
       });
 
       describe('updating datasets through new form drafts', () => {
-        it.only('should update a dataset with a new draft and be able to upload multiple drafts', testService(async (service) => {
+        it('should update a dataset with a new draft and be able to upload multiple drafts', testService(async (service) => {
           const asAlice = await service.login('alice');
 
           console.log('alice logged in');
