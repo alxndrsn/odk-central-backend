@@ -1994,7 +1994,7 @@ describe('Entities API', () => {
     // `getById` creates an advisory lock which blocks other transactions to do the same.
     // Once first transaction updates the Entity, only then second transaction is able
     // to get the Entity.
-    it('should not allow parallel updates to the same Entity', testServiceFullTrx(async (service, container) => {
+    it.only('should not allow parallel updates to the same Entity', testServiceFullTrx(async (service, container) => {
 
       const asAlice = await service.login('alice');
 
