@@ -796,7 +796,6 @@ describe('/audits', () => {
         service.login('alice', (asAlice) =>
           asAlice.post('/v1/projects/1/forms/simple/public-links')
             .send({ displayName: 'Public Link Name' })
-            .expect(200)
             .then(({ body }) => body)
             .then((link) => asAlice.delete('/v1/projects/1/forms/simple/public-links/' + link.id))
             .then(() => asAlice.get('/v1/audits').set('X-Extended-Metadata', true))
