@@ -1,6 +1,6 @@
 const { testService } = require('../setup');
 
-describe.only('api: /projects/:id/assignments/forms', () => {
+describe('api: /projects/:id/assignments/forms', () => {
   // helper that does a bunch of assignments that we will use to test these apis:
   // * make chelsea a manager on simple form
   // * create app user david and assign app user on simple form
@@ -295,7 +295,7 @@ describe('api: /assignments', () => {
       it('should return notfound if the user does not exist', testService((service) =>
         service.delete('/v1/assignments/admin/999').expect(404)));
 
-      it.only('should return notfound if the assignment does not exist', testService((service) =>
+      it('should return notfound if the assignment does not exist', testService((service) =>
         service.login('alice', (asAlice) => service.login('chelsea', (asChelsea) =>
           asChelsea.get('/v1/users/current').expect(200).then(({ body }) => body.id)
             .then((chelseaId) => asAlice.delete('/v1/assignments/admin/' + chelseaId)
