@@ -5,11 +5,10 @@ const { sql } = require('slonik');
 const { readdirSync } = require('fs');
 const { join } = require('path');
 const request = require('supertest');
+const { noop } = require(appRoot + '/lib/util/util');
 const { task } = require(appRoot + '/lib/task/task');
 const authenticateUser = require('../util/authenticate-user');
 const testData = require('../data/xml');
-
-/* eslint-disable no-console */
 
 // knex things.
 const config = require('config');
@@ -73,26 +72,19 @@ const populate = (container, [ head, ...tail ] = fixtures) =>
 // this hook won't run if `test-unit` is called, as this directory is skipped
 // in that case.
 const initialize = async () => {
-  console.log('initialize()', 'ENTRY');
   const migrator = knexConnect(config.get('test.database'));
-  console.log('initialize()', 'migrator done');
   const { log } = console;
   try {
-    console.log('initialize()', 'dropping owned');
     await migrator.raw('drop owned by current_user');
     // Silence logging from migrations.
-    console.log('migrating...');
+    console.log = noop; // eslint-disable-line no-console
     await migrator.migrate.latest({ directory: appRoot + '/lib/model/migrations' });
-    console.log('migrated.');
   } finally {
     console.log = log; // eslint-disable-line no-console
     await migrator.destroy();
   }
 
-  console.log('initialize()', 'Calling withDefaults()...');
-  const res = await withDefaults({ db, context, enketo, env, s3 }).transacting(populate);
-  console.log('initialize()', 'Returning...');
-  return res;
+  return withDefaults({ db, context, enketo, env, s3 }).transacting(populate);
 };
 
 before(function() {
