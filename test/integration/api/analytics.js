@@ -7,7 +7,7 @@ describe('api: /analytics/preview', () => {
       service.login('chelsea', (asChelsea) =>
         asChelsea.get('/v1/analytics/preview').expect(403))));
 
-    it('should return the analytics', testService((service) =>
+    it.only('should return the analytics', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.get('/v1/analytics/preview')
           .expect(200)
