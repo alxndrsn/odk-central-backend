@@ -28,7 +28,7 @@ NODE_CONFIG_DIR=../../config DEBUG=knex:query,knex:bindings npx knex migrate:up 
 */
 
 const config = require('config');
-const { knexConnection } = require('../util/db');
+const { knexConnection } = require('./knex-migrator');
 
 module.exports = {
   client: 'pg',

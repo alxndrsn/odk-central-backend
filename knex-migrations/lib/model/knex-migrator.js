@@ -60,5 +60,5 @@ const checkMigrations = (db) => db.migrate.list({ directory: `${__dirname}/migra
       process.exitCode = 1;
   });
 
-module.exports = { checkMigrations, knexConnect, withKnex, migrate };
+module.exports = { checkMigrations, knexConnect, withKnex, migrate, knexConnection };
 
