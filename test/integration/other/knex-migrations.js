@@ -1238,7 +1238,7 @@ testMigration.skip('20240914-02-remove-orphaned-client-audits.js', () => {
   });
 });
 
-testMigration('20241227-01-backfill-audit-entity-uuid.js', () => {
+testMigration.skip('20241227-01-backfill-audit-entity-uuid.js', () => {
   it('should update the format of detail for entity.delete audits', testServiceFullTrx(async (service, container) => {
     await populateUsers(container);
     await populateForms(container);
