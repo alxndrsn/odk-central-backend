@@ -7,7 +7,7 @@
 // including this file, may be copied, modified, propagated, or distributed
 // except according to the terms contained in the LICENSE file.
 
-const { getFormFields } = require('../../data/schema'); // eslint-disable-line no-restricted-modules
+const { getFormFields } = require('../../../../lib/data/schema'); // eslint-disable-line no-restricted-modules
 
 const up = async (db) => {
   await db.schema.createTable('form_fields', (fields) => {
