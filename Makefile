@@ -133,7 +133,7 @@ test-coverage: node_version
 	npx nyc -x "**/migrations/**" --reporter=lcov node_modules/.bin/_mocha --recursive test
 
 .PHONY: lint
-lint: node_version
+lint: node_version knex-migrations/node_modules
 	npx eslint --cache --max-warnings 0 .
 
 
