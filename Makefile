@@ -77,7 +77,7 @@ migrations: node_version knex-migrations/node_modules
 
 .PHONY: check-migrations
 check-migrations: node_version
-	cd knex-migrations && node lib/bin/check-migrations.js
+	cd knex-migrations && NODE_CONFIG_DIR=../config node lib/bin/check-migrations.js
 
 
 ################################################################################
