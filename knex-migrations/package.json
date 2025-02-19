@@ -9,6 +9,7 @@
     "node": "22.12.0"
   },
   "dependencies": {
-    "knex": "~0.21"
+    "knex": "~0.21",
+    "ramda": "~0"
   }
 }
