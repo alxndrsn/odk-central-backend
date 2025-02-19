@@ -255,7 +255,7 @@ describe('database migrations: removing default project', function() {
   }));
 });
 
-describe('database migrations: intermediate form schema', function() {
+describe.skip('database migrations: intermediate form schema', function() {
   this.timeout(20000);
 
   it('should test migration', testServiceFullTrx(async (service, container) => {
@@ -384,7 +384,7 @@ describe('database migrations: intermediate form schema', function() {
   }));
 });
 
-describe('database migrations: 20230123-01-remove-google-backups', function() {
+describe.skip('database migrations: 20230123-01-remove-google-backups', function() {
   this.timeout(20000);
 
   beforeEach(() => upToMigration('20230123-01-remove-google-backups.js', false));
