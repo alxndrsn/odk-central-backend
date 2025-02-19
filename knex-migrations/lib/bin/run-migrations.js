@@ -13,7 +13,7 @@ const { withKnex, migrate } = require('../model/knex-migrator');
   try {
     await withKnex(require('config').get('default.database'))(migrate);
   } catch (err) {
-    console.error('Error:', err.message);
+    console.error('Error:', err.message); // eslint-disable-line no-console
     process.exit(1);
   }
 })();
