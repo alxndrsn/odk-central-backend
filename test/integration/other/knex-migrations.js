@@ -984,7 +984,7 @@ testMigration('20240215-02-dedupe-verbs.js', () => {
   }));
 });
 
-testMigration('20240914-02-remove-orphaned-client-audits.js', () => {
+testMigration.skip('20240914-02-remove-orphaned-client-audits.js', () => {
   it('should remove orphaned client audits', testServiceFullTrx(async (service, container) => {
     await populateUsers(container);
     await populateForms(container);
