@@ -50,6 +50,8 @@ jobs:
         cache: 'npm'
     - run: npm ci
     - run: node lib/bin/create-docker-databases.js
+    - run: cd knex-migrations && npm ci
+
     - name: E2E Test
       timeout-minutes: 10
       run: ./test/e2e/s3/run-tests.sh

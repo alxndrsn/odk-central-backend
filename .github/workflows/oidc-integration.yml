@@ -33,6 +33,8 @@ jobs:
     - run: npm ci
     - run: FAKE_OIDC_ROOT_URL=http://localhost:9898 make fake-oidc-server-ci > fake-oidc-server.log &
     - run: node lib/bin/create-docker-databases.js
+    - run: cd knex-migrations && npm ci
+
     - run: make test-oidc-integration
     - name: Fake OIDC Server Logs
       if: always()

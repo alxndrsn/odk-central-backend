@@ -17,6 +17,7 @@ if [[ ${CI-} = true ]]; then
   log "Creating database users..."
   npm ci
   node lib/bin/create-docker-databases.js
+  (cd knex-migrations && npm ci)
 
   START_SERVICES=true
   INSTALL_PLAYWRIGHT_DEPS=true
