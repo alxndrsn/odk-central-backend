@@ -6,7 +6,6 @@ const { sql } = require('slonik');
 const { readdirSync } = require('fs');
 const { join } = require('path');
 const request = require('supertest');
-const { noop } = require(appRoot + '/lib/util/util');
 const { task } = require(appRoot + '/lib/task/task');
 const authenticateUser = require('../util/authenticate-user');
 const testData = require('../data/xml');
@@ -71,7 +70,6 @@ const populate = (container, [ head, ...tail ] = fixtures) =>
 // this hook won't run if `test-unit` is called, as this directory is skipped
 // in that case.
 const initialize = async () => {
-  const migrator = knexConnect(config.get('test.database'));
   const { Client } = require('pg');
   const client = new Client(dbConfig);
   await client.connect();
