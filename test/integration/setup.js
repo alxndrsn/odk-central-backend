@@ -72,6 +72,10 @@ const populate = (container, [ head, ...tail ] = fixtures) =>
 // in that case.
 const initialize = async () => {
   const migrator = knexConnect(config.get('test.database'));
+  const { Client } = require('pg');
+  const client = new Client(dbConfig);
+  await client.connect();
+  await client.query('drop owned by current_user');
   execSync('make migrations', { env: { ...process.env, NODE_CONFIG: JSON.stringify({ default: { database: dbConfig } }) } });
 
   return withDefaults({ db, context, enketo, env, s3 }).transacting(populate);
