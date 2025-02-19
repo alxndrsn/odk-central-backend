@@ -1,5 +1,8 @@
 {
-  "extends": "../../../.eslintrc.json",
+  "extends": "../../../../.eslintrc.json",
+  "plugins": [
+    //"no-only-tests" // disable explicitly here to prevent "ESLint couldn't determine the plugin "no-only-tests" uniquely."
+  ],
   "rules": {
     "no-restricted-modules": [ "error", { "patterns": [ "../*" ] } ]
   }
