@@ -11,7 +11,34 @@
 // top-level operations with a database, like migrations.
 
 const knex = require('knex');
-const { knexConnection } = require('../util/db');
+
+const validateConfig = (config) => {
+  const { host, port, database, user, password, ssl, maximumPoolSize, ...unsupported } = config;
+
+  if (ssl != null && ssl !== true)
+    throw new Error('Invalid database config: if ssl is specified, its value can only be true.');
+
+  const unsupportedKeys = Object.keys(unsupported);
+  if (unsupportedKeys.length !== 0)
+    throw new Error(`Invalid database config: '${unsupportedKeys[0]}' is unknown or is not supported.`);
+};
+
+// Returns an object that Knex will use to connect to the database.
+const knexConnection = (config) => {
+  const problem = validateConfig(config);
+  if (problem != null) throw problem;
+  // We ignore maximumPoolSize when using Knex.
+  const { maximumPoolSize, ...knexConfig } = config;
+  if (knexConfig.ssl === true) {
+    // Slonik seems to specify `false` for `rejectUnauthorized` whenever SSL is
+    // specified:
+    // https://github.com/gajus/slonik/issues/159#issuecomment-891089466. We do
+    // the same here so that Knex will connect to the database in the same way
+    // as Slonik.
+    knexConfig.ssl = { rejectUnauthorized: false };
+  }
+  return knexConfig;
+};
 
 // Connects to the postgres database specified in configuration and returns it.
 const knexConnect = (config) => knex({ client: 'pg', connection: knexConnection(config) });
