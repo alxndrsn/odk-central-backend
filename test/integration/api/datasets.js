@@ -6016,8 +6016,8 @@ describe('datasets and entities', () => {
       await asAlice.get('/v1/projects/1/datasets/people/integrity')
         .set('X-OpenRosa-Version', '1.0')
         .expect(200)
-        .then(async ({ text }) => {
-          const result = await xml2js.parseStringPromise(text, { explicitArray: false });
+        .then(({ text }) => {
+          const result = xml2js.parseString(text, { explicitArray: false });
           result.data.entities.should.not.have.property('entity');
         });
     }));
@@ -6039,8 +6039,8 @@ describe('datasets and entities', () => {
       await service.get(`/v1/key/${appUser.token}/projects/1/datasets/people/integrity`)
         .set('X-OpenRosa-Version', '1.0')
         .expect(200)
-        .then(async ({ text }) => {
-          const result = await xml2js.parseStringPromise(text, { explicitArray: false });
+        .then(({ text }) => {
+          const result = xml2js.parseString(text, { explicitArray: false });
           result.data.entities.entity.length.should.be.eql(2);
         });
     }));
@@ -6077,8 +6077,8 @@ describe('datasets and entities', () => {
       await asAlice.get(`/v1/projects/1/datasets/people/integrity`)
         .set('X-OpenRosa-Version', '1.0')
         .expect(200)
-        .then(async ({ text }) => {
-          const result = await xml2js.parseStringPromise(text, { explicitArray: false });
+        .then(({ text }) => {
+          const result = xml2js.parseString(text, { explicitArray: false });
           result.data.entities.entity.length.should.be.eql(2);
           const [first, second] = result.data.entities.entity;
           first.$.id.should.be.eql('12345678-1234-4123-8234-123456789aaa');
@@ -6099,8 +6099,8 @@ describe('datasets and entities', () => {
       await asAlice.get(`/v1/projects/1/datasets/people/integrity`)
         .set('X-OpenRosa-Version', '1.0')
         .expect(200)
-        .then(async ({ text }) => {
-          const result = await xml2js.parseStringPromise(text, { explicitArray: false });
+        .then(({ text }) => {
+          const result = xml2js.parseString(text, { explicitArray: false });
           result.data.entities.entity.length.should.be.eql(2);
           const [first, second] = result.data.entities.entity;
           first.$.id.should.be.eql('12345678-1234-4123-8234-123456789aaa');
@@ -6119,8 +6119,8 @@ describe('datasets and entities', () => {
       await asAlice.get(`/v1/projects/1/datasets/people/integrity?id=12345678-1234-4123-8234-123456789abc`)
         .set('X-OpenRosa-Version', '1.0')
         .expect(200)
-        .then(async ({ text }) => {
-          const result = await xml2js.parseStringPromise(text, { explicitArray: false });
+        .then(({ text }) => {
+          const result = xml2js.parseString(text, { explicitArray: false });
           const { entity } = result.data.entities;
           entity.$.id.should.be.eql('12345678-1234-4123-8234-123456789abc');
           entity.deleted.should.be.eql('true');
@@ -6141,8 +6141,8 @@ describe('datasets and entities', () => {
       await asAlice.get(`/v1/projects/1/datasets/people/integrity?id=12345678-1234-4123-8234-123456789abc`)
         .set('X-OpenRosa-Version', '1.0')
         .expect(200)
-        .then(async ({ text }) => {
-          const result = await xml2js.parseStringPromise(text, { explicitArray: false });
+        .then(({ text }) => {
+          const result = xml2js.parseString(text, { explicitArray: false });
           const { entity } = result.data.entities;
           entity.$.id.should.be.eql('12345678-1234-4123-8234-123456789abc');
           entity.deleted.should.be.eql('true');
