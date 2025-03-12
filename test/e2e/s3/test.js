@@ -178,7 +178,7 @@ describe('s3 support', () => {
     // generate 9.xml - it's 150+ MB
     const template = n => `<translation lang="default" default="true()"><text id="image-big-${n}-bin"><value>Big Bin ${n}</value><value form="image">jr://images/big-${n}.bin</value></text></translation>`;
     let templated = '';
-    for (let i=0; i<=bigFiles; ++i) templated += template(i);
+    for (let i=1; i<=bigFiles; ++i) templated += template(i);
     fs.writeFileSync('./test-forms/9.xml', fs.readFileSync('./test-forms/9-template.xml', { encoding:'utf8' }).replace('{{itext}}', templated));
     // and
     await setup(9, { bigFiles, bigFileSizeMb:0.1 });
