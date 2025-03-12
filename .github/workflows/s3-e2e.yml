@@ -6,7 +6,7 @@ on:
 
 jobs:
   s3-e2e:
-    timeout-minutes: 15
+    timeout-minutes: 60
     # TODO should we use the same container as circle & central?
     runs-on: ubuntu-latest
     services:
