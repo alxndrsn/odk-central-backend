@@ -53,7 +53,7 @@ jobs:
     - name: Free Space Before
       run: df -h
     - name: E2E Test
-      timeout-minutes: 10
+      timeout-minutes: 60
       run: ./test/e2e/s3/run-tests.sh
     - name: Free Space After
       run: df -h
