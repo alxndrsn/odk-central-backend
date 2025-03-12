@@ -158,6 +158,42 @@ describe('s3 support', () => {
         `uploading2 (${humanDuration(res2)}) implies that one was blocking the other.`);
   });
 
+  it('should gracefully handle MANY simultaneous calls to upload-pending', async function() {
+    this.timeout(TIMEOUT);
+
+    const uploadPending = async () => {
+      const start = performance.now();
+      const stdout = await cli('upload-pending');
+      const duration = performance.now() - start;
+      const parsedHashes = hashes(stdout);
+      return { hashes:parsedHashes, duration };
+    };
+
+    // given
+    // generate 9.xml - it's 150+ MB
+    const template = n => `<translation lang="default" default="true()"><text id="image-big-${n}-bin"><value>Big Bin ${n}</value><value form="image">jr://images/big-${n}.bin</value></text></translation>`;
+    let templated = '';
+    for (let i=0; i<=1_000_000; ++i) templated += template(i);
+    fs.writeFileSync('./test-forms/9.xml', fs.readFileSync('./test-forms/9-template.xml', { encoding:'utf8' }).replace('{{itext}}', templated));
+    // and
+    await setup(9, { bigFiles:1_000_000, bigFileSizeMb:0.1 });
+    await assertNewStatuses({ pending: 1_000_000 });
+
+    // given
+    const uploading = [];
+    for(let i=0; i<10_000; ++i) uploading.push(uploadPending());
+
+    // when
+    const responses = await Promise.all(uploading);
+
+    // then
+    await assertNewStatuses({ uploaded: 1_000_000 });
+    // and
+    responses.reduce((acc, r) => acc + r.hashes.length, 0).should.equal(1_000_000);
+    // and
+    _.uniq(responses.flatMap(r => r.hashes)).length.should.equal(1_000_000);
+  });
+
   it('should gracefully handle upload-pending dying unexpectedly (SIGKILL)', async function() {
     this.timeout(TIMEOUT);
 
