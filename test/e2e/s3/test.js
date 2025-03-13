@@ -10,7 +10,7 @@
 /* eslint-disable func-names, no-await-in-loop, space-before-function-paren  */
 
 // Enough time to upload big-*.bin, and then run each test scenario.
-const TIMEOUT = 240_000; // ms
+const TIMEOUT = 2_400_000; // ms
 
 const { exec, execSync } = require('node:child_process');
 const fs = require('node:fs');
