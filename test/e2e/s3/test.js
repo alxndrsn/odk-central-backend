@@ -163,7 +163,7 @@ describe('s3 support', () => {
 
     // TODO tune the following value(s) until the test reliably fails with the
     // bad implementation of Blobs.getOnePending()
-    const bigFiles = 10_000;  // 1_000_000
+    const bigFiles = 100_000;  // 1_000_000
 
     const uploadPending = async () => {
       const start = performance.now();
