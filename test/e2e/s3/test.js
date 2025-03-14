@@ -161,10 +161,9 @@ describe('s3 support', () => {
   it('should gracefully handle MANY simultaneous calls to upload-pending', async function() {
     this.timeout(TIMEOUT);
 
-    // TODO tune the following values until the test reliably fails with the
+    // TODO tune the following value(s) until the test reliably fails with the
     // bad implementation of Blobs.getOnePending()
     const bigFiles = 10_000;  // 1_000_000
-    const uploaders = 1_000; // 10_000
 
     const uploadPending = async () => {
       const start = performance.now();
@@ -184,12 +183,17 @@ describe('s3 support', () => {
     await setup(9, { bigFiles, bigFileSizeMb:0.1 });
     await assertNewStatuses({ pending: bigFiles });
 
-    // given
-    const uploading = [];
-    for(let i=0; i<uploaders; ++i) uploading.push(uploadPending());
-
     // when
-    const responses = await Promise.all(uploading);
+    const responses = [];
+    while(true) { // eslint-disable-line no-constant-condition
+      const uploading = [];
+      // Limit max simultaneous uploaders to avoid:
+      // ConnectionError: remaining connection slots are reserved for non-replication superuser connections
+      for(let i=0; i<90; ++i) uploading.push(uploadPending());
+      const theseResponses = await Promise.all(uploading);
+      responses.push(...theseResponses);
+      if(theseResponses.every(r => !r.hashes.length)) break;
+    }
 
     // then
     await assertNewStatuses({ uploaded: bigFiles });
