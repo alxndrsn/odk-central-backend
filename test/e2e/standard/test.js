@@ -126,20 +126,20 @@ describe('Cache headers', () => {
       it(`should NOT cache ${url()} in a private cache`, async () => {
         // given
         const res1 = await undici.fetch(url(), withPrivateCache(withSessionHeader()));
-        assert.equal(res1.ok, true);
+        assertOkStatus(res1);
 
         // when
         const res2 = await undici.fetch(url(), withPrivateCache());
 
         // then
-        assert.equal(res2.ok, false);
+        assertNonOkStatus(res2);
 
         // when
         await sleep(1000);
         const res3 = await undici.fetch(url(), withPrivateCache(withSessionHeader()));
 
         // then
-        assert.equal(res3.ok, true);
+        assertOkStatus(res3);
         assert.notEqual(res3.headers.get('date'), res1.headers.get('date'));
 
         // and
@@ -154,20 +154,20 @@ describe('Cache headers', () => {
       it(`should NOT cache ${url()} in a shared cache`, async () => {
         // given
         const res1 = await undici.fetch(url(), withSharedCache(withSessionHeader()));
-        assert.equal(res1.ok, true);
+        assertOkStatus(res1);
 
         // when
         const res2 = await undici.fetch(url(), withSharedCache());
 
         // then
-        assert.equal(res2.ok, false);
+        assertNonOkStatus(res2);
 
         // when
         await sleep(1000);
         const res3 = await undici.fetch(url(), withSharedCache(withSessionHeader()));
 
         // then
-        assert.equal(res3.ok, true);
+        assertOkStatus(res3);
         assert.notEqual(res3.headers.get('date'), res1.headers.get('date'));
 
         // and
