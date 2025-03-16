@@ -64,20 +64,20 @@ describe('Cache headers', () => {
       it(`should cache ${url()} in a private cache for a short amount of time`, async () => {
         // given
         const res1 = await undici.fetch(url(), withPrivateCache(withSessionHeader()));
-        assert.equal(res1.ok, true);
+        assertOkStatus(res1);
 
         // when
         const res2 = await undici.fetch(url(), withPrivateCache());
 
         // then
-        assert.equal(res2.ok, true);
+        assertOkStatus(res2);
 
         // when
         await sleep(1000);
         const res3 = await undici.fetch(url(), withPrivateCache(withSessionHeader()));
 
         // then
-        assert.equal(res3.ok, true);
+        assertOkStatus(res3);
         assert.equal(res3.headers.get('date'), res1.headers.get('date'));
 
         // and
@@ -92,20 +92,20 @@ describe('Cache headers', () => {
       it(`should NOT cache ${url()} in a shared cache`, async () => {
         // given
         const res1 = await undici.fetch(url(), withSharedCache(withSessionHeader()));
-        assert.equal(res1.ok, true);
+        assertOkStatus(res1);
 
         // when
         const res2 = await undici.fetch(url(), withSharedCache());
 
         // then
-        assert.equal(res2.ok, false);
+        assertNonOkStatus(res2);
 
         // when
         await sleep(1000);
         const res3 = await undici.fetch(url(), withSharedCache(withSessionHeader()));
 
         // then
-        assert.equal(res3.ok, true);
+        assertOkStatus(res3);
         assert.notEqual(res3.headers.get('date'), res1.headers.get('date'));
 
         // and
@@ -251,4 +251,12 @@ function uploadSubmission(api, projectId, xmlFormId, xmlFormVersion, submissionI
 
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms)); // eslint-disable-line no-promise-executor-return
+}
+
+function assertOkStatus({ ok, status }) {
+  assert.equal(ok, true, `Expected OK response status, but got ${status}`);
+}
+
+function assertNonOkStatus({ ok, status }) {
+  assert.equal(ok, false, `Expected non-OK response status, but got ${status}`);
 }
