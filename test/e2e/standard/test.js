@@ -7,8 +7,6 @@
 // including this file, may be copied, modified, propagated, or distributed
 // except according to the terms contained in the LICENSE file.
 
-// TODO add no-transform?
-
 const assert = require('node:assert');
 const fs = require('node:fs');
 
@@ -19,7 +17,7 @@ const serverUrl = 'http://localhost:8383';
 const userEmail = 'x@example.com';
 const userPassword = 'secret1234';
 
-describe.only('Cache headers', () => {
+describe('Cache headers', () => {
   const undici = require('undici');
 
   // TODO increase max-age to 1 and add 2 seconds of sleep - maybe undici never caches max-age 0 at all?
@@ -63,59 +61,35 @@ describe.only('Cache headers', () => {
   describe('private paths', () => {
     [
       () => `${serverUrl}/v1/projects/${projectId}`,
-//      () => `${serverUrl}/v1/projects/${projectId}/forms/${encodeURIComponent(xmlFormId)}`,
-//      () => `${serverUrl}/v1/projects/${projectId}/forms/${encodeURIComponent(xmlFormId)}.svc/Submissions('cache-test-submission')`,
+      () => `${serverUrl}/v1/projects/${projectId}/forms/${encodeURIComponent(xmlFormId)}`,
+      () => `${serverUrl}/v1/projects/${projectId}/forms/${encodeURIComponent(xmlFormId)}.svc/Submissions('cache-test-submission')`,
     ].forEach(url => {
-      it.only(`should cache ${url()} in a private cache for a short amount of time`, async function() {
-        this.timeout(3000); // take account of all sleep() calls in this test
-
-        const withEtagFrom = (res, opts={}) => ({ ...opts, headers: { ...opts.headers, 'If-None-Match': res.headers.get('ETag') } });
-
+      it(`should cache ${url()} in a private cache for a short amount of time`, async () => {
         // given
         const res1 = await undici.fetch(url(), withPrivateCache(withSessionHeader()));
-        console.log('res1.etag:', res1.headers.get('etag'));
         assertOkStatus(res1);
-
 
         // when
         const res2 = await undici.fetch(url(), withPrivateCache());
-        // then
-        assert.equal(res2.status, 403);
 
-        // when
-        const res3 = await undici.fetch(url(), withPrivateCache(withEtagFrom(res1)));
         // then
-        assert.equal(res3.status, 403); // If-None-Match only checked if response is OK
+        assertOkStatus(res2);
 
         // when
         await sleep(1000);
-        const res4 = await undici.fetch(url(), withPrivateCache(withSessionHeader()));
-        console.log('res4.status:', res4.status);
-        console.log('res4.etag:', res4.headers.get('etag'));
-        // then
-        assertOkStatus(res4);
-        assert.notEqual(res4.headers.get('date'), res1.headers.get('date')); // no etag, so not cached
+        const res3 = await undici.fetch(url(), withPrivateCache(withSessionHeader()));
 
-        // when
-        await sleep(1000);
-        const res5 = await undici.fetch(url(), withPrivateCache(withSessionHeader(withEtagFrom(res1))));
-        console.log('res5.status:', res5.status);
-        console.log('res5.etag:', res5.headers.get('etag'));
         // then
-        assertOkStatus(res5);
-        assert.equal(res5.headers.get('date'), res4.headers.get('date')); // etag, so should re-use res4
+        assertOkStatus(res3);
+        assert.equal(res3.headers.get('date'), res1.headers.get('date'));
 
         // and
-        assert.equal(res1.headers.get('Cache-Control'), 'private, max-age=0');
-        assert.equal(res2.headers.get('Cache-Control'), 'private, max-age=0');
-        assert.equal(res3.headers.get('Cache-Control'), 'private, max-age=0');
-        assert.equal(res4.headers.get('Cache-Control'), 'private, max-age=0');
-        assert.equal(res5.headers.get('Cache-Control'), 'private, max-age=0');
+        assert.equal(res1.headers.get('Cache-Control'), 'private, max-age=20');
+        assert.equal(res2.headers.get('Cache-Control'), 'private, max-age=20');
+        assert.equal(res3.headers.get('Cache-Control'), 'private, max-age=20');
         assert.equal(res1.headers.get('Expires'), undefined);
         assert.equal(res2.headers.get('Expires'), undefined);
         assert.equal(res3.headers.get('Expires'), undefined);
-        assert.equal(res4.headers.get('Expires'), undefined);
-        assert.equal(res5.headers.get('Expires'), undefined);
       });
 
       it(`should NOT cache ${url()} in a shared cache`, async () => {
@@ -138,9 +112,9 @@ describe.only('Cache headers', () => {
         assert.notEqual(res3.headers.get('date'), res1.headers.get('date'));
 
         // and
-        assert.equal(res1.headers.get('Cache-Control'), 'private, max-age=0');
-        assert.equal(res2.headers.get('Cache-Control'), 'private, max-age=0');
-        assert.equal(res3.headers.get('Cache-Control'), 'private, max-age=0');
+        assert.equal(res1.headers.get('Cache-Control'), 'private, max-age=20');
+        assert.equal(res2.headers.get('Cache-Control'), 'private, max-age=20');
+        assert.equal(res3.headers.get('Cache-Control'), 'private, max-age=20');
         assert.equal(res1.headers.get('Expires'), undefined);
         assert.equal(res2.headers.get('Expires'), undefined);
         assert.equal(res3.headers.get('Expires'), undefined);
