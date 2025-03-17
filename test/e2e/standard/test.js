@@ -20,6 +20,9 @@ const userPassword = 'secret1234';
 describe('Cache headers', () => {
   const undici = require('undici');
 
+  // TODO increase max-age to 1 and add 2 seconds of sleep - maybe undici never caches max-age 0 at all?
+  // TODO check stashed stuff
+
   const privateCacheDispatcher = new undici.Agent().compose(undici.interceptors.cache({
     cacheByDefault: undefined, // do not cache responses without explicit expiration
     methods: [ 'GET' ],
