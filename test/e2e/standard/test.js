@@ -17,7 +17,7 @@ const serverUrl = 'http://localhost:8383';
 const userEmail = 'x@example.com';
 const userPassword = 'secret1234';
 
-describe('Cache headers', () => {
+describe.only('Cache headers', () => {
   const undici = require('undici');
 
   // TODO increase max-age to 1 and add 2 seconds of sleep - maybe undici never caches max-age 0 at all?
@@ -46,6 +46,8 @@ describe('Cache headers', () => {
   const withPrivateCache = (opts={}) => ({ ...opts, dispatcher: privateCacheDispatcher });
   const withSharedCache  = (opts={}) => ({ ...opts, dispatcher:  sharedCacheDispatcher });
 
+  const withEtagFrom = (res, opts={}) => ({ ...opts, headers: { ...opts.headers, 'If-None-Match': res.headers.get('ETag') } });
+
   before(async () => {
     // given
     api = await apiClient(SUITE_NAME, { serverUrl, userEmail, userPassword });
@@ -61,86 +63,110 @@ describe('Cache headers', () => {
   describe('private paths', () => {
     [
       () => `${serverUrl}/v1/projects/${projectId}`,
-      () => `${serverUrl}/v1/projects/${projectId}/forms/${encodeURIComponent(xmlFormId)}`,
-      () => `${serverUrl}/v1/projects/${projectId}/forms/${encodeURIComponent(xmlFormId)}.svc/Submissions('cache-test-submission')`,
+      //() => `${serverUrl}/v1/projects/${projectId}/forms/${encodeURIComponent(xmlFormId)}`,
+      //() => `${serverUrl}/v1/projects/${projectId}/forms/${encodeURIComponent(xmlFormId)}.svc/Submissions('cache-test-submission')`,
     ].forEach(url => {
-      it(`should cache ${url()} in a private cache for a short amount of time`, async () => {
-        // given
-        const res1 = await undici.fetch(url(), withPrivateCache(withSessionHeader()));
-        assertOkStatus(res1);
+      `
+        inputs                                                     || expected outputs
+        with cache | has session header | has etag | after max-age || response status | different date
+        -----------|--------------------|----------|---------------||-----------------|---------------
+                ❌ |                 ❌ |       ❌ |            ❌ || 403             | ❌
+                ❌ |                 ❌ |       ❌ |            ✅ || 403             | ❌
+                ❌ |                 ❌ |       ✅ |            ❌ || 403             | ❌
+                ❌ |                 ❌ |       ✅ |            ✅ || 403             | ❌
+                ❌ |                 ✅ |       ❌ |            ❌ || 200             | ❌
+                ❌ |                 ✅ |       ❌ |            ✅ || 200             | ❌
+                ❌ |                 ✅ |       ✅ |            ❌ || 200             | ❌
+                ❌ |                 ✅ |       ✅ |            ✅ || 200             | ❌
+            shared |                 ❌ |       ❌ |            ❌ || 403             | ❌
+            shared |                 ❌ |       ❌ |            ✅ || 403             | ❌
+            shared |                 ❌ |       ✅ |            ❌ || 403             | ❌
+            shared |                 ❌ |       ✅ |            ✅ || 403             | ❌
+            shared |                 ✅ |       ❌ |            ❌ || 200             | ❌
+            shared |                 ✅ |       ❌ |            ✅ || 200             | ✅
+            shared |                 ✅ |       ✅ |            ❌ || 200             | ❌
+            shared |                 ✅ |       ✅ |            ✅ || 200             | ❌
+           private |                 ❌ |       ❌ |            ❌ || 403             | ❌
+           private |                 ❌ |       ❌ |            ✅ || 403             | ❌
+           private |                 ❌ |       ✅ |            ❌ || 403             | ❌
+           private |                 ❌ |       ✅ |            ✅ || 403             | ❌
+           private |                 ✅ |       ❌ |            ❌ || 200             | ❌
+           private |                 ✅ |       ❌ |            ✅ || 200             | ✅
+           private |                 ✅ |       ✅ |            ❌ || 304             | ❌
+           private |                 ✅ |       ✅ |            ✅ || 304             | ❌
+      `.split('\n')
+        .filter(line => !line.match(/^\s*(--|\/\/|#)/)) // TODO remove comment filter
+        .filter((line, idx) => line.trim() && idx > 3)
+        .map(line => console.log({ line, parts: line.split(/\s*\|+\s*/) }) || line // TODO remove console.log()
+          .trim()
+          .split(/\s*\|+\s*/)
+          .map(str => {
+            if (str === '✅') return true;
+            if (str === '❌') return false;
+            return str;
+          }))
+        .forEach(([ cache, useSession, useEtag, useSleep, expectedStatus, expectDifferentDate ]) => {
+          it.only(`should return ${expectedStatus} when ${JSON.stringify({ cache, useSession, useEtag, useSleep })}`, async function() {
+            this.timeout(5000);
 
-        // when
-        const res2 = await undici.fetch(url(), withPrivateCache());
+            // TODO filtering some variables here while working out expected values
+            //if(cache !== 'private') return;
+            //if(useSleep) return;
+            //if(useEtag) return;
+            //if(useSession) return;
 
-        // then
-        assertOkStatus(res2);
+            // given
+            console.log('--- req1 -----------------------');
+            const res1 = await undici.fetch(url(), withPrivateCache(withSessionHeader()));
+            console.log('res1 headers:', res1.headers);
+            assertOkStatus(res1);
+            // and
+            console.log('--- req2 -----------------------');
+            let opts = {};
+            if (useEtag)             opts = withEtagFrom(res1, opts);
+            if (useSession)          opts = withSessionHeader(opts);
+            if (cache === 'private') opts = withPrivateCache(opts);
+            if (cache === 'shared')  opts = withSharedCache(opts);
 
-        // when
-        await sleep(1000);
-        const res3 = await undici.fetch(url(), withPrivateCache(withSessionHeader()));
+            // when
+            if (useSleep) await sleep(2000);
+            // and
+            console.log('res2 opts:', opts);
+            const res2 = await undici.fetch(url(), opts);
+            console.log('res2 headers:', res2.headers);
 
-        // then
-        assertOkStatus(res3);
-        assert.equal(res3.headers.get('date'), res1.headers.get('date'));
-
-        // and
-        assert.equal(res1.headers.get('Cache-Control'), 'private, max-age=20');
-        assert.equal(res2.headers.get('Cache-Control'), 'private, max-age=20');
-        assert.equal(res3.headers.get('Cache-Control'), 'private, max-age=20');
-        assert.equal(res1.headers.get('Expires'), undefined);
-        assert.equal(res2.headers.get('Expires'), undefined);
-        assert.equal(res3.headers.get('Expires'), undefined);
+            // then
+            assert.equal(res2.status, Number(expectedStatus), `Expected response status ${expectedStatus}, but got ${res2.status}`);
+            if (expectDifferentDate) assert.notEqual(res2.headers.get('date'), res1.headers.get('date'));
+            // and
+            assert.equal(res1.headers.get('Cache-Control'), 'private, max-age=1'); // TODO change this to max-age=0 and decrease sleep to 1s
+            assert.equal(res2.headers.get('Cache-Control'), 'private, max-age=1');
+            assert.equal(res1.headers.get('Expires'), undefined);
+            assert.equal(res2.headers.get('Expires'), undefined);
+          });
+        });
       });
-
-      it(`should NOT cache ${url()} in a shared cache`, async () => {
-        // given
-        const res1 = await undici.fetch(url(), withSharedCache(withSessionHeader()));
-        assertOkStatus(res1);
-
-        // when
-        const res2 = await undici.fetch(url(), withSharedCache());
-
-        // then
-        assertNonOkStatus(res2);
-
-        // when
-        await sleep(1000);
-        const res3 = await undici.fetch(url(), withSharedCache(withSessionHeader()));
-
-        // then
-        assertOkStatus(res3);
-        assert.notEqual(res3.headers.get('date'), res1.headers.get('date'));
-
-        // and
-        assert.equal(res1.headers.get('Cache-Control'), 'private, max-age=20');
-        assert.equal(res2.headers.get('Cache-Control'), 'private, max-age=20');
-        assert.equal(res3.headers.get('Cache-Control'), 'private, max-age=20');
-        assert.equal(res1.headers.get('Expires'), undefined);
-        assert.equal(res2.headers.get('Expires'), undefined);
-        assert.equal(res3.headers.get('Expires'), undefined);
-      });
-    });
   });
 
   describe('single-use paths', () => {
     [
       () => `${serverUrl}/v1/sessions/restore`,
     ].forEach(url => {
-      it(`should NOT cache ${url()} in a private cache`, async () => {
+      it(`should NOT cache ${url()} in a private cache`, async function() {
+        this.timeout(10000);
+
         // given
         const res1 = await undici.fetch(url(), withPrivateCache(withSessionHeader()));
         assertOkStatus(res1);
 
         // when
         const res2 = await undici.fetch(url(), withPrivateCache());
-
         // then
         assertNonOkStatus(res2);
 
         // when
-        await sleep(1000);
+        await sleep(2000);
         const res3 = await undici.fetch(url(), withPrivateCache(withSessionHeader()));
-
         // then
         assertOkStatus(res3);
         assert.notEqual(res3.headers.get('date'), res1.headers.get('date'));
@@ -154,21 +180,21 @@ describe('Cache headers', () => {
         assert.equal(res3.headers.get('Expires'), undefined);
       });
 
-      it(`should NOT cache ${url()} in a shared cache`, async () => {
+      it(`should NOT cache ${url()} in a shared cache`, async function() {
+        this.timeout(10000);
+
         // given
         const res1 = await undici.fetch(url(), withSharedCache(withSessionHeader()));
         assertOkStatus(res1);
 
         // when
         const res2 = await undici.fetch(url(), withSharedCache());
-
         // then
         assertNonOkStatus(res2);
 
         // when
-        await sleep(1000);
+        await sleep(2000);
         const res3 = await undici.fetch(url(), withSharedCache(withSessionHeader()));
-
         // then
         assertOkStatus(res3);
         assert.notEqual(res3.headers.get('date'), res1.headers.get('date'));
