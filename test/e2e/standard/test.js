@@ -23,30 +23,10 @@ describe.only('Cache headers', () => {
   // TODO increase max-age to 1 and add 2 seconds of sleep - maybe undici never caches max-age 0 at all?
   // TODO check stashed stuff
 
-  const privateCacheDispatcher = new undici.Agent().compose(undici.interceptors.cache({
-    cacheByDefault: undefined, // do not cache responses without explicit expiration
-    methods: [ 'GET' ],
-    type: 'private',
-  }));
-  const sharedCacheDispatcher = new undici.Agent().compose(undici.interceptors.cache({
-    cacheByDefault: Number.MAX_SAFE_INTEGER, // aggressively cache everything
-    methods: [ 'GET' ],
-    type: 'shared',
-  }));
-
   let api;
   let projectId = ':projectId';
   let xmlFormId = ':xmlFormId';
   let xmlFormVersion = ':xmlFormVersion';
-
-  const withSessionHeader = (opts={}) => ({
-    ...opts,
-    headers: { ...opts.headers, Authorization:`Bearer ${api.getSessionToken()}` },
-  });
-  const withPrivateCache = (opts={}) => ({ ...opts, dispatcher: privateCacheDispatcher });
-  const withSharedCache  = (opts={}) => ({ ...opts, dispatcher:  sharedCacheDispatcher });
-
-  const withEtagFrom = (res, opts={}) => ({ ...opts, headers: { ...opts.headers, 'If-None-Match': res.headers.get('ETag') } });
 
   before(async () => {
     // given
@@ -95,8 +75,8 @@ describe.only('Cache headers', () => {
            private |                 ✅ |       ✅ |            ❌ || 304             | ❌
            private |                 ✅ |       ✅ |            ✅ || 304             | ❌
       `.split('\n')
-        .filter(line => !line.match(/^\s*(--|\/\/|#)/)) // TODO remove comment filter
         .filter((line, idx) => line.trim() && idx > 3)
+        .filter(line => !line.match(/^\s*(--|\/\/|#)/)) // TODO remove comment filter
         .map(line => console.log({ line, parts: line.split(/\s*\|+\s*/) }) || line // TODO remove console.log()
           .trim()
           .split(/\s*\|+\s*/)
@@ -109,6 +89,43 @@ describe.only('Cache headers', () => {
           it.only(`should return ${expectedStatus} when ${JSON.stringify({ cache, useSession, useEtag, useSleep })}`, async function() {
             this.timeout(5000);
 
+            const dispatcher = (() => {
+              switch (cache) {
+                case 'private': return new undici.Agent().compose(undici.interceptors.cache({
+                  cacheByDefault: undefined, // do not cache responses without explicit expiration
+                  methods: [ 'GET' ],
+                  type: 'private',
+                }));
+                case 'shared': return new undici.Agent().compose(undici.interceptors.cache({
+                  cacheByDefault: Number.MAX_SAFE_INTEGER, // aggressively cache everything
+                  methods: [ 'GET' ],
+                  type: 'shared',
+                }));
+                case false: return;
+                default: throw new Error(`Unrecognised cache option '${cache}'`);
+              }
+            })();
+
+            const baseOpts = {
+              dispatcher,
+              // N.B. base caching headers are set to work around "helpful" fetch behaviour.  These
+              // overrides may make these tests behave less like browsers, which may be of
+              // significance if trying to tune real-world client behaviour for odk-central-frontend
+              // users.
+              // See: https://github.com/nodejs/undici/issues/1930
+              headers: {
+                'Cache-Control': '',
+                'Pragma': '',
+              },
+            };
+
+            const withSessionHeader = (opts={}) => ({
+              ...opts,
+              headers: { ...opts.headers, Authorization:`Bearer ${api.getSessionToken()}` },
+            });
+
+            const withEtagFrom = (res, opts={}) => ({ ...opts, headers: { ...opts.headers, 'If-None-Match': res.headers.get('ETag') } });
+
             // TODO filtering some variables here while working out expected values
             //if(cache !== 'private') return;
             //if(useSleep) return;
@@ -117,23 +134,23 @@ describe.only('Cache headers', () => {
 
             // given
             console.log('--- req1 -----------------------');
-            const res1 = await undici.fetch(url(), withPrivateCache(withSessionHeader()));
-            console.log('res1 headers:', res1.headers);
+            let opts1 = withSessionHeader(baseOpts);
+            console.log('res1 opts:', opts1);
+            const res1 = await undici.fetch(url(), opts1);
+            console.log('res1:', res1.status, res1.headers);
             assertOkStatus(res1);
             // and
             console.log('--- req2 -----------------------');
-            let opts = {};
-            if (useEtag)             opts = withEtagFrom(res1, opts);
-            if (useSession)          opts = withSessionHeader(opts);
-            if (cache === 'private') opts = withPrivateCache(opts);
-            if (cache === 'shared')  opts = withSharedCache(opts);
+            let opts2 = baseOpts;
+            if (useEtag)    opts2 = withEtagFrom(res1, opts2);
+            if (useSession) opts2 = withSessionHeader(opts2);
 
             // when
             if (useSleep) await sleep(2000);
             // and
-            console.log('res2 opts:', opts);
-            const res2 = await undici.fetch(url(), opts);
-            console.log('res2 headers:', res2.headers);
+            console.log('res2 opts:', opts2);
+            const res2 = await undici.fetch(url(), opts2);
+            console.log('res2:', res2.status, res2.headers);
 
             // then
             assert.equal(res2.status, Number(expectedStatus), `Expected response status ${expectedStatus}, but got ${res2.status}`);
