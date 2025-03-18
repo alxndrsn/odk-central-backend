@@ -169,7 +169,7 @@ describe('Cache headers', () => {
       };
     }
 
-    function scenario(authType, firstAuth, secondAuth) {
+    function scenario(authType, withFirstAuth, withSecondAuth) {
       return it(`should return ${expectedStatus} ${authType} and ${JSON.stringify({ cache, useSession, useEtag, useSleep })}`, async function() {
         this.timeout(2000);
 
@@ -212,13 +212,13 @@ describe('Cache headers', () => {
         const withEtagFrom = (res, opts={}) => ({ ...opts, headers: { ...opts.headers, 'if-none-match': res.headers.get('ETag') } });
 
         // given
-        const opts1 = firstAuth(baseOpts);
+        const opts1 = withFirstAuth(baseOpts);
         const res1 = await undici.fetch(url(), opts1);
         assert.equal(res1.ok, true, `Expected OK response status, but got ${res1.status}`);
         // and
         let opts2 = baseOpts;
         if (useEtag)    opts2 = withEtagFrom(res1, opts2);
-        if (useSession) opts2 = secondAuth(opts2);
+        if (useSession) opts2 = withSecondAuth(opts2);
 
         // when
         if (useSleep) await sleep(1000);
