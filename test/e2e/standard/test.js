@@ -86,7 +86,7 @@ describe.only('Cache headers', () => {
             if (str === '✅') return true;
             if (str === '❌') return false;
             return str;
-          }))
+          })) // TODO extract this into test parsing function, e.g. testTable()
         .forEach(([ cache, useSession, useEtag, useSleep, expectedStatus, dateExpectation ]) => {
           it.only(`should return ${expectedStatus} when ${JSON.stringify({ cache, useSession, useEtag, useSleep })}`, async function() {
             this.timeout(5000);
@@ -144,7 +144,7 @@ describe.only('Cache headers', () => {
 
             // given
             console.log('--- req1 -----------------------');
-            let opts1 = withSessionHeader(baseOpts);
+            const opts1 = withSessionHeader(baseOpts);
             console.log('res1 opts:', opts1);
             const res1 = await undici.fetch(url(), opts1);
             console.log('res1:', res1.status, res1.headers);
@@ -182,6 +182,7 @@ describe.only('Cache headers', () => {
   });
 
   describe('single-use paths', () => {
+    // TODO rewrite as above
     [
       () => `${serverUrl}/v1/sessions/restore`,
     ].forEach(url => {
