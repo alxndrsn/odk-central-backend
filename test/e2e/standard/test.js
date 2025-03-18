@@ -47,32 +47,33 @@ describe.only('Cache headers', () => {
       //() => `${serverUrl}/v1/projects/${projectId}/forms/${encodeURIComponent(xmlFormId)}`,
       //() => `${serverUrl}/v1/projects/${projectId}/forms/${encodeURIComponent(xmlFormId)}.svc/Submissions('cache-test-submission')`,
     ].forEach(url => {
+      // TODO etags do NOT need to added manually!
       `
         inputs                                                     || expected outputs
         with cache | has session header | has etag | after max-age || response status | date
         -----------|--------------------|----------|---------------||-----------------|---------------
-//                ❌ |                 ❌ |       ❌ |            ❌ || 403             |
-//                ❌ |                 ❌ |       ❌ |            ✅ || 403             |
-//                ❌ |                 ❌ |       ✅ |            ❌ || 403             |
-//                ❌ |                 ❌ |       ✅ |            ✅ || 403             |
-//                ❌ |                 ✅ |       ❌ |            ❌ || 200             | // why no cache hit?
-//                ❌ |                 ✅ |       ❌ |            ✅ || 200             | changed // why no cache hit?
-//                ❌ |                 ✅ |       ✅ |            ❌ || 304             |
-//                ❌ |                 ✅ |       ✅ |            ✅ || 304             |
-//            shared |                 ❌ |       ❌ |            ❌ || 403             |
-//            shared |                 ❌ |       ❌ |            ✅ || 403             |
-//            shared |                 ❌ |       ✅ |            ❌ || 403             |
-//            shared |                 ❌ |       ✅ |            ✅ || 403             |
-//            shared |                 ✅ |       ❌ |            ❌ || 200             | same
-//            shared |                 ✅ |       ❌ |            ✅ || 200             | same
-//            shared |                 ✅ |       ✅ |            ❌ || 304             |
-//            shared |                 ✅ |       ✅ |            ✅ || 304             |
-//           private |                 ❌ |       ❌ |            ❌ || 403             |
-//           private |                 ❌ |       ❌ |            ✅ || 403             |
-//           private |                 ❌ |       ✅ |            ❌ || 403             |
-//           private |                 ❌ |       ✅ |            ✅ || 403             |
-//           private |                 ✅ |       ❌ |            ❌ || 200             | same
-//           private |                 ✅ |       ❌ |            ✅ || 200             | same
+                ❌ |                 ❌ |       ❌ |            ❌ || 403             | N/A
+                ❌ |                 ❌ |       ❌ |            ✅ || 403             | N/A
+                ❌ |                 ❌ |       ✅ |            ❌ || 403             | N/A
+                ❌ |                 ❌ |       ✅ |            ✅ || 403             | N/A
+                ❌ |                 ✅ |       ❌ |            ❌ || 200             | race-condition
+                ❌ |                 ✅ |       ❌ |            ✅ || 200             | changed
+                ❌ |                 ✅ |       ✅ |            ❌ || 304             | race-condition
+                ❌ |                 ✅ |       ✅ |            ✅ || 304             | changed
+            shared |                 ❌ |       ❌ |            ❌ || 403             | N/A
+            shared |                 ❌ |       ❌ |            ✅ || 403             | N/A
+            shared |                 ❌ |       ✅ |            ❌ || 403             | N/A
+            shared |                 ❌ |       ✅ |            ✅ || 403             | N/A
+            shared |                 ✅ |       ❌ |            ❌ || 200             | race-condition
+            shared |                 ✅ |       ❌ |            ✅ || 200             | changed
+            shared |                 ✅ |       ✅ |            ❌ || 304             | race-condition
+            shared |                 ✅ |       ✅ |            ✅ || 304             | changed
+           private |                 ❌ |       ❌ |            ❌ || 403             | N/A
+           private |                 ❌ |       ❌ |            ✅ || 403             | N/A
+           private |                 ❌ |       ✅ |            ❌ || 403             | N/A
+           private |                 ❌ |       ✅ |            ✅ || 403             | N/A
+           private |                 ✅ |       ❌ |            ❌ || 200             | same
+           private |                 ✅ |       ❌ |            ✅ || 200             | same
            private |                 ✅ |       ✅ |            ❌ || 200             | same
            private |                 ✅ |       ✅ |            ✅ || 200             | same
       `.split('\n')
@@ -107,6 +108,10 @@ describe.only('Cache headers', () => {
               }
             })();
 
+            // Note that undici has had various historical issues with case-sensitivity of header
+            // names.  With this in mind, it's generally safest to follow the undici style of using
+            // lower-case header names.
+
             const baseOpts = {
               dispatcher,
               // N.B. base caching headers are set to work around "helpful" fetch behaviour.  These
@@ -115,17 +120,17 @@ describe.only('Cache headers', () => {
               // users.
               // See: https://github.com/nodejs/undici/issues/1930
               headers: {
-                'Cache-Control': 'max-stale=3600',
-                'Pragma': '',
+                'cache-control': 'max-stale=3600',
+                'pragma': '',
               },
             };
 
             const withSessionHeader = (opts={}) => ({
               ...opts,
-              headers: { ...opts.headers, Authorization:`Bearer ${api.getSessionToken()}` },
+              headers: { ...opts.headers, authorization:`Bearer ${api.getSessionToken()}` },
             });
 
-            const withEtagFrom = (res, opts={}) => ({ ...opts, headers: { ...opts.headers, 'If-None-Match': res.headers.get('ETag') } });
+            const withEtagFrom = (res, opts={}) => ({ ...opts, headers: { ...opts.headers, 'if-none-match': res.headers.get('ETag') } });
 
             // TODO filtering some variables here while working out expected values
             //if(cache !== 'private') return;
@@ -155,8 +160,13 @@ describe.only('Cache headers', () => {
 
             // then
             assert.equal(res2.status, Number(expectedStatus), `Expected response status ${expectedStatus}, but got ${res2.status}`);
-            if (dateExpectation === 'same')       assert.equal(res2.headers.get('date'), res1.headers.get('date'));
-            if (dateExpectation === 'changed') assert.notEqual(res2.headers.get('date'), res1.headers.get('date'));
+            switch(dateExpectation) {
+              case 'same':       assert.equal(res2.headers.get('date'), res1.headers.get('date')); break;
+              case 'changed': assert.notEqual(res2.headers.get('date'), res1.headers.get('date')); break;
+              case 'N/A': /* not important - no assertion made about date values; the behaviour is undefined */ break;
+              case 'race-condition': /* date may or may not have changed, depending on if the clock ticked between requests */ break;
+              default: throw new Error(`Unrecognised value for dateExpectation: '${dateExpectation}'`);
+            }
             // and
             assert.equal(res1.headers.get('Cache-Control'), 'private, max-age=1'); // TODO change this to max-age=0 and decrease sleep to 1s
             assert.equal(res2.headers.get('Cache-Control'), 'private, max-age=1');
