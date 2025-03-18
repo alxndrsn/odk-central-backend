@@ -82,7 +82,6 @@ describe('Cache headers', () => {
   });
 
   describe('single-use paths', () => {
-    // TODO rewrite as above
     [
       () => `${serverUrl}/v1/sessions/restore`,
     ].forEach(url => {
@@ -141,9 +140,9 @@ describe('Cache headers', () => {
 
   function testSecondRequest(url, [ cache, useSession, useEtag, useSleep, expectedStatus, dateExpectation ], ...expectedHeaders) {
     if(!useSession) {
-      //scenario('without session', opts => opts);
+      scenario('without session', opts => opts);
     } else {
-      //scenario('with bearer token', withBearerToken);
+      scenario('with bearer token', withBearerToken);
 
       scenario(
         'with session cookie',
@@ -151,7 +150,6 @@ describe('Cache headers', () => {
           ...opts,
           headers: {
             ...opts.headers,
-            //cookie: `session=${Buffer.from(api.getSessionToken()).toString('base64')}`,
             cookie: `session=${api.getSessionToken()}`,
             'x-forwarded-proto': 'https', // see lib/http/preprocessors.js
           },
