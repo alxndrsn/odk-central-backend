@@ -155,8 +155,10 @@ describe('Cache headers', () => {
     }
 
     function withBearerToken(opts={}) {
-      ...opts,
-      headers: { ...opts.headers, authorization:`Bearer ${api.getSessionToken()}` },
+      return {
+        ...opts,
+        headers: { ...opts.headers, authorization:`Bearer ${api.getSessionToken()}` },
+      };
     }
 
     function scenario(authType, withAuth) {
