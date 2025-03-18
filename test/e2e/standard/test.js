@@ -20,9 +20,6 @@ const userPassword = 'secret1234';
 describe.only('Cache headers', () => {
   const undici = require('undici');
 
-  // TODO increase max-age to 1 and add 2 seconds of sleep - maybe undici never caches max-age 0 at all?
-  // TODO check stashed stuff
-
   let api;
   let projectId = ':projectId';
   let xmlFormId = ':xmlFormId';
@@ -47,8 +44,7 @@ describe.only('Cache headers', () => {
       //() => `${serverUrl}/v1/projects/${projectId}/forms/${encodeURIComponent(xmlFormId)}`,
       //() => `${serverUrl}/v1/projects/${projectId}/forms/${encodeURIComponent(xmlFormId)}.svc/Submissions('cache-test-submission')`,
     ].forEach(url => {
-      // TODO etags do NOT need to added manually!
-      `
+      testTable(`
         inputs                                                     || expected outputs
         with cache | has session header | has etag | after max-age || response status | date
         -----------|--------------------|----------|---------------||-----------------|---------------
@@ -76,17 +72,7 @@ describe.only('Cache headers', () => {
            private |                 ✅ |       ❌ |            ✅ || 200             | same
            private |                 ✅ |       ✅ |            ❌ || 200             | same
            private |                 ✅ |       ✅ |            ✅ || 200             | same
-      `.split('\n')
-        .map(line => line.replace(/\/\/.*/, '')) // remove comments starting with //
-        .filter((line, idx) => line.trim() && idx > 3)
-        .map(line => console.log({ line, parts: line.split(/\s*\|+\s*/) }) || line // TODO remove console.log()
-          .trim()
-          .split(/\s*\|+\s*/)
-          .map(str => {
-            if (str === '✅') return true;
-            if (str === '❌') return false;
-            return str;
-          })) // TODO extract this into test parsing function, e.g. testTable()
+      `)
         .forEach(([ cache, useSession, useEtag, useSleep, expectedStatus, dateExpectation ]) => {
           it.only(`should return ${expectedStatus} when ${JSON.stringify({ cache, useSession, useEtag, useSleep })}`, async function() {
             this.timeout(5000);
@@ -322,4 +308,20 @@ function assertOkStatus({ ok, status }) {
 
 function assertNonOkStatus({ ok, status }) {
   assert.equal(ok, false, `Expected non-OK response status, but got ${status}`);
+}
+
+function testTable(tableString) {
+  const lines = tableString.split('\n');
+  const idxHeaderEnd = lines.findIndex(line => line.match(/^\s*-+(\|+-+)\s*$/));
+  return lines
+    .map(line => line.replace(/\/\/.*/, '')) // remove comments starting with //
+    .filter((line, idx) => line.trim() && idx > idxHeaderEnd)
+    .map(line => line
+      .trim()
+      .split(/\s*\|+\s*/)
+      .map(str => {
+        if (str === '✅') return true;
+        if (str === '❌') return false;
+        return str;
+      }));
 }
