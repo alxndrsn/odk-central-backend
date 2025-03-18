@@ -41,8 +41,8 @@ describe.only('Cache headers', () => {
     // TODO write test version with cookie (and/or with session header?)
     [
       () => `${serverUrl}/v1/projects/${projectId}`,
-      //() => `${serverUrl}/v1/projects/${projectId}/forms/${encodeURIComponent(xmlFormId)}`,
-      //() => `${serverUrl}/v1/projects/${projectId}/forms/${encodeURIComponent(xmlFormId)}.svc/Submissions('cache-test-submission')`,
+      () => `${serverUrl}/v1/projects/${projectId}/forms/${encodeURIComponent(xmlFormId)}`,
+      () => `${serverUrl}/v1/projects/${projectId}/forms/${encodeURIComponent(xmlFormId)}.svc/Submissions('cache-test-submission')`,
     ].forEach(url => {
       testTable(`
         inputs                                                     || expected outputs
@@ -312,7 +312,7 @@ function assertNonOkStatus({ ok, status }) {
 
 function testTable(tableString) {
   const lines = tableString.split('\n');
-  const idxHeaderEnd = lines.findIndex(line => line.match(/^\s*-+(\|+-+)\s*$/));
+  const idxHeaderEnd = lines.findIndex(line => line.match(/^\s*-+(\|+-+)+\s*$/));
   return lines
     .map(line => line.replace(/\/\/.*/, '')) // remove comments starting with //
     .filter((line, idx) => line.trim() && idx > idxHeaderEnd)
