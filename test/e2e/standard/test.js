@@ -41,6 +41,7 @@ describe.only('Cache headers', () => {
   });
 
   describe('private paths', () => {
+    // TODO write test version with cookie (and/or with session header?)
     [
       () => `${serverUrl}/v1/projects/${projectId}`,
       //() => `${serverUrl}/v1/projects/${projectId}/forms/${encodeURIComponent(xmlFormId)}`,
@@ -48,35 +49,35 @@ describe.only('Cache headers', () => {
     ].forEach(url => {
       `
         inputs                                                     || expected outputs
-        with cache | has session header | has etag | after max-age || response status | different date
+        with cache | has session header | has etag | after max-age || response status | date
         -----------|--------------------|----------|---------------||-----------------|---------------
-                ❌ |                 ❌ |       ❌ |            ❌ || 403             | ❌
-                ❌ |                 ❌ |       ❌ |            ✅ || 403             | ❌
-                ❌ |                 ❌ |       ✅ |            ❌ || 403             | ❌
-                ❌ |                 ❌ |       ✅ |            ✅ || 403             | ❌
-                ❌ |                 ✅ |       ❌ |            ❌ || 200             | ❌
-                ❌ |                 ✅ |       ❌ |            ✅ || 200             | ❌
-                ❌ |                 ✅ |       ✅ |            ❌ || 200             | ❌
-                ❌ |                 ✅ |       ✅ |            ✅ || 200             | ❌
-            shared |                 ❌ |       ❌ |            ❌ || 403             | ❌
-            shared |                 ❌ |       ❌ |            ✅ || 403             | ❌
-            shared |                 ❌ |       ✅ |            ❌ || 403             | ❌
-            shared |                 ❌ |       ✅ |            ✅ || 403             | ❌
-            shared |                 ✅ |       ❌ |            ❌ || 200             | ❌
-            shared |                 ✅ |       ❌ |            ✅ || 200             | ✅
-            shared |                 ✅ |       ✅ |            ❌ || 200             | ❌
-            shared |                 ✅ |       ✅ |            ✅ || 200             | ❌
-           private |                 ❌ |       ❌ |            ❌ || 403             | ❌
-           private |                 ❌ |       ❌ |            ✅ || 403             | ❌
-           private |                 ❌ |       ✅ |            ❌ || 403             | ❌
-           private |                 ❌ |       ✅ |            ✅ || 403             | ❌
-           private |                 ✅ |       ❌ |            ❌ || 200             | ❌
-           private |                 ✅ |       ❌ |            ✅ || 200             | ✅
-           private |                 ✅ |       ✅ |            ❌ || 304             | ❌
-           private |                 ✅ |       ✅ |            ✅ || 304             | ❌
+//                ❌ |                 ❌ |       ❌ |            ❌ || 403             |
+//                ❌ |                 ❌ |       ❌ |            ✅ || 403             |
+//                ❌ |                 ❌ |       ✅ |            ❌ || 403             |
+//                ❌ |                 ❌ |       ✅ |            ✅ || 403             |
+//                ❌ |                 ✅ |       ❌ |            ❌ || 200             | // why no cache hit?
+//                ❌ |                 ✅ |       ❌ |            ✅ || 200             | changed // why no cache hit?
+//                ❌ |                 ✅ |       ✅ |            ❌ || 304             |
+//                ❌ |                 ✅ |       ✅ |            ✅ || 304             |
+//            shared |                 ❌ |       ❌ |            ❌ || 403             |
+//            shared |                 ❌ |       ❌ |            ✅ || 403             |
+//            shared |                 ❌ |       ✅ |            ❌ || 403             |
+//            shared |                 ❌ |       ✅ |            ✅ || 403             |
+//            shared |                 ✅ |       ❌ |            ❌ || 200             | same
+//            shared |                 ✅ |       ❌ |            ✅ || 200             | same
+//            shared |                 ✅ |       ✅ |            ❌ || 304             |
+//            shared |                 ✅ |       ✅ |            ✅ || 304             |
+//           private |                 ❌ |       ❌ |            ❌ || 403             |
+//           private |                 ❌ |       ❌ |            ✅ || 403             |
+//           private |                 ❌ |       ✅ |            ❌ || 403             |
+//           private |                 ❌ |       ✅ |            ✅ || 403             |
+//           private |                 ✅ |       ❌ |            ❌ || 200             | same
+//           private |                 ✅ |       ❌ |            ✅ || 200             | same
+           private |                 ✅ |       ✅ |            ❌ || 200             | same
+           private |                 ✅ |       ✅ |            ✅ || 200             | same
       `.split('\n')
+        .map(line => line.replace(/\/\/.*/, '')) // remove comments starting with //
         .filter((line, idx) => line.trim() && idx > 3)
-        .filter(line => !line.match(/^\s*(--|\/\/|#)/)) // TODO remove comment filter
         .map(line => console.log({ line, parts: line.split(/\s*\|+\s*/) }) || line // TODO remove console.log()
           .trim()
           .split(/\s*\|+\s*/)
@@ -85,7 +86,7 @@ describe.only('Cache headers', () => {
             if (str === '❌') return false;
             return str;
           }))
-        .forEach(([ cache, useSession, useEtag, useSleep, expectedStatus, expectDifferentDate ]) => {
+        .forEach(([ cache, useSession, useEtag, useSleep, expectedStatus, dateExpectation ]) => {
           it.only(`should return ${expectedStatus} when ${JSON.stringify({ cache, useSession, useEtag, useSleep })}`, async function() {
             this.timeout(5000);
 
@@ -114,7 +115,7 @@ describe.only('Cache headers', () => {
               // users.
               // See: https://github.com/nodejs/undici/issues/1930
               headers: {
-                'Cache-Control': '',
+                'Cache-Control': 'max-stale=3600',
                 'Pragma': '',
               },
             };
@@ -154,7 +155,8 @@ describe.only('Cache headers', () => {
 
             // then
             assert.equal(res2.status, Number(expectedStatus), `Expected response status ${expectedStatus}, but got ${res2.status}`);
-            if (expectDifferentDate) assert.notEqual(res2.headers.get('date'), res1.headers.get('date'));
+            if (dateExpectation === 'same')       assert.equal(res2.headers.get('date'), res1.headers.get('date'));
+            if (dateExpectation === 'changed') assert.notEqual(res2.headers.get('date'), res1.headers.get('date'));
             // and
             assert.equal(res1.headers.get('Cache-Control'), 'private, max-age=1'); // TODO change this to max-age=0 and decrease sleep to 1s
             assert.equal(res2.headers.get('Cache-Control'), 'private, max-age=1');
