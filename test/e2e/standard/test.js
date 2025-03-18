@@ -91,10 +91,14 @@ describe.only('Cache headers', () => {
           it.only(`should return ${expectedStatus} when ${JSON.stringify({ cache, useSession, useEtag, useSleep })}`, async function() {
             this.timeout(5000);
 
+            // Testing with cacheByDefault: MAX_SAFE_INTEGER is appropriate for
+            // testing privacy & integrity of cached data.  There may be a more
+            // appropriate value if looking to test real-world browser behaviour.
+
             const dispatcher = (() => {
               switch (cache) {
                 case 'private': return new undici.Agent().compose(undici.interceptors.cache({
-                  cacheByDefault: undefined, // do not cache responses without explicit expiration
+                  cacheByDefault: Number.MAX_SAFE_INTEGER, // aggressively cache everything
                   methods: [ 'GET' ],
                   type: 'private',
                 }));
@@ -168,8 +172,8 @@ describe.only('Cache headers', () => {
               default: throw new Error(`Unrecognised value for dateExpectation: '${dateExpectation}'`);
             }
             // and
-            assert.equal(res1.headers.get('Cache-Control'), 'private, max-age=1'); // TODO change this to max-age=0 and decrease sleep to 1s
-            assert.equal(res2.headers.get('Cache-Control'), 'private, max-age=1');
+            assert.equal(res1.headers.get('Cache-Control'), 'private, max-age=0');
+            assert.equal(res2.headers.get('Cache-Control'), 'private, max-age=0');
             assert.equal(res1.headers.get('Expires'), undefined);
             assert.equal(res2.headers.get('Expires'), undefined);
           });
