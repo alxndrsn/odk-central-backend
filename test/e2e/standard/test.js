@@ -188,12 +188,6 @@ describe.only('Cache headers', () => {
 
       const withEtagFrom = (res, opts={}) => ({ ...opts, headers: { ...opts.headers, 'if-none-match': res.headers.get('ETag') } });
 
-      // TODO filtering some variables here while working out expected values
-      //if(cache !== 'private') return;
-      //if(useSleep) return;
-      //if(useEtag) return;
-      //if(useSession) return;
-
       // given
       console.log('--- req1 -----------------------');
       const opts1 = withSessionHeader(baseOpts);
