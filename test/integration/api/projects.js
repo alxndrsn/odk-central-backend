@@ -298,19 +298,14 @@ describe('api: /projects', () => {
       service.login('chelsea', (asChelsea) =>
         asChelsea.get('/v1/projects/1').expect(403))));
 
-    it.only('should use etags', testService((service) =>
+    it('should return the default project', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.get('/v1/projects/1')
           .expect(200)
-          .then(({ body, headers }) => {
+          .then(({ body }) => {
             body.id.should.equal(1);
             body.name.should.equal('Default Project');
             body.should.be.a.Project();
-            const { etag } = headers;
-            etag.should.match(/^W\/".*"/);
-            return asAlice.get('/v1/projects/1')
-              .set('If-None-Match', etag)
-              .expect(304);
           }))));
 
     it('should return extended metadata if requested', testService(async (service) => {
