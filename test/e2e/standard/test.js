@@ -231,7 +231,7 @@ describe('Cache headers', () => {
           assert.deepEqual(res2.headers.get(name), expectedValue, `Unexpected value for header ${name} of response 2`);
         });
       });
-    };
+    }
   }
 });
 
