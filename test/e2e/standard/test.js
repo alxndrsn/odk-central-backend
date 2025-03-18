@@ -17,7 +17,7 @@ const serverUrl = 'http://localhost:8383';
 const userEmail = 'x@example.com';
 const userPassword = 'secret1234';
 
-describe.only('Cache headers', () => {
+describe('Cache headers', () => {
   const undici = require('undici');
 
   let api;
@@ -163,15 +163,15 @@ describe.only('Cache headers', () => {
         }
       })();
 
-      // Note that undici has had various historical issues with case-sensitivity of header
-      // names.  With this in mind, it's generally safest to follow the undici style of using
-      // lower-case header names.
+      // Note that undici has had various historical issues with case-sensitivity
+      // of header names.  With this in mind, it's generally safest to follow the
+      // undici style of using lower-case header names.
       const baseOpts = {
         dispatcher,
-        // N.B. base caching headers are set to work around "helpful" fetch behaviour.  These
-        // overrides may make these tests behave less like browsers, which may be of
-        // significance if trying to tune real-world client behaviour for odk-central-frontend
-        // users.
+        // Base caching headers are set to work around "helpful" fetch behaviour.
+        // These overrides may make these tests behave less like browsers, which
+        // may be of significance if trying to tune real-world client behaviour
+        // for e.g. odk-central-frontend users.
         // See: https://github.com/nodejs/undici/issues/1930
         headers: {
           'cache-control': 'max-stale=3600',
@@ -187,24 +187,17 @@ describe.only('Cache headers', () => {
       const withEtagFrom = (res, opts={}) => ({ ...opts, headers: { ...opts.headers, 'if-none-match': res.headers.get('ETag') } });
 
       // given
-      console.log('--- req1 -----------------------');
       const opts1 = withSessionHeader(baseOpts);
-      console.log('res1 opts:', opts1);
       const res1 = await undici.fetch(url(), opts1);
-      console.log('res1:', res1.status, res1.headers);
       assert.equal(res1.ok, true, `Expected OK response status, but got ${res1.status}`);
       // and
-      console.log('--- req2 -----------------------');
       let opts2 = baseOpts;
       if (useEtag)    opts2 = withEtagFrom(res1, opts2);
       if (useSession) opts2 = withSessionHeader(opts2);
 
       // when
       if (useSleep) await sleep(1000);
-      // and
-      console.log('res2 opts:', opts2);
       const res2 = await undici.fetch(url(), opts2);
-      console.log('res2:', res2.status, res2.headers);
 
       // then
       assert.equal(res2.status, Number(expectedStatus), `Expected response status ${expectedStatus}, but got ${res2.status}`);
