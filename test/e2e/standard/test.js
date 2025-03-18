@@ -73,7 +73,11 @@ describe.only('Cache headers', () => {
            private |                 ✅ |       ✅ |            ❌ || 200             | same
            private |                 ✅ |       ✅ |            ✅ || 200             | same
       `)
-        .forEach(args => testSecondRequest(url, args, 'private, max-age=0'));
+        .forEach(args => testSecondRequest(url, args,
+          [ 'Cache-Control', 'private, max-age=0' ],
+          [ 'Expires',        undefined ],
+          [ 'Vary',          'Authorization, Cookie' ],
+        ));
       });
   });
 
@@ -86,42 +90,38 @@ describe.only('Cache headers', () => {
         inputs                                                     || expected outputs
         with cache | has session header | has etag | after max-age || response status | date
         -----------|--------------------|----------|---------------||-----------------|---------------
-                ❌ |                 ❌ |       ❌ |            ❌ || 403             | N/A
-                ❌ |                 ❌ |       ❌ |            ✅ || 403             | N/A
-                ❌ |                 ❌ |       ✅ |            ❌ || 403             | N/A
-                ❌ |                 ❌ |       ✅ |            ✅ || 403             | N/A
+                ❌ |                 ❌ |       ❌ |            ❌ || 404             | N/A
+                ❌ |                 ❌ |       ❌ |            ✅ || 404             | N/A
+                ❌ |                 ❌ |       ✅ |            ❌ || 404             | N/A
+                ❌ |                 ❌ |       ✅ |            ✅ || 404             | N/A
                 ❌ |                 ✅ |       ❌ |            ❌ || 200             | race-condition
                 ❌ |                 ✅ |       ❌ |            ✅ || 200             | changed
-                ❌ |                 ✅ |       ✅ |            ❌ || 200             | race-condition
-                ❌ |                 ✅ |       ✅ |            ✅ || 200             | changed
-            shared |                 ❌ |       ❌ |            ❌ || 403             | N/A
-            shared |                 ❌ |       ❌ |            ✅ || 403             | N/A
-            shared |                 ❌ |       ✅ |            ❌ || 403             | N/A
-            shared |                 ❌ |       ✅ |            ✅ || 403             | N/A
+                ❌ |                 ✅ |       ✅ |            ❌ || 304             | race-condition
+                ❌ |                 ✅ |       ✅ |            ✅ || 304             | changed
+            shared |                 ❌ |       ❌ |            ❌ || 404             | N/A
+            shared |                 ❌ |       ❌ |            ✅ || 404             | N/A
+            shared |                 ❌ |       ✅ |            ❌ || 404             | N/A
+            shared |                 ❌ |       ✅ |            ✅ || 404             | N/A
             shared |                 ✅ |       ❌ |            ❌ || 200             | race-condition
             shared |                 ✅ |       ❌ |            ✅ || 200             | changed
-            shared |                 ✅ |       ✅ |            ❌ || 200             | race-condition
-            shared |                 ✅ |       ✅ |            ✅ || 200             | changed
-           private |                 ❌ |       ❌ |            ❌ || 403             | N/A
-           private |                 ❌ |       ❌ |            ✅ || 403             | N/A
-           private |                 ❌ |       ✅ |            ❌ || 403             | N/A
-           private |                 ❌ |       ✅ |            ✅ || 403             | N/A
+            shared |                 ✅ |       ✅ |            ❌ || 304             | race-condition
+            shared |                 ✅ |       ✅ |            ✅ || 304             | changed
+           private |                 ❌ |       ❌ |            ❌ || 404             | N/A
+           private |                 ❌ |       ❌ |            ✅ || 404             | N/A
+           private |                 ❌ |       ✅ |            ❌ || 404             | N/A
+           private |                 ❌ |       ✅ |            ✅ || 404             | N/A
            private |                 ✅ |       ❌ |            ❌ || 200             | race-condition
            private |                 ✅ |       ❌ |            ✅ || 200             | changed
-           private |                 ✅ |       ✅ |            ❌ || 200             | race-condition
-           private |                 ✅ |       ✅ |            ✅ || 200             | changed
+           private |                 ✅ |       ✅ |            ❌ || 304             | race-condition
+           private |                 ✅ |       ✅ |            ✅ || 304             | changed
       `)
-        .forEach(args => testSecondRequest(url, args, 'no-store'));
+        .forEach(args => testSecondRequest(url, args,
+          [ 'Cache-Control', 'no-store' ],
+          [ 'Expires',        undefined ],
+          [ 'Vary',           undefined ],
+        ));
     });
   });
-
-  function assertOkStatus({ ok, status }) {
-    assert.equal(ok, true, `Expected OK response status, but got ${status}`);
-  }
-
-  function assertNonOkStatus({ ok, status }) {
-    assert.equal(ok, false, `Expected non-OK response status, but got ${status}`);
-  }
 
   function testTable(tableString) {
     const lines = tableString.split('\n');
@@ -139,14 +139,13 @@ describe.only('Cache headers', () => {
         }));
   }
 
-  function testSecondRequest(url, [ cache, useSession, useEtag, useSleep, expectedStatus, dateExpectation ], expectedCacheControlHeader) {
+  function testSecondRequest(url, [ cache, useSession, useEtag, useSleep, expectedStatus, dateExpectation ], ...expectedHeaders) {
     it(`should return ${expectedStatus} when ${JSON.stringify({ cache, useSession, useEtag, useSleep })}`, async function() {
       this.timeout(2000);
 
       // Testing with cacheByDefault: MAX_SAFE_INTEGER is appropriate for
       // testing privacy & integrity of cached data.  There may be a more
       // appropriate value if looking to test real-world browser behaviour.
-
       const dispatcher = (() => {
         switch (cache) {
           case 'private': return new undici.Agent().compose(undici.interceptors.cache({
@@ -167,7 +166,6 @@ describe.only('Cache headers', () => {
       // Note that undici has had various historical issues with case-sensitivity of header
       // names.  With this in mind, it's generally safest to follow the undici style of using
       // lower-case header names.
-
       const baseOpts = {
         dispatcher,
         // N.B. base caching headers are set to work around "helpful" fetch behaviour.  These
@@ -177,7 +175,7 @@ describe.only('Cache headers', () => {
         // See: https://github.com/nodejs/undici/issues/1930
         headers: {
           'cache-control': 'max-stale=3600',
-          'pragma': '',
+          'pragma':        '', // eslint-disable-line quote-props
         },
       };
 
@@ -194,7 +192,7 @@ describe.only('Cache headers', () => {
       console.log('res1 opts:', opts1);
       const res1 = await undici.fetch(url(), opts1);
       console.log('res1:', res1.status, res1.headers);
-      assertOkStatus(res1);
+      assert.equal(res1.ok, true, `Expected OK response status, but got ${res1.status}`);
       // and
       console.log('--- req2 -----------------------');
       let opts2 = baseOpts;
@@ -222,12 +220,6 @@ describe.only('Cache headers', () => {
         assert.deepEqual(res1.headers.get(name), expectedValue, `Unexpected value for header ${name} of response 1`);
         assert.deepEqual(res2.headers.get(name), expectedValue, `Unexpected value for header ${name} of response 2`);
       });
-      assert.equal(res1.headers.get('Cache-Control'), expectedCacheControlHeader);
-      assert.equal(res2.headers.get('Cache-Control'), expectedCacheControlHeader);
-      assert.equal(res1.headers.get('Expires'), undefined);
-      assert.equal(res2.headers.get('Expires'), undefined);
-      assert.equal(res1.headers.get('Vary'), 'Authorization, Cookie');
-      assert.equal(res2.headers.get('Vary'), 'Authorization, Cookie');
     });
   }
 });
