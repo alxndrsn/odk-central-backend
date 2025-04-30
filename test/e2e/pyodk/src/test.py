@@ -1,6 +1,5 @@
 import uuid
 from pyodk.client import Client
-from pyodk.exceptions import ODKClientError
 from pathlib import Path
 
 def log(*args):
@@ -49,7 +48,7 @@ with Client(config_path="pyodk.conf.toml") as client:
         f'</h:html>'
       ),
     )
-  except ODKClientError as err:
+  except Exception as err:
     assert err.status_code == 409, f'Failed to create form.  HTTP response code: {res.status_code}'
 
   file = Path(__file__).parent / "fruits.csv"
