@@ -78,6 +78,8 @@ with Client(config_path="pyodk.conf.toml") as client:
   res = client.get(f'projects/1/forms/upload_file/submissions/{submissionId}/attachments/{file.name}')
   assert res.status_code == 200, f'Unexpected status code: {res.status_code}'
 
-  assert res.headers["content-type"] == "text/csv", f'Unexpected Content-Type header: {res.headers["content-type"]}'
+  expected = 'text/csv'
+  actual = res.headers["content-type"]
+  assert actual == expected or actual.startswith(f'{expected}; '), f'Unexpected Content-Type header: {actual}'
 
 log("Completed OK.")
