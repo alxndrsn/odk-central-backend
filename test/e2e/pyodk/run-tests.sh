@@ -24,16 +24,18 @@ trap kill_child_processes EXIT
 log "Starting backend..."
 make run | tee server.log &
 
-log "Waiting for backend to start..."
-timeout 30 bash -c "while ! curl -s -o /dev/null $serverUrl; do sleep 1; done"
-log "Backend started!"
-
 cd test/e2e/pyodk
 
 log "Building pyodk test image..."
 imgTag="pyodk-central-tester"
 docker build --tag "$imgTag" .
 log "Image built OK."
+
+# Check backend has started as late as possible to reduce waiting time - it may
+# have completed startup while other work was happening.
+log "Waiting for backend to start..."
+timeout 30 bash -c "while ! curl -s -o /dev/null $serverUrl; do sleep 1; done"
+log "Backend started!"
 
 log "Running tests..."
 docker run "$imgTag"
