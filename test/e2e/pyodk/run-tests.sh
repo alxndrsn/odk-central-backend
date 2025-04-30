@@ -28,6 +28,8 @@ log "Waiting for backend to start..."
 timeout 30 bash -c "while ! curl -s -o /dev/null $serverUrl; do sleep 1; done"
 log "Backend started!"
 
+cd test/e2e/pyodk
+
 log "Building pyodk test image..."
 imgTag="pyodk-central-tester"
 docker build --tag "$imgTag" .
