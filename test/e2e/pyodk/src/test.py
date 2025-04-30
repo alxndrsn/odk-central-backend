@@ -1,5 +1,6 @@
 import uuid
 from pyodk.client import Client
+from pyodk.exceptions import ODKClientError
 from pathlib import Path
 
 def log(*args):
