@@ -37,8 +37,12 @@ log "Waiting for backend to start..."
 timeout 30 bash -c "while ! curl -s -o /dev/null $serverUrl; do sleep 1; done"
 log "Backend started!"
 
+# TODO this is just for debug
+log "Showing docker network config:"
+ip addr show docker0
+
 log "Running tests..."
-docker run "$imgTag"
+docker run --network=host "$imgTag"
 
 if ! curl -s -o /dev/null "$serverUrl"; then
   log "Backend died."
