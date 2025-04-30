@@ -1,0 +1,5 @@
+[central]
+base_url = "http://localhost:8383"
+username = "x@example.com"
+password = "secret1234"
+default_project_id = 1
