@@ -9,4 +9,4 @@ RUN pip install pyodk
 
 COPY pyodk.conf.toml /src/ .
 
-CMD [ "run.sh" ]
+CMD [ "./run.sh" ]
