@@ -395,9 +395,10 @@ describe('preprocessors', () => {
           { Auth, Sessions: mockFkSession('alohomoraalohomoraalohomoraalohomoraalohomoraalohomoraalohomoraa', 'field_key') },
           new Context(createRequest(), { fieldKey: Option.of('alohomoraalohomoraalohomoraalohomoraalohomoraalohomoraalohomoraa'), })
         )).then((context) => {
-          context.auth.session.should.eql(Option.of(new Session({
-            token: 'alohomoraalohomoraalohomoraalohomoraalohomoraalohomoraalohomoraa'
-          })));
+          context.auth.session.should.eql(Option.of(new Session(
+            { token: 'alohomoraalohomoraalohomoraalohomoraalohomoraalohomoraalohomoraa' },
+            { actor: new Actor({ type: 'field_key' }) },
+          )));
           context.auth.actor.should.eql(Option.of(new Actor({ type: 'field_key' })));
         }));
     });
