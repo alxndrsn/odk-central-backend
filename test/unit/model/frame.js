@@ -120,7 +120,7 @@ describe('Frame', () => {
       const b = new Frame({ y: 6, z: 7 }, { a: new Frame({ n: 8, o: 9 }), c: new Frame({ p: 10 }) });
 
       a.with(b).should.eql(new Frame({ x: 2, y: 6, z: 7 },
-        { a: new Frame({ m: 4, n: 8, o: 9 }), b: new Frame({ b: 0 }), c: new Frame({ p: 10 }) }));
+        { a: ({ m: 4, n: 8, o: 9 }), b: ({ b: 0 }), c: ({ p: 10 }) }));
     });
 
     it('should include another aux frame with withAux', () => {
