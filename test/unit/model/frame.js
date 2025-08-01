@@ -106,8 +106,7 @@ describe('Frame', () => {
       const Box = Frame.define('w', writable, 'x', writable, 'y', 'z', aux(Inner));
 
       const inflated = Box.fromApi({ x: 2, y: 3, z: 4 });
-      inflated.should.eql(new Box({ x: 2 }));
-      inflated.aux.inner.should.eql(new Inner({ y: 3 }));
+      inflated.should.eql(new Box({ x: 2 }, { inner: new Inner({ y: 3 }) }));
     });
 
     it('should merge additional data into a new instance via with', () => {
