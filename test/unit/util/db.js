@@ -223,7 +223,7 @@ describe('util/db', () => {
         .should.eql(new T({ x: 3, y: 4 }, { extra: Option.of(new U({ z: 5 })) }));
 
       unjoin({ 'frames!x': 3, 'frames!y': 4 })
-        .should.eql(new T({ x: 3, y: 4 }, { extra: Option.none() }));
+        .should.eql(new T({ x: 3, y: 4 }));
     });
   });
 
