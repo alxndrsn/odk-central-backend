@@ -211,12 +211,9 @@ describe('util/db', () => {
     });
 
     it('should unjoin data', () => {
-      console.log('wextra:', new T({ x: 3, y: 4 }, { extra: new U({ z: 5 }) }));
-      console.log('unjoined:', unjoiner(T, U)({ 'frames!x': 3, 'frames!y': 4, z: 6 }));
-      unjoiner(T, U)({ 'frames!x': 3, 'frames!y': 4, z: 5 })
-        .should.eql(new T({ x: 3, y: 4 }, { extra: new U({ z: 5 }) })); // TODO this extra part does nothing
-      unjoiner(T, U)({ 'frames!x': 3, 'frames!y': 4, z: 5 })
-        .should.eql(new T({ x: 3, y: 4 }, { extra: new U({ z: 6 }) })); // TODO this extra part does nothing
+      const unjoined = unjoiner(T, U)({ 'frames!x': 3, 'frames!y': 4, z: 5 });
+      unjoined.should.eql(new T({ x: 3, y: 4 }));
+      unjoined.aux.extra.should.eql(new U({ z: 5 }));
     });
 
     it('should optionally unjoin optional data', () => {
@@ -250,8 +247,9 @@ describe('util/db', () => {
     });
 
     it('should unjoin data', () => {
-      _unjoiner({ 'big_frame!a': 1, 'big_frame!c': 3, 'big_frame!e': 5, f: 6, h: 8, j: 10 })
-        .should.eql(new V({ a: 1, c: 3, e: 5 }, { extra: new W({ f: 6, g: undefined, h: 8, i: undefined, j: 10 }) }));
+      const unjoined = _unjoiner({ 'big_frame!a': 1, 'big_frame!c': 3, 'big_frame!e': 5, f: 6, h: 8, j: 10 });
+      unjoined.should.eql(new V({ a: 1, c: 3, e: 5 }));
+      unjoined.aux.extra.should.eql(new W({ f: 6, h: 8, j: 10 }));
     });
   });
 
