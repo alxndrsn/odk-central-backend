@@ -2,6 +2,10 @@ default: base
 
 NODE_CONFIG_ENV ?= test
 
+.PHONY: stars
+stars:
+	git grep -Ei 'returning.*\*' -- lib/model/query/ | grep -v return-star-ok | grep --color=always -Ei 'returning.*\*'
+
 node_modules: package.json
 	npm install
 	touch node_modules
