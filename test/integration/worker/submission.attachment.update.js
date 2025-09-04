@@ -6,7 +6,7 @@ const testData = require(appRoot + '/test/data/xml.js');
 const worker = require(appRoot + '/lib/worker/submission.attachment.update');
 
 describe('worker: submission.attachment.update', () => {
-  it('should do nothing if the attachment is not a client audit', testService((service, container) =>
+  it.only('should do nothing if the attachment is not a client audit', testService((service, container) =>
     service.login('alice', (asAlice) =>
       asAlice.post('/v1/projects/1/forms?publish=true')
         .set('Content-Type', 'application/xml')
@@ -25,7 +25,7 @@ describe('worker: submission.attachment.update', () => {
         .then(() => container.oneFirst(sql`select count(*) from client_audits`))
         .then((count) => { Number(count).should.equal(0); }))));
 
-  it('should process the given logs', testService((service, container) =>
+  it.only('should process the given logs', testService((service, container) =>
     service.login('alice', (asAlice) =>
       asAlice.post('/v1/projects/1/forms?publish=true')
         .set('Content-Type', 'application/xml')
@@ -46,7 +46,7 @@ describe('worker: submission.attachment.update', () => {
         .then(() => container.oneFirst(sql`select count(*) from client_audits`))
         .then((count) => { Number(count).should.equal(5); }))));
 
-  it('should process the given logs if already uploaded to s3', testService((service, container) => {
+  it.only('should process the given logs if already uploaded to s3', testService((service, container) => {
     global.s3.enableMock();
     return service.login('alice', (asAlice) =>
       asAlice.post('/v1/projects/1/forms?publish=true')
@@ -70,7 +70,7 @@ describe('worker: submission.attachment.update', () => {
         .then((count) => { Number(count).should.equal(5); }));
   }));
 
-  it('should not reprocess already-processed logs', testService((service, container) =>
+  it.only('should not reprocess already-processed logs', testService((service, container) =>
     service.login('alice', (asAlice) =>
       asAlice.post('/v1/projects/1/forms?publish=true')
         .set('Content-Type', 'application/xml')

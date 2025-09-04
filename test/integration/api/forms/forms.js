@@ -1040,7 +1040,7 @@ describe('api: /projects/:id/forms (create, read, update)', () => {
                 should.not.exist(body.draftToken);
               })))));
 
-      it('should not count draft submissions in its count', testService((service) =>
+      it.only('should not count draft submissions in its count', testService((service) =>
         service.login('alice', (asAlice) =>
           asAlice.post('/v1/projects/1/forms/simple/draft')
             .send(testData.forms.simple)

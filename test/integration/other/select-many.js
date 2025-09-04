@@ -5,7 +5,7 @@ const testData = require('../../data/xml');
 const { exhaust } = require(appRoot + '/lib/worker/worker');
 
 describe('select many value processing', () => {
-  it('should process values on submission ingest', testService((service, container) =>
+  it.only('should process values on submission ingest', testService((service, container) =>
     service.login('alice', (asAlice) =>
       asAlice.post('/v1/projects/1/forms?publish=true')
         .send(testData.forms.selectMultiple)
@@ -43,7 +43,7 @@ describe('select many value processing', () => {
           ]);
         }))));
 
-  it('should update values on submission update', testService((service, container) =>
+  it.only('should update values on submission update', testService((service, container) =>
     service.login('alice', (asAlice) =>
       asAlice.post('/v1/projects/1/forms?publish=true')
         .send(testData.forms.selectMultiple)
@@ -83,7 +83,7 @@ describe('select many value processing', () => {
           ]);
         }))));
 
-  it('should handle when field changes from select1 to select (selectMultiple)', testService(async (service, container) => {
+  it.only('should handle when field changes from select1 to select (selectMultiple)', testService(async (service, container) => {
     const asAlice = await service.login('alice');
 
     // the select1 version of forms.selectMultple

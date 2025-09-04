@@ -32,7 +32,7 @@ const testOfflineEntities = (test) => testService(async (service, container) => 
 
 describe('Offline Entities', () => {
   describe('parsing branchId and trunkVersion from submission xml', () => {
-    it('should parse and save info from submission creating an entity', testOfflineEntities(async (service, container) => {
+    it.only('should parse and save info from submission creating an entity', testOfflineEntities(async (service, container) => {
       const asAlice = await service.login('alice');
 
       // create=1 is specified, but baseVersion, trunkVersion, and branchId are all empty for entity creation
@@ -57,7 +57,7 @@ describe('Offline Entities', () => {
         });
     }));
 
-    it('should parse and save branch info from sub updating an entity', testOfflineEntities(async (service, container) => {
+    it.only('should parse and save branch info from sub updating an entity', testOfflineEntities(async (service, container) => {
       const asAlice = await service.login('alice');
       const branchId = uuid();
 
@@ -83,7 +83,7 @@ describe('Offline Entities', () => {
         });
     }));
 
-    it('should ignore empty string trunkVersion and branchId values in update scenario', testOfflineEntities(async (service, container) => {
+    it.only('should ignore empty string trunkVersion and branchId values in update scenario', testOfflineEntities(async (service, container) => {
       const asAlice = await service.login('alice');
 
       // branchId = "" and trunkVersion = ""
@@ -110,7 +110,7 @@ describe('Offline Entities', () => {
         });
     }));
 
-    it('should log processing error if trunkVersion is set but branchId is not', testOfflineEntities(async (service, container) => {
+    it.only('should log processing error if trunkVersion is set but branchId is not', testOfflineEntities(async (service, container) => {
       const asAlice = await service.login('alice');
 
       // branchId = "" but trunkVersion = "1" (will cause entity processing error)
@@ -143,7 +143,7 @@ describe('Offline Entities', () => {
   });
 
   describe('offline branches submitted in order', () => {
-    it('should let multiple updates in the same branch get applied in order', testOfflineEntities(async (service, container) => {
+    it.only('should let multiple updates in the same branch get applied in order', testOfflineEntities(async (service, container) => {
       const asAlice = await service.login('alice');
       const branchId = uuid();
 
@@ -179,7 +179,7 @@ describe('Offline Entities', () => {
         });
     }));
 
-    it('should apply update branch in order after server version has advanced', testOfflineEntities(async (service, container) => {
+    it.only('should apply update branch in order after server version has advanced', testOfflineEntities(async (service, container) => {
       const asAlice = await service.login('alice');
       const branchId = uuid();
 
@@ -220,7 +220,7 @@ describe('Offline Entities', () => {
         });
     }));
 
-    it('should handle updating a branch in order, but with an interruption', testOfflineEntities(async (service, container) => {
+    it.only('should handle updating a branch in order, but with an interruption', testOfflineEntities(async (service, container) => {
       const asAlice = await service.login('alice');
       const branchId = uuid();
 
@@ -271,7 +271,7 @@ describe('Offline Entities', () => {
         });
     }));
 
-    it('should handle an offline branch that starts with a create', testOfflineEntities(async (service, container) => {
+    it.only('should handle an offline branch that starts with a create', testOfflineEntities(async (service, container) => {
       const asAlice = await service.login('alice');
       const branchId = uuid();
 
@@ -308,7 +308,7 @@ describe('Offline Entities', () => {
         });
     }));
 
-    it('should handle offline create+update+update with interleaved online updates', testOfflineEntities(async (service, container) => {
+    it.only('should handle offline create+update+update with interleaved online updates', testOfflineEntities(async (service, container) => {
       const asAlice = await service.login('alice');
       const branchId = uuid();
 
@@ -382,7 +382,7 @@ describe('Offline Entities', () => {
   });
 
   describe('out of order runs', () => {
-    it('should quietly process submission without entity work if trunk and base versions are not good', testOfflineEntities(async (service, container) => {
+    it.only('should quietly process submission without entity work if trunk and base versions are not good', testOfflineEntities(async (service, container) => {
       const asAlice = await service.login('alice');
 
       // trunk version is 1, but base version is higher than trunk version indicating it is later in the run
@@ -414,7 +414,7 @@ describe('Offline Entities', () => {
       // This submission is now held in the backlog, but that functionality is checked in later tests
     }));
 
-    it('should not apply out of order update from a run after starting a run', testOfflineEntities(async (service, container) => {
+    it.only('should not apply out of order update from a run after starting a run', testOfflineEntities(async (service, container) => {
       const asAlice = await service.login('alice');
       const branchId = uuid();
 
@@ -452,7 +452,7 @@ describe('Offline Entities', () => {
         });
     }));
 
-    it('should not apply later trunkVersion (past existing server version)', testOfflineEntities(async (service, container) => {
+    it.only('should not apply later trunkVersion (past existing server version)', testOfflineEntities(async (service, container) => {
       const asAlice = await service.login('alice');
       const branchId = uuid();
 
@@ -492,7 +492,7 @@ describe('Offline Entities', () => {
         });
     }));
 
-    it('should apply later run received earlier', testOfflineEntities(async (service, container) => {
+    it.only('should apply later run received earlier', testOfflineEntities(async (service, container) => {
       const asAlice = await service.login('alice');
       const branchId = uuid();
 
@@ -545,7 +545,7 @@ describe('Offline Entities', () => {
         });
     }));
 
-    it('should handle offline update that comes before a create', testOfflineEntities(async (service, container) => {
+    it.only('should handle offline update that comes before a create', testOfflineEntities(async (service, container) => {
       const asAlice = await service.login('alice');
       const branchId = uuid();
 
@@ -590,7 +590,7 @@ describe('Offline Entities', () => {
         });
     }));
 
-    it('should handle offline create/update that comes in backwards', testOfflineEntities(async (service, container) => {
+    it.only('should handle offline create/update that comes in backwards', testOfflineEntities(async (service, container) => {
       const asAlice = await service.login('alice');
       const branchId = uuid();
 
@@ -649,7 +649,7 @@ describe('Offline Entities', () => {
         });
     }));
 
-    it('should log an event when holding submission in backlog (force update)', testOfflineEntities(async (service, container) => {
+    it.only('should log an event when holding submission in backlog (force update)', testOfflineEntities(async (service, container) => {
       const asAlice = await service.login('alice');
       const branchId = uuid();
 
@@ -692,7 +692,7 @@ describe('Offline Entities', () => {
         });
     }));
 
-    it('should log an event when holding submission in backlog (force update-as-create, then create-as-update)', testOfflineEntities(async (service, container) => {
+    it.only('should log an event when holding submission in backlog (force update-as-create, then create-as-update)', testOfflineEntities(async (service, container) => {
       const asAlice = await service.login('alice');
       const branchId = uuid();
 
@@ -746,7 +746,7 @@ describe('Offline Entities', () => {
         });
     }));
 
-    it('should include submission.backlog.reprocess event in audit log of held submission', testOfflineEntities(async (service, container) => {
+    it.only('should include submission.backlog.reprocess event in audit log of held submission', testOfflineEntities(async (service, container) => {
       const asAlice = await service.login('alice');
       const branchId = uuid();
 
@@ -787,7 +787,7 @@ describe('Offline Entities', () => {
   });
 
   describe('reprocessing submissions when toggling approvalRequired dataset flag', () => {
-    it('should not over-process a submission that is being held because it is later in a run', testOfflineEntities(async (service, container) => {
+    it.only('should not over-process a submission that is being held because it is later in a run', testOfflineEntities(async (service, container) => {
       const asAlice = await service.login('alice');
       const branchId = uuid();
 
@@ -877,7 +877,7 @@ describe('Offline Entities', () => {
       count.should.equal(0);
     }));
 
-    it('should wait for approval of create submission in offline branch', testOfflineEntities(async (service, container) => {
+    it.only('should wait for approval of create submission in offline branch', testOfflineEntities(async (service, container) => {
       const asAlice = await service.login('alice');
 
       // Configure the entity list to create entities on submission approval
@@ -958,7 +958,7 @@ describe('Offline Entities', () => {
       count.should.equal(0);
     }));
 
-    it('should not process update submission in backlog if approvalRequired is true', testOfflineEntities(async (service, container) => {
+    it.only('should not process update submission in backlog if approvalRequired is true', testOfflineEntities(async (service, container) => {
       // Demonstrating issue c#811
       const asAlice = await service.login('alice');
 
@@ -1014,7 +1014,7 @@ describe('Offline Entities', () => {
   });
 
   describe('force-processing held submissions', () => {
-    it('should apply an entity update when the previous update is missing', testOfflineEntities(async (service, container) => {
+    it.only('should apply an entity update when the previous update is missing', testOfflineEntities(async (service, container) => {
       const asAlice = await service.login('alice');
       const branchId = uuid();
 
@@ -1050,7 +1050,7 @@ describe('Offline Entities', () => {
       backlogCount.should.equal(0);
     }));
 
-    it('should apply two updates when first upate is missing', testOfflineEntities(async (service, container) => {
+    it.only('should apply two updates when first upate is missing', testOfflineEntities(async (service, container) => {
       const asAlice = await service.login('alice');
       const branchId = uuid();
 
@@ -1096,7 +1096,7 @@ describe('Offline Entities', () => {
       backlogCount.should.equal(0);
     }));
 
-    it('should apply an entity update as a create', testOfflineEntities(async (service, container) => {
+    it.only('should apply an entity update as a create', testOfflineEntities(async (service, container) => {
       const asAlice = await service.login('alice');
       const branchId = uuid();
       const newUuid = uuid();
@@ -1163,7 +1163,7 @@ describe('Offline Entities', () => {
       backlogCount.should.equal(0);
     }));
 
-    it('should apply an entity update as a create followed by another update', testOfflineEntities(async (service, container) => {
+    it.only('should apply an entity update as a create followed by another update', testOfflineEntities(async (service, container) => {
       const asAlice = await service.login('alice');
       const branchId = uuid();
       const newUuid = uuid();
@@ -1251,7 +1251,7 @@ describe('Offline Entities', () => {
       backlogCount.should.equal(0);
     }));
 
-    it('should apply an entity update as a create, and then properly handle the delayed create as an update', testOfflineEntities(async (service, container) => {
+    it.only('should apply an entity update as a create, and then properly handle the delayed create as an update', testOfflineEntities(async (service, container) => {
       const asAlice = await service.login('alice');
       const branchId = uuid();
 
@@ -1317,7 +1317,7 @@ describe('Offline Entities', () => {
         });
     }));
 
-    it('should verify that the create-as-update submission was parsed as a create even when applied as an update', testOfflineEntities(async (service, container) => {
+    it.only('should verify that the create-as-update submission was parsed as a create even when applied as an update', testOfflineEntities(async (service, container) => {
       const asAlice = await service.login('alice');
       const branchId = uuid();
 
@@ -1366,7 +1366,7 @@ describe('Offline Entities', () => {
     }));
 
     describe('only force-process submissions held in backlog for a certain amount of time', () => {
-      it('should process a submission from over 7 days ago', testOfflineEntities(async (service, container) => {
+      it.only('should process a submission from over 7 days ago', testOfflineEntities(async (service, container) => {
         const asAlice = await service.login('alice');
         const branchId = uuid();
 
@@ -1445,7 +1445,7 @@ describe('Offline Entities', () => {
     });
 
     describe('force-processing deleted submissions and entities', () => {
-      it('should not process a submission in a soft-deleted form', testOfflineEntities(async (service, container) => {
+      it.only('should not process a submission in a soft-deleted form', testOfflineEntities(async (service, container) => {
         const asAlice = await service.login('alice');
         const branchId = uuid();
 
@@ -1478,7 +1478,7 @@ describe('Offline Entities', () => {
           });
       }));
 
-      it('should not process a submission that has been soft-deleted', testOfflineEntities(async (service, container) => {
+      it.only('should not process a submission that has been soft-deleted', testOfflineEntities(async (service, container) => {
         const asAlice = await service.login('alice');
         const branchId = uuid();
 
@@ -1511,7 +1511,7 @@ describe('Offline Entities', () => {
           });
       }));
 
-      it('should not process a submission for an entity that has been soft-deleted', testOfflineEntities(async (service, container) => {
+      it.only('should not process a submission for an entity that has been soft-deleted', testOfflineEntities(async (service, container) => {
         const asAlice = await service.login('alice');
         const branchId = uuid();
 
@@ -1551,7 +1551,7 @@ describe('Offline Entities', () => {
   });
 
   describe('conflict cases', () => {
-    it('should mark an update that is not contiguous with its trunk version as a soft conflict', testOfflineEntities(async (service, container) => {
+    it.only('should mark an update that is not contiguous with its trunk version as a soft conflict', testOfflineEntities(async (service, container) => {
       const asAlice = await service.login('alice');
       const branchId = uuid();
 
@@ -1601,7 +1601,7 @@ describe('Offline Entities', () => {
         });
     }));
 
-    it('should mark an update that is not contiguous (due to force processing) as a soft conflict', testOfflineEntities(async (service, container) => {
+    it.only('should mark an update that is not contiguous (due to force processing) as a soft conflict', testOfflineEntities(async (service, container) => {
       const asAlice = await service.login('alice');
       const branchId = uuid();
 
@@ -1668,7 +1668,7 @@ describe('Offline Entities', () => {
         });
     }));
 
-    it('should mark an update that is not contiguous with its trunk version as a soft conflict on entity despite earlier conflict resolution', testOfflineEntities(async (service, container) => {
+    it.only('should mark an update that is not contiguous with its trunk version as a soft conflict on entity despite earlier conflict resolution', testOfflineEntities(async (service, container) => {
       const asAlice = await service.login('alice');
       const branchId = uuid();
 
@@ -1725,7 +1725,7 @@ describe('Offline Entities', () => {
         });
     }));
 
-    it('should mark an update that is not contiguous (from an offline create branch) as a soft conflict on entity despite earlier conflict resolution', testOfflineEntities(async (service, container) => {
+    it.only('should mark an update that is not contiguous (from an offline create branch) as a soft conflict on entity despite earlier conflict resolution', testOfflineEntities(async (service, container) => {
       const asAlice = await service.login('alice');
       const branchId = uuid();
 
@@ -1789,7 +1789,7 @@ describe('Offline Entities', () => {
         });
     }));
 
-    it('should check that interrupting version logic is doesnt flag non-conflicts as conflicts', testOfflineEntities(async (service, container) => {
+    it.only('should check that interrupting version logic is doesnt flag non-conflicts as conflicts', testOfflineEntities(async (service, container) => {
       const asAlice = await service.login('alice');
       const branchId = uuid();
 
@@ -1825,7 +1825,7 @@ describe('Offline Entities', () => {
         });
     }));
 
-    it('should show proper conflict info on create applied as update', testOfflineEntities(async (service, container) => {
+    it.only('should show proper conflict info on create applied as update', testOfflineEntities(async (service, container) => {
       // Issue c#815
       const asAlice = await service.login('alice');
       const branchId = uuid();
@@ -1876,7 +1876,7 @@ describe('Offline Entities', () => {
         });
     }));
 
-    it('should show proper conflict info on create applied as update that is only a soft conflict', testOfflineEntities(async (service, container) => {
+    it.only('should show proper conflict info on create applied as update that is only a soft conflict', testOfflineEntities(async (service, container) => {
       const asAlice = await service.login('alice');
       const branchId = uuid();
 
@@ -1927,7 +1927,7 @@ describe('Offline Entities', () => {
     this.timeout(8000);
 
     // https://github.com/getodk/central/issues/705
-    it('should concurrently process an offline create + update @slow', testServiceFullTrx(async (service, container) => {
+    it.only('should concurrently process an offline create + update @slow', testServiceFullTrx(async (service, container) => {
       const asAlice = await service.login('alice');
       await asAlice.post('/v1/projects/1/forms?publish=true')
         .send(testData.forms.offlineEntity)
@@ -1975,7 +1975,7 @@ describe('Offline Entities', () => {
   });
 
   describe('miscellaneous', () => {
-    it('should handle two updates followed by delayed create', testOfflineEntities(async (service, container) => {
+    it.only('should handle two updates followed by delayed create', testOfflineEntities(async (service, container) => {
       // Issue c#808
       const asAlice = await service.login('alice');
       const branchId = uuid();
@@ -2028,7 +2028,7 @@ describe('Offline Entities', () => {
         });
     }));
 
-    it('should handle update from sub and update from API followed by delayed create', testOfflineEntities(async (service, container) => {
+    it.only('should handle update from sub and update from API followed by delayed create', testOfflineEntities(async (service, container) => {
       // Issue c#810
       const asAlice = await service.login('alice');
       const branchId = uuid();

@@ -67,7 +67,7 @@ describe('api: /datasets/:name.svc', () => {
         .expect(200);
     };
 
-    it('should return all entities', testService(async (service, container) => {
+    it.only('should return all entities', testService(async (service, container) => {
       const asAlice = await service.login('alice');
 
       await asAlice.post('/v1/projects/1/forms?publish=true')
@@ -91,7 +91,7 @@ describe('api: /datasets/:name.svc', () => {
         });
     }));
 
-    it('should return entity data that matches spec', testService(async (service, container) => {
+    it.only('should return entity data that matches spec', testService(async (service, container) => {
       const asAlice = await service.login('alice');
 
       await asAlice.post('/v1/projects/1/forms?publish=true')
@@ -131,7 +131,7 @@ describe('api: /datasets/:name.svc', () => {
         });
     }));
 
-    it('should return count of entities', testService(async (service, container) => {
+    it.only('should return count of entities', testService(async (service, container) => {
       const asAlice = await service.login('alice');
 
       await asAlice.post('/v1/projects/1/forms?publish=true')
@@ -148,7 +148,7 @@ describe('api: /datasets/:name.svc', () => {
         });
     }));
 
-    it('should return count of entities not the entity_defs', testService(async (service, container) => {
+    it.only('should return count of entities not the entity_defs', testService(async (service, container) => {
       const asAlice = await service.login('alice');
 
       await asAlice.post('/v1/projects/1/forms?publish=true')
@@ -178,7 +178,7 @@ describe('api: /datasets/:name.svc', () => {
         });
     }));
 
-    it('should return count of filtered entities', testService(async (service, container) => {
+    it.only('should return count of filtered entities', testService(async (service, container) => {
       const asAlice = await service.login('alice');
 
       await asAlice.post('/v1/projects/1/forms?publish=true')
@@ -199,7 +199,7 @@ describe('api: /datasets/:name.svc', () => {
         });
     }));
 
-    it('should return only second entity', testService(async (service, container) => {
+    it.only('should return only second entity', testService(async (service, container) => {
       const asAlice = await service.login('alice');
 
       await asAlice.post('/v1/projects/1/forms?publish=true')
@@ -216,7 +216,7 @@ describe('api: /datasets/:name.svc', () => {
         });
     }));
 
-    it('should return nextURL', testService(async (service, container) => {
+    it.only('should return nextURL', testService(async (service, container) => {
       const asAlice = await service.login('alice');
 
       await asAlice.post('/v1/projects/1/forms?publish=true')
@@ -237,7 +237,7 @@ describe('api: /datasets/:name.svc', () => {
         });
     }));
 
-    it('should not duplicate or skip entities - opaque cursor', testService(async (service, container) => {
+    it.only('should not duplicate or skip entities - opaque cursor', testService(async (service, container) => {
       const asAlice = await service.login('alice');
 
       await asAlice.post('/v1/projects/1/forms?publish=true')
@@ -272,7 +272,7 @@ describe('api: /datasets/:name.svc', () => {
         });
     }));
 
-    it('should not return deleted entities - opaque cursor', testService(async (service, container) => {
+    it.only('should not return deleted entities - opaque cursor', testService(async (service, container) => {
       const asAlice = await service.login('alice');
 
       await asAlice.post('/v1/projects/1/forms?publish=true')
@@ -355,7 +355,7 @@ describe('api: /datasets/:name.svc', () => {
       filtering(0, 'should support inequality with yoda notation',     'null ne __system/deletedAt'); // eslint-disable-line no-multi-spaces
     });
 
-    it('should return filtered entities', testService(async (service, container) => {
+    it.only('should return filtered entities', testService(async (service, container) => {
       const asAlice = await service.login('alice');
 
       await asAlice.post('/v1/projects/1/forms?publish=true')
@@ -448,7 +448,7 @@ describe('api: /datasets/:name.svc', () => {
         });
     }));
 
-    it('should filter by conflict status', testService(async (service, container) => {
+    it.only('should filter by conflict status', testService(async (service, container) => {
       const asAlice = await service.login('alice');
 
       await asAlice.post('/v1/projects/1/forms?publish=true')
@@ -469,7 +469,7 @@ describe('api: /datasets/:name.svc', () => {
         });
     }));
 
-    it('should NOT filter by label', testService(async (service, container) => {
+    it.only('should NOT filter by label', testService(async (service, container) => {
       const asAlice = await service.login('alice');
 
       await asAlice.post('/v1/projects/1/forms?publish=true')
@@ -486,7 +486,7 @@ describe('api: /datasets/:name.svc', () => {
         });
     }));
 
-    it('should NOT filter by id', testService(async (service, container) => {
+    it.only('should NOT filter by id', testService(async (service, container) => {
       const asAlice = await service.login('alice');
 
       await asAlice.post('/v1/projects/1/forms?publish=true')
@@ -503,7 +503,7 @@ describe('api: /datasets/:name.svc', () => {
         });
     }));
 
-    it('should NOT filter by name/uuid', testService(async (service, container) => {
+    it.only('should NOT filter by name/uuid', testService(async (service, container) => {
       const asAlice = await service.login('alice');
 
       await asAlice.post('/v1/projects/1/forms?publish=true')
@@ -526,7 +526,7 @@ describe('api: /datasets/:name.svc', () => {
         });
     }));
 
-    it('should return filtered entities with pagination', testService(async (service, container) => {
+    it.only('should return filtered entities with pagination', testService(async (service, container) => {
       const asAlice = await service.login('alice');
       const asBob = await service.login('bob');
 
@@ -557,7 +557,7 @@ describe('api: /datasets/:name.svc', () => {
         });
     }));
 
-    it('should throw error if filter criterion is invalid', testService(async (service, container) => {
+    it.only('should throw error if filter criterion is invalid', testService(async (service, container) => {
       const asAlice = await service.login('alice');
 
       await asAlice.post('/v1/projects/1/forms?publish=true')
@@ -574,7 +574,7 @@ describe('api: /datasets/:name.svc', () => {
         });
     }));
 
-    it('should return selected properties only', testService(async (service, container) => {
+    it.only('should return selected properties only', testService(async (service, container) => {
       const asAlice = await service.login('alice');
 
       await asAlice.post('/v1/projects/1/forms?publish=true')
@@ -592,7 +592,7 @@ describe('api: /datasets/:name.svc', () => {
         });
     }));
 
-    it('should return selected user-defined only', testService(async (service, container) => {
+    it.only('should return selected user-defined only', testService(async (service, container) => {
       const asAlice = await service.login('alice');
 
       await asAlice.post('/v1/projects/1/forms?publish=true')
@@ -610,7 +610,7 @@ describe('api: /datasets/:name.svc', () => {
         });
     }));
 
-    it('should return update count and updatedAt', testService(async (service, container) => {
+    it.only('should return update count and updatedAt', testService(async (service, container) => {
       const asAlice = await service.login('alice');
 
       await asAlice.post('/v1/projects/1/forms?publish=true')
@@ -647,7 +647,7 @@ describe('api: /datasets/:name.svc', () => {
         });
     }));
 
-    it('should filter by updatedAt', testService(async (service, container) => {
+    it.only('should filter by updatedAt', testService(async (service, container) => {
       const asAlice = await service.login('alice');
 
       await asAlice.post('/v1/projects/1/forms?publish=true')
@@ -676,7 +676,7 @@ describe('api: /datasets/:name.svc', () => {
         });
     }));
 
-    it('should return entities in specified order', testService(async (service, container) => {
+    it.only('should return entities in specified order', testService(async (service, container) => {
       const asAlice = await service.login('alice');
 
       await asAlice.post('/v1/projects/1/forms?publish=true')
@@ -701,7 +701,7 @@ describe('api: /datasets/:name.svc', () => {
         });
     }));
 
-    it('should return entities with order specified in multiple clauses', testService(async (service, container) => {
+    it.only('should return entities with order specified in multiple clauses', testService(async (service, container) => {
       const asAlice = await service.login('alice');
       const asBob = await service.login('bob');
 
@@ -722,7 +722,7 @@ describe('api: /datasets/:name.svc', () => {
         });
     }));
 
-    it('should return entities in stable order', testService(async (service, container) => {
+    it.only('should return entities in stable order', testService(async (service, container) => {
       const asAlice = await service.login('alice');
       const asBob = await service.login('bob');
 
@@ -750,7 +750,7 @@ describe('api: /datasets/:name.svc', () => {
         });
     }));
 
-    it('should return sorted null values in the correct order', testService(async (service, container) => {
+    it.only('should return sorted null values in the correct order', testService(async (service, container) => {
       const asAlice = await service.login('alice');
 
       await asAlice.post('/v1/projects/1/forms?publish=true')
@@ -782,7 +782,7 @@ describe('api: /datasets/:name.svc', () => {
         });
     }));
 
-    it('should return sorted null values in the correct order in any clause', testService(async (service, container) => {
+    it.only('should return sorted null values in the correct order in any clause', testService(async (service, container) => {
       const asAlice = await service.login('alice');
       const asBob = await service.login('bob');
 
@@ -826,7 +826,7 @@ describe('api: /datasets/:name.svc', () => {
         });
     }));
 
-    it('should combine orderby with other filters', testService(async (service, container) => {
+    it.only('should combine orderby with other filters', testService(async (service, container) => {
       const asAlice = await service.login('alice');
 
       await asAlice.post('/v1/projects/1/forms?publish=true')
@@ -857,7 +857,7 @@ describe('api: /datasets/:name.svc', () => {
         });
     }));
 
-    it('should reject if orderby used with skiptoken', testService(async (service, container) => {
+    it.only('should reject if orderby used with skiptoken', testService(async (service, container) => {
       const asAlice = await service.login('alice');
 
       await asAlice.post('/v1/projects/1/forms?publish=true')

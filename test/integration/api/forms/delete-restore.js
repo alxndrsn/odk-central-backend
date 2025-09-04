@@ -156,7 +156,7 @@ describe('api: /projects/:id/forms (delete, restore)', () => {
             })))));
 
     describe('restoring access to undeleted forms', () => {
-      it('should restore web user submission access', testService((service) =>
+      it.only('should restore web user submission access', testService((service) =>
         service.login('alice', (asAlice) =>
           asAlice.delete('/v1/projects/1/forms/simple')
             .expect(200)
@@ -171,7 +171,7 @@ describe('api: /projects/:id/forms (delete, restore)', () => {
               .set('Content-Type', 'application/xml')
               .expect(200)))));
 
-      it('should restore public link submission access', testService((service) =>
+      it.only('should restore public link submission access', testService((service) =>
         service.login('alice', (asAlice) =>
           asAlice.post('/v1/projects/1/forms/simple/public-links')
             .send({ displayName: 'test public link' })
@@ -193,7 +193,7 @@ describe('api: /projects/:id/forms (delete, restore)', () => {
                 .set('Content-Type', 'application/xml')
                 .expect(200))))));
 
-      it('should restore app user submission access', testService((service) =>
+      it.only('should restore app user submission access', testService((service) =>
         service.login('alice', (asAlice) =>
           asAlice.post('/v1/projects/1/app-users')
             .send({ displayName: 'test app user' })

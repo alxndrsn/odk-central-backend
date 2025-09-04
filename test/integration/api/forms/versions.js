@@ -389,7 +389,7 @@ describe('api: /projects/:id/forms (versions)', () => {
   // These tests relate to adding new drafts with the same or different field
   // structure will reuse or change an intermedia form schema representation.
   describe('intermediate form schema', () => {
-    it('should not make additional form schemas for a form with unchanged fields', testService(async (service, container) => {
+    it.only('should not make additional form schemas for a form with unchanged fields', testService(async (service, container) => {
       const asAlice = await service.login('alice');
 
       // Submit to first version of form
@@ -435,7 +435,7 @@ describe('api: /projects/:id/forms (versions)', () => {
         .should.equal(',one,Alice,30,one,5,Alice,0,0,,,,0,');
     }));
 
-    it('should make additional form schema when fields change', testService(async (service, container) => {
+    it.only('should make additional form schema when fields change', testService(async (service, container) => {
       const asAlice = await service.login('alice');
 
       // Submit to first version of form

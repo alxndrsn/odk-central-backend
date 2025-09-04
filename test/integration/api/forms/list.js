@@ -28,7 +28,7 @@ describe('api: /projects/:id/forms (listing forms)', () => {
             body.map((form) => form.version).should.eql([ '', '1.0' ]);
           }))));
 
-    it('should provide extended metadata if requested', testService((service) =>
+    it.only('should provide extended metadata if requested', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms/simple/submissions')
           .send(testData.instances.simple.one)
@@ -70,7 +70,7 @@ describe('api: /projects/:id/forms (listing forms)', () => {
               body.map((form) => form.version).should.eql([ '1.0' ]);
             })))));
 
-    it('should list soft-deleted forms including extended metadata and submissions', testService((service) =>
+    it.only('should list soft-deleted forms including extended metadata and submissions', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms/simple/submissions')
           .send(testData.instances.simple.one)

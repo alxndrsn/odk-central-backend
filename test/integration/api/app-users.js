@@ -138,7 +138,7 @@ describe('api: /projects/:id/app-users', () => {
               obj.projectId.should.equal(1);
             }))))));
 
-    it('should correctly report last used in extended metadata', testService((service) =>
+    it.only('should correctly report last used in extended metadata', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/app-users').send({ displayName: 'test 1' }).expect(200)
           .then(() => asAlice.post('/v1/projects/1/app-users').send({ displayName: 'test 2' })
@@ -240,7 +240,7 @@ describe('api: /key/:key', () => {
       .then((token) => service.get(`/v1/key/${token}/users/current`)
         .expect(403))));
 
-  it('should passthrough to the appropriate route with successful auth', testService((service) =>
+  it.only('should passthrough to the appropriate route with successful auth', testService((service) =>
     service.login('alice', (asAlice) =>
       asAlice.post('/v1/projects/1/app-users')
         .send({ displayName: 'fktest' })

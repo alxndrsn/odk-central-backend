@@ -85,7 +85,7 @@ describe('project viewer role', () => {
       .set('Content-Type', 'text/xml')
       .expect(403))));
 
-  it('should be able to list form submissions', testService(withSubmissions(viewer((asViewer) =>
+  it.only('should be able to list form submissions', testService(withSubmissions(viewer((asViewer) =>
     asViewer.get('/v1/projects/1/forms/simple/submissions')
       .expect(200)
       .then(({ body }) => {
@@ -100,11 +100,11 @@ describe('project viewer role', () => {
       .set('Content-Type', 'text/xml')
       .expect(403))));
 
-  it('should be able to download submissions', testService(withSubmissions(viewer((asViewer) =>
+  it.only('should be able to download submissions', testService(withSubmissions(viewer((asViewer) =>
     asViewer.get('/v1/projects/1/forms/simple/submissions.csv.zip')
       .expect(200)))));
 
-  it('should be able to get submission detail', testService(withSubmissions(viewer((asViewer) =>
+  it.only('should be able to get submission detail', testService(withSubmissions(viewer((asViewer) =>
     asViewer.get('/v1/projects/1/forms/simple/submissions/one')
       .expect(200)
       .then(({ body }) => {
@@ -112,7 +112,7 @@ describe('project viewer role', () => {
         body.instanceId.should.equal('one');
       })))));
 
-  it('should be able to fetch a submission attachment', testService(withSubmissions(viewer((asViewer) =>
+  it.only('should be able to fetch a submission attachment', testService(withSubmissions(viewer((asViewer) =>
     asViewer.get('/v1/projects/1/forms/binaryType/submissions/bone/attachments/my_file1.mp4')
       .expect(200)
       .then(({ text }) => { text.should.equal('content'); })))));

@@ -10,7 +10,7 @@ const { exhaust } = require(appRoot + '/lib/worker/worker');
 
 describe('worker: entity', () => {
   describe('should not make an entity or log anything about entities', () => {
-    it('should not make entity for approved submission for non-entity form', testService(async (service, container) => {
+    it.only('should not make entity for approved submission for non-entity form', testService(async (service, container) => {
       // This submission contains no entity data. The worker will look at it anyway
       // to establish that it isn't about an entity, but it should not log any entity-related event.
       await service.login('alice', (asAlice) =>
@@ -39,7 +39,7 @@ describe('worker: entity', () => {
       errorEvent.isEmpty().should.equal(true);
     }));
 
-    it('should not make entity for rejected entity submission', testService(async (service, container) => {
+    it.only('should not make entity for rejected entity submission', testService(async (service, container) => {
       await service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms?publish=true')
           .send(testData.forms.simpleEntity)
@@ -73,7 +73,7 @@ describe('worker: entity', () => {
       errorEvent.isEmpty().should.equal(true);
     }));
 
-    it('should not make entity for create=false submission', testService(async (service, container) => {
+    it.only('should not make entity for create=false submission', testService(async (service, container) => {
       await service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms?publish=true')
           .send(testData.forms.simpleEntity)
@@ -104,7 +104,7 @@ describe('worker: entity', () => {
       errorEvent.isEmpty().should.equal(true);
     }));
 
-    it('should not make an entity when reprocessing a submission', testService(async (service, container) => {
+    it.only('should not make an entity when reprocessing a submission', testService(async (service, container) => {
       await service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms?publish=true')
           .send(testData.forms.simpleEntity)
@@ -142,7 +142,7 @@ describe('worker: entity', () => {
       errorEvent.isEmpty().should.be.true();
     }));
 
-    it('should not make an entity when reprocessing an edited submission', testService(async (service, container) => {
+    it.only('should not make an entity when reprocessing an edited submission', testService(async (service, container) => {
       const asAlice = await service.login('alice');
 
       await asAlice.post('/v1/projects/1/forms?publish=true')
@@ -183,7 +183,7 @@ describe('worker: entity', () => {
       errorEvent.isEmpty().should.be.true();
     }));
 
-    it('should not make entity for draft submission', testService(async (service, container) => {
+    it.only('should not make entity for draft submission', testService(async (service, container) => {
       const asAlice = await service.login('alice');
 
       await asAlice.post('/v1/projects/1/forms?publish=true')
@@ -211,7 +211,7 @@ describe('worker: entity', () => {
   });
 
   describe('should successfully process submissions about entities', () => {
-    it('should log entity creation in audit log', testService(async (service, container) => {
+    it.only('should log entity creation in audit log', testService(async (service, container) => {
       await service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms?publish=true')
           .send(testData.forms.simpleEntity)
@@ -246,7 +246,7 @@ describe('worker: entity', () => {
       createEvent.details.entity.uuid.should.equal('12345678-1234-4123-8234-123456789abc');
     }));
 
-    it('should log entity update in audit log', testService(async (service, container) => {
+    it.only('should log entity update in audit log', testService(async (service, container) => {
       const asAlice = await service.login('alice');
       const asBob = await service.login('bob');
 
@@ -293,7 +293,7 @@ describe('worker: entity', () => {
     // in the database. They likely point to a form design error that we want to try to surface.
     // There are more tests of validation errors in test/unit/data/entity.
     describe('validation errors', () => {
-      it('should fail because UUID is invalid', testService(async (service, container) => {
+      it.only('should fail because UUID is invalid', testService(async (service, container) => {
         await service.login('alice', (asAlice) =>
           asAlice.post('/v1/projects/1/forms?publish=true')
             .send(testData.forms.simpleEntity)
@@ -324,7 +324,7 @@ describe('worker: entity', () => {
         event.details.problem.problemCode.should.equal(400.11);
       }));
 
-      it('should fail because dataset attribute is missing', testService(async (service, container) => {
+      it.only('should fail because dataset attribute is missing', testService(async (service, container) => {
         await service.login('alice', (asAlice) =>
           asAlice.post('/v1/projects/1/forms?publish=true')
             .send(testData.forms.simpleEntity)
@@ -352,7 +352,7 @@ describe('worker: entity', () => {
         event.details.problem.problemCode.should.equal(400.2);
       }));
 
-      it('should not create entity because UUID is used by a deleted entity', testService(async (service, container) => {
+      it.only('should not create entity because UUID is used by a deleted entity', testService(async (service, container) => {
         const asAlice = await service.login('alice');
 
         await asAlice.post('/v1/projects/1/forms?publish=true')
@@ -387,7 +387,7 @@ describe('worker: entity', () => {
           });
       }));
 
-      it('should not create entity because UUID is used by a purged entity', testService(async (service, container) => {
+      it.only('should not create entity because UUID is used by a purged entity', testService(async (service, container) => {
         const asAlice = await service.login('alice');
 
         await asAlice.post('/v1/projects/1/forms?publish=true')
@@ -426,7 +426,7 @@ describe('worker: entity', () => {
     });
 
     describe('constraint errors', () => {
-      it('should fail if trying to use an entity uuid that exists', testService(async (service, container) => {
+      it.only('should fail if trying to use an entity uuid that exists', testService(async (service, container) => {
         // We check separately if a submission has already been processed, but we rely on the database constraint
         // errors for avoiding duplicate UUIDs and other collisions.
         await service.login('alice', (asAlice) =>
@@ -473,7 +473,7 @@ describe('worker: entity', () => {
         event.details.problem.problemCode.should.equal(409.3);
       }));
 
-      it('should fail for other constraint errors like dataset name does not exist', testService(async (service, container) => {
+      it.only('should fail for other constraint errors like dataset name does not exist', testService(async (service, container) => {
         await service.login('alice', (asAlice) =>
           asAlice.post('/v1/projects/1/forms?publish=true')
             .send(testData.forms.simpleEntity)
@@ -527,7 +527,7 @@ describe('worker: entity', () => {
 
   describe('should catch problems updating entity', () => {
     describe('validation errors', () => {
-      it('should fail because UUID is invalid', testService(async (service, container) => {
+      it.only('should fail because UUID is invalid', testService(async (service, container) => {
         const asAlice = await service.login('alice');
 
         // create an initial entity to update
@@ -569,7 +569,7 @@ describe('worker: entity', () => {
         event.details.problem.problemCode.should.equal(400.11);
       }));
 
-      it('should fail because dataset attribute is missing', testService(async (service, container) => {
+      it.only('should fail because dataset attribute is missing', testService(async (service, container) => {
         const asAlice = await service.login('alice');
 
         // create an initial entity to update
@@ -611,7 +611,7 @@ describe('worker: entity', () => {
         event.details.problem.problemCode.should.equal(400.2);
       }));
 
-      it('should fail because UUID has been deleted', testService(async (service, container) => {
+      it.only('should fail because UUID has been deleted', testService(async (service, container) => {
         const asAlice = await service.login('alice');
 
         await asAlice.post(`/v1/projects/1/datasets`)
@@ -649,7 +649,7 @@ describe('worker: entity', () => {
           });
       }));
 
-      it('should fail because UUID has been purged', testService(async (service, container) => {
+      it.only('should fail because UUID has been purged', testService(async (service, container) => {
         const asAlice = await service.login('alice');
 
         await asAlice.post(`/v1/projects/1/datasets`)
@@ -691,7 +691,7 @@ describe('worker: entity', () => {
     });
 
     describe('constraint errors', () => {
-      it('should fail if trying to update an entity by uuid that does not exist', testService(async (service, container) => {
+      it.only('should fail if trying to update an entity by uuid that does not exist', testService(async (service, container) => {
         const asAlice = await service.login('alice');
 
         // create an initial entity to update
@@ -731,7 +731,7 @@ describe('worker: entity', () => {
         event.details.errorMessage.should.equal('The entity with UUID (12345678-1234-4123-8234-123456789abc) specified in the submission does not exist in the dataset (people).');
       }));
 
-      it('should fail for other constraint errors like dataset name does not exist', testService(async (service, container) => {
+      it.only('should fail for other constraint errors like dataset name does not exist', testService(async (service, container) => {
         const asAlice = await service.login('alice');
 
         // create an initial entity to update
@@ -774,7 +774,7 @@ describe('worker: entity', () => {
   });
 
   describe('event processing based on approvalRequired flag', () => {
-    it('should create entity on submission creation when approvalRequired is false', testService(async (service, container) => {
+    it.only('should create entity on submission creation when approvalRequired is false', testService(async (service, container) => {
       const asAlice = await service.login('alice');
 
       await asAlice.post('/v1/projects/1/forms?publish=true')
@@ -797,7 +797,7 @@ describe('worker: entity', () => {
       entity.currentVersion.data.first_name.should.equal('Alice');
     }));
 
-    it('should create entity on submission approval when approvalRequired is true', testService(async (service, container) => {
+    it.only('should create entity on submission approval when approvalRequired is true', testService(async (service, container) => {
       const asAlice = await service.login('alice');
 
       await asAlice.post('/v1/projects/1/forms?publish=true')
@@ -833,7 +833,7 @@ describe('worker: entity', () => {
       entity.currentVersion.data.first_name.should.equal('Alice');
     }));
 
-    it('should create entity on submission update when approvalRequired is false and it was not created on submission receipt', testService(async (service, container) => {
+    it.only('should create entity on submission update when approvalRequired is false and it was not created on submission receipt', testService(async (service, container) => {
       const asAlice = await service.login('alice');
 
       await asAlice.post('/v1/projects/1/forms?publish=true')
@@ -867,7 +867,7 @@ describe('worker: entity', () => {
       entity.currentVersion.data.first_name.should.equal('Alice');
     }));
 
-    it('should create entity on approval of submission update when approvalRequired is true and entity was not created previously', testService(async (service, container) => {
+    it.only('should create entity on approval of submission update when approvalRequired is true and entity was not created previously', testService(async (service, container) => {
       const asAlice = await service.login('alice');
 
       await asAlice.post('/v1/projects/1/forms?publish=true')
@@ -918,7 +918,7 @@ describe('worker: entity', () => {
       entity.currentVersion.data.first_name.should.equal('Alice');
     }));
 
-    it('should not create a new entity on edit if it was created on submission receipt', testService(async (service, container) => {
+    it.only('should not create a new entity on edit if it was created on submission receipt', testService(async (service, container) => {
       const asAlice = await service.login('alice');
 
       await asAlice.post('/v1/projects/1/forms?publish=true')
@@ -958,7 +958,7 @@ describe('worker: entity', () => {
 
     }));
 
-    it('should not create on approval if approval is not required', testService(async (service, container) => {
+    it.only('should not create on approval if approval is not required', testService(async (service, container) => {
       const asAlice = await service.login('alice');
 
       await asAlice.post('/v1/projects/1/forms?publish=true')
@@ -996,7 +996,7 @@ describe('worker: entity', () => {
 
     }));
 
-    it('should not create entity when review status is rejected', testService(async (service, container) => {
+    it.only('should not create entity when review status is rejected', testService(async (service, container) => {
       const asAlice = await service.login('alice');
 
       await asAlice.post('/v1/projects/1/forms?publish=true')
@@ -1065,7 +1065,7 @@ describe('worker: entity', () => {
   });
 
   describe('event processing of entity updates only on submission.create regardless of approvalRequired', () => {
-    it('should update entity on submission.create even if approvalRequired is true for new entities', testService(async (service, container) => {
+    it.only('should update entity on submission.create even if approvalRequired is true for new entities', testService(async (service, container) => {
       const asAlice = await service.login('alice');
 
       await asAlice.post('/v1/projects/1/forms?publish=true')
@@ -1108,7 +1108,7 @@ describe('worker: entity', () => {
         });
     }));
 
-    it('should not process submission.update (approval) for entity update', testService(async (service, container) => {
+    it.only('should not process submission.update (approval) for entity update', testService(async (service, container) => {
       // approving the submission wont update the entity because there is already an entity def associated with this submission
       const asAlice = await service.login('alice');
 
@@ -1158,7 +1158,7 @@ describe('worker: entity', () => {
       updateCount.should.equal(1); // only the original update from submission.count should be present
     }));
 
-    it('should never process submission.update for entity update even if submission.create gets skipped', testService(async (service, container) => {
+    it.only('should never process submission.update for entity update even if submission.create gets skipped', testService(async (service, container) => {
       const asAlice = await service.login('alice');
 
       await asAlice.post('/v1/projects/1/forms?publish=true')

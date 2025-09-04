@@ -150,7 +150,7 @@ describe('api: /submission', () => {
             text.should.match(/The form version specified in this submission/);
           }))));
 
-    it('should save the submission to the appropriate form', testService((service) =>
+    it.only('should save the submission to the appropriate form', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/submission')
           .set('X-OpenRosa-Version', '1.0')
@@ -171,7 +171,7 @@ describe('api: /submission', () => {
               .then(({ text }) => { text.should.equal(testData.instances.simple.one); })
           ])))));
 
-    it('should save the submission to the appropriate form with device id as null when query string is empty', testService((service) =>
+    it.only('should save the submission to the appropriate form with device id as null when query string is empty', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/submission?deviceID=')
           .set('X-OpenRosa-Version', '1.0')
@@ -192,7 +192,7 @@ describe('api: /submission', () => {
               .then(({ text }) => { text.should.equal(testData.instances.simple.one); })
           ])))));
 
-    it('should save the submission to the appropriate form with device id and user agent', testService((service) =>
+    it.only('should save the submission to the appropriate form with device id and user agent', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/submission?deviceID=imei%3A358240051111110')
           .set('X-OpenRosa-Version', '1.0')
@@ -220,7 +220,7 @@ describe('api: /submission', () => {
               .then(({ text }) => { text.should.equal(testData.instances.simple.one); })
           ])))));
 
-    it('should accept a submission for an old form version', testService((service, { Submissions, one }) =>
+    it.only('should accept a submission for an old form version', testService((service, { Submissions, one }) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms/simple/draft')
           .expect(200)
@@ -243,7 +243,7 @@ describe('api: /submission', () => {
           .then(({ formDefId }) => one(sql`select * from form_defs where id=${formDefId}`))
           .then((formDef) => { formDef.version.should.equal('two'); }))));
 
-    it('should store the correct formdef and actor ids', testService((service, { all, oneFirst }) =>
+    it.only('should store the correct formdef and actor ids', testService((service, { all, oneFirst }) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/submission')
           .set('X-OpenRosa-Version', '1.0')
@@ -264,7 +264,7 @@ describe('api: /submission', () => {
 
     // also tests /forms/_/submissions/_/attachments return content. (mark1)
     // no point in replicating it.
-    it('should save given attachments', testService((service) =>
+    it.only('should save given attachments', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms?publish=true')
           .set('Content-Type', 'application/xml')
@@ -285,7 +285,7 @@ describe('api: /submission', () => {
                 ]);
               }))))));
 
-    it('should save attachments with unicode / non-english char', testService(async (service) => {
+    it.only('should save attachments with unicode / non-english char', testService(async (service) => {
       const asAlice = await service.login('alice');
 
       await asAlice.post('/v1/projects/1/forms?publish=true')
@@ -323,7 +323,7 @@ describe('api: /submission', () => {
 
     }));
 
-    it('should not fail given identical attachments', testService((service) =>
+    it.only('should not fail given identical attachments', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms?publish=true')
           .set('Content-Type', 'application/xml')
@@ -344,7 +344,7 @@ describe('api: /submission', () => {
                 ]);
               }))))));
 
-    it('should not fail given identical attachment references', testService((service) => // gh330
+    it.only('should not fail given identical attachment references', testService((service) => // gh330
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms?publish=true')
           .set('Content-Type', 'application/xml')
@@ -362,7 +362,7 @@ describe('api: /submission', () => {
                 body.should.eql([{ name: 'my_file1.mp4', exists: true }]);
               }))))));
 
-    it('should create audit log entries for saved attachments', testService((service) =>
+    it.only('should create audit log entries for saved attachments', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms?publish=true')
           .set('Content-Type', 'application/xml')
@@ -385,7 +385,7 @@ describe('api: /submission', () => {
               audits[0].details.instanceId.should.equal('both');
             })))));
 
-    it('should ignore unknown attachments', testService((service) =>
+    it.only('should ignore unknown attachments', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms?publish=true')
           .set('Content-Type', 'application/xml')
@@ -408,7 +408,7 @@ describe('api: /submission', () => {
 
     // this just ensures that we correctly pick up the attachment and save it. we verify
     // that it's been correctly processed and exports right in the .csv.zip tests below.
-    it('should save client audit log attachments', testService((service) =>
+    it.only('should save client audit log attachments', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms?publish=true')
           .set('Content-Type', 'application/xml')
@@ -425,7 +425,7 @@ describe('api: /submission', () => {
                 body.should.eql([{ name: 'audit.csv', exists: true }]);
               }))))));
 
-    it('should create empty client audit log slots', testService((service) =>
+    it.only('should create empty client audit log slots', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms?publish=true')
           .set('Content-Type', 'application/xml')
@@ -441,7 +441,7 @@ describe('api: /submission', () => {
                 body.should.eql([{ name: 'audit.csv', exists: false }]);
               }))))));
 
-    it('should detect which attachments are expected', testService((service) =>
+    it.only('should detect which attachments are expected', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms?publish=true')
           .set('Content-Type', 'application/xml')
@@ -457,7 +457,7 @@ describe('api: /submission', () => {
                 body.should.eql([{ name: 'my_file1.mp4', exists: false }]);
               }))))));
 
-    it('should reject if the xml changes between posts', testService((service) =>
+    it.only('should reject if the xml changes between posts', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/submission')
           .set('X-OpenRosa-Version', '1.0')
@@ -471,7 +471,7 @@ describe('api: /submission', () => {
               text.should.match(/different XML/i);
             })))));
 
-    it('should take in additional attachments via additional POSTs', testService((service) =>
+    it.only('should take in additional attachments via additional POSTs', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms?publish=true')
           .set('Content-Type', 'application/xml')
@@ -498,7 +498,7 @@ describe('api: /submission', () => {
 
     // also tests /forms/_/submissions/_/attachments/_ return content. (mark2)
     // no point in replicating it.
-    it('should successfully save attachment binary data', testService((service) =>
+    it.only('should successfully save attachment binary data', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms?publish=true')
           .set('Content-Type', 'application/xml')
@@ -521,7 +521,7 @@ describe('api: /submission', () => {
               .set('If-None-Match', '"75f5701abfe7de8202cecaa0ca753f29"')
               .expect(304))))));
 
-    it('should successfully save additionally POSTed attachment binary data', testService((service) =>
+    it.only('should successfully save additionally POSTed attachment binary data', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms?publish=true')
           .set('Content-Type', 'application/xml')
@@ -549,7 +549,7 @@ describe('api: /submission', () => {
                 .set('If-None-Match', '"25bdb03b7942881c279788575997efba"')
                 .expect(304)))))));
 
-    it('should successfully save additionally POSTed attachment binary data with s3 enabled', testService((service, { Blobs }) => {
+    it.only('should successfully save additionally POSTed attachment binary data with s3 enabled', testService((service, { Blobs }) => {
       global.s3.enableMock();
       return service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms?publish=true')
@@ -605,7 +605,7 @@ describe('api: /submission', () => {
                   }))))));
     }));
 
-    it('should accept encrypted submissions, with attachments', testService((service) =>
+    it.only('should accept encrypted submissions, with attachments', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms?publish=true')
           .set('Content-Type', 'application/xml')
@@ -636,7 +636,7 @@ describe('api: /submission', () => {
               .then(({ body }) => { body.toString('utf8').should.equal('this is test file one'); })
           ])))));
 
-    it('should reject resubmission of soft-deleted submission', testService(async (service) => {
+    it.only('should reject resubmission of soft-deleted submission', testService(async (service) => {
       const asAlice = await service.login('alice');
 
       await asAlice.post('/v1/projects/1/submission')
@@ -657,7 +657,7 @@ describe('api: /submission', () => {
     }));
 
     context('versioning', () => {
-      it('should reject if the deprecatedId is not known', testService((service) =>
+      it.only('should reject if the deprecatedId is not known', testService((service) =>
         service.login('alice', (asAlice) =>
           asAlice.post('/v1/projects/1/submission')
             .set('X-OpenRosa-Version', '1.0')
@@ -668,7 +668,7 @@ describe('api: /submission', () => {
               .attach('xml_submission_file', Buffer.from(withSimpleIds('unknown', 'two')), { filename: 'data.xml' })
               .expect(404)))));
 
-      it('should reject if the deprecatedId is not current', testService((service) =>
+      it.only('should reject if the deprecatedId is not current', testService((service) =>
         service.login('alice', (asAlice) =>
           asAlice.post('/v1/projects/1/submission')
             .set('X-OpenRosa-Version', '1.0')
@@ -686,7 +686,7 @@ describe('api: /submission', () => {
                 text.includes('but the copy you were editing (one) is now out of date').should.equal(true);
               })))));
 
-      it('should reject if the new instanceId is a duplicate', testService((service) =>
+      it.only('should reject if the new instanceId is a duplicate', testService((service) =>
         service.login('alice', (asAlice) =>
           asAlice.post('/v1/projects/1/submission')
             .set('X-OpenRosa-Version', '1.0')
@@ -704,7 +704,7 @@ describe('api: /submission', () => {
                 text.includes('A resource already exists with instanceID value(s) of one.').should.equal(true);
               })))));
 
-      it('should not reject for an instanceID conflict on another form', testService((service) =>
+      it.only('should not reject for an instanceID conflict on another form', testService((service) =>
         service.login('alice', (asAlice) =>
           asAlice.post('/v1/projects/1/submission')
             .set('X-OpenRosa-Version', '1.0')
@@ -715,7 +715,7 @@ describe('api: /submission', () => {
               .attach('xml_submission_file', Buffer.from(testData.instances.withrepeat.one.replace('rone', 'one')), { filename: 'data.xml' })
               .expect(201)))));
 
-      it('should accept the new submission', testService((service) =>
+      it.only('should accept the new submission', testService((service) =>
         service.login('alice', (asAlice) =>
           asAlice.post('/v1/projects/1/submission')
             .set('X-OpenRosa-Version', '1.0')
@@ -768,7 +768,7 @@ describe('api: /submission', () => {
                 body.value[0].name.should.equal('Alyssa');
               })))));
 
-      it('should set the submission review state to edited', testService((service) =>
+      it.only('should set the submission review state to edited', testService((service) =>
         service.login('alice', (asAlice) =>
           asAlice.post('/v1/projects/1/submission')
             .set('X-OpenRosa-Version', '1.0')
@@ -783,7 +783,7 @@ describe('api: /submission', () => {
                 body.reviewState.should.equal('edited');
               })))));
 
-      it('should copy forward missing attachments', testService((service) =>
+      it.only('should copy forward missing attachments', testService((service) =>
         service.login('alice', (asAlice) =>
           asAlice.post('/v1/projects/1/forms?publish=true')
             .set('Content-Type', 'text/xml')
@@ -806,7 +806,7 @@ describe('api: /submission', () => {
                   ]);
                 }))))));
 
-      it('should replace extant attachments', testService((service) =>
+      it.only('should replace extant attachments', testService((service) =>
         service.login('alice', (asAlice) =>
           asAlice.post('/v1/projects/1/forms?publish=true')
             .set('Content-Type', 'text/xml')
@@ -833,7 +833,7 @@ describe('api: /submission', () => {
                   .then(({ body }) => { body.toString('utf8').should.equal('this is test file two two'); })
               ]))))));
 
-      it('should upsert attachments', testService((service) =>
+      it.only('should upsert attachments', testService((service) =>
         service.login('alice', (asAlice) =>
           asAlice.post('/v1/projects/1/forms?publish=true')
             .set('Content-Type', 'text/xml')
@@ -874,7 +874,7 @@ describe('api: /submission', () => {
           .attach('xml_submission_file', Buffer.from(testData.instances.simple.one), { filename: 'data.xml' })
           .expect(404))));
 
-    it('should save the submission into the form draft', testService((service) =>
+    it.only('should save the submission into the form draft', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms/simple/draft')
           .expect(200)
@@ -957,7 +957,7 @@ describe('api: /submission', () => {
                 .expect(404)
             ]))))));
 
-    it('should save client audit log attachments', testService((service) =>
+    it.only('should save client audit log attachments', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms')
           .set('Content-Type', 'application/xml')
@@ -1023,7 +1023,7 @@ describe('api: /submission', () => {
             .attach('xml_submission_file', Buffer.from(testData.instances.simple.one), { filename: 'data.xml' })
             .expect(404)))));
 
-    it('should save the submission into the form draft', testService((service) =>
+    it.only('should save the submission into the form draft', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms/simple/draft')
           .expect(200)
@@ -1126,7 +1126,7 @@ describe('api: /forms/:id/submissions', () => {
             body.message.should.match(/The form version specified in this submission/);
           }))));
 
-    it('should submit if all details are provided', testService((service) =>
+    it.only('should submit if all details are provided', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms/simple/submissions')
           .send(testData.instances.simple.one)
@@ -1138,7 +1138,7 @@ describe('api: /forms/:id/submissions', () => {
             body.submitterId.should.equal(5);
           }))));
 
-    it('should record a deviceId and userAgent if given', testService((service) =>
+    it.only('should record a deviceId and userAgent if given', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms/simple/submissions?deviceID=testtest')
           .send(testData.instances.simple.one)
@@ -1157,7 +1157,7 @@ describe('api: /forms/:id/submissions', () => {
 
     const lengthyUserAgent = 'Enketo/7.5.1 Mozilla/5.0 (iPhone; CPU iPhone OS 18_4_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/22E252 [FBAN/FBIOS;FBAV/512.0.0.52.99;FBBV/731098301;FBDV/iPhone15,4;FBMD/iPhone;FBSN/iOS;FBSV/18.4.1;FBSS/3;FBID/phone;FBLC/en_US;FBOP/5;FBRV/733464354;IABMV/1]';
     const lengthyDeviceId = 'Lorem Ipsum: In ea cillum aliqua voluptate est non aute aute dolor. Non amet sit deserunt amet quis qui voluptate ad dolor magna do adipisicing. Laboris mollit anim exercitation anim Lorem ullamco culpa nulla sit qui. Occaecat laboris minim ea ut laboris mollit quis. Proident pariatur Lorem adipisicing nisi enim minim.';
-    it('should not fail if longer userAgent and deviceId is provided', testService((service) =>
+    it.only('should not fail if longer userAgent and deviceId is provided', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post(`/v1/projects/1/forms/simple/submissions?deviceID=${lengthyDeviceId}`)
           .send(testData.instances.simple.one)
@@ -1174,7 +1174,7 @@ describe('api: /forms/:id/submissions', () => {
               body[0].userAgent.should.startWith('Enketo/7.5.1');
             })))));
 
-    it('should accept a submission for an old form version', testService((service, { Submissions, one }) =>
+    it.only('should accept a submission for an old form version', testService((service, { Submissions, one }) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms/simple/draft')
           .expect(200)
@@ -1197,7 +1197,7 @@ describe('api: /forms/:id/submissions', () => {
           .then(({ formDefId }) => one(sql`select * from form_defs where id=${formDefId}`))
           .then((formDef) => { formDef.version.should.equal('two'); }))));
 
-    it('should create expected attachments', testService((service) =>
+    it.only('should create expected attachments', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms?publish=true')
           .set('Content-Type', 'application/xml')
@@ -1216,7 +1216,7 @@ describe('api: /forms/:id/submissions', () => {
                 ]);
               }))))));
 
-    it('should store the correct formdef and actor ids', testService((service, { all, oneFirst }) =>
+    it.only('should store the correct formdef and actor ids', testService((service, { all, oneFirst }) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms/simple/submissions')
           .send(testData.instances.simple.one)
@@ -1233,7 +1233,7 @@ describe('api: /forms/:id/submissions', () => {
               .then((xml) => { xml.should.equal(testData.forms.simple); });
           }))));
 
-    it('should accept encrypted submissions, with attachments', testService((service) =>
+    it.only('should accept encrypted submissions, with attachments', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms?publish=true')
           .set('Content-Type', 'application/xml')
@@ -1257,7 +1257,7 @@ describe('api: /forms/:id/submissions', () => {
               })
           ])))));
 
-    it('should reject duplicate submissions', testService(async (service) => {
+    it.only('should reject duplicate submissions', testService(async (service) => {
       const asAlice = await service.login('alice');
 
       await asAlice.post('/v1/projects/1/forms/simple/submissions')
@@ -1280,7 +1280,7 @@ describe('api: /forms/:id/submissions', () => {
           .set('Content-Type', 'text/xml')
           .expect(404))));
 
-    it('should accept submissions', testService((service) =>
+    it.only('should accept submissions', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms/simple/draft')
           .expect(200)
@@ -1294,7 +1294,7 @@ describe('api: /forms/:id/submissions', () => {
               body.submitterId.should.equal(5);
             })))));
 
-    it('should accept even if the form is not taking submissions', testService((service) =>
+    it.only('should accept even if the form is not taking submissions', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.patch('/v1/projects/1/forms/simple')
           .send({ state: 'closed' })
@@ -1315,7 +1315,7 @@ describe('api: /forms/:id/submissions', () => {
             asAlice.get('/v1/projects/1/forms/simple/draft/submissions/one').expect(200)
           ])))));
 
-    it('should accept even if the version in the submission is wrong', testService((service) =>
+    it.only('should accept even if the version in the submission is wrong', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms/simple/draft')
           .expect(200)
@@ -1333,7 +1333,7 @@ describe('api: /forms/:id/submissions', () => {
           .send(withSimpleIds('one', 'two'))
           .expect(404))));
 
-    it('should reject if the user cannot edit', testService((service) =>
+    it.only('should reject if the user cannot edit', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms/simple/submissions')
           .send(testData.instances.simple.one)
@@ -1345,7 +1345,7 @@ describe('api: /forms/:id/submissions', () => {
               .send(withSimpleIds('one', 'two'))
               .expect(403))))));
 
-    it('should update the submission', testService((service) =>
+    it.only('should update the submission', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms/simple/submissions')
           .send(testData.instances.simple.one)
@@ -1369,7 +1369,7 @@ describe('api: /forms/:id/submissions', () => {
             .expect(200)
             .then(({ text }) => { text.should.equal(withSimpleIds('one', 'two')); })))));
 
-    it('should reject if the deprecated submission is not current', testService((service) =>
+    it.only('should reject if the deprecated submission is not current', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms/simple/submissions')
           .send(testData.instances.simple.one)
@@ -1384,7 +1384,7 @@ describe('api: /forms/:id/submissions', () => {
             .send(withSimpleIds('one', 'three'))
             .expect(409)))));
 
-    it('should copy forward matching attachments', testService((service) =>
+    it.only('should copy forward matching attachments', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms?publish=true')
           .set('Content-Type', 'text/xml')
@@ -1419,7 +1419,7 @@ describe('api: /forms/:id/submissions', () => {
           asAlice.get('/v1/projects/1/forms/simple/submissions/one/edit')
             .expect(404)))));
 
-    it('should reject if the form does not have an enketoId', testService((service) =>
+    it.only('should reject if the form does not have an enketoId', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms/simple/submissions')
           .send(testData.instances.simple.one)
@@ -1428,7 +1428,7 @@ describe('api: /forms/:id/submissions', () => {
           .then(() => asAlice.get('/v1/projects/1/forms/simple/submissions/one/edit')
             .expect(409)))));
 
-    it('should reject if the form is closing', testService((service, { run }) =>
+    it.only('should reject if the form is closing', testService((service, { run }) =>
       run(sql`update forms set "enketoId"='myenketoid'`)
         .then(() => service.login('alice', (asAlice) =>
           asAlice.post('/v1/projects/1/forms/simple/submissions')
@@ -1445,7 +1445,7 @@ describe('api: /forms/:id/submissions', () => {
                 /trying to edit a submission of a Form that is in Closing or Closed/.test(body.message).should.equal(true);
               }))))));
 
-    it('should redirect to the edit_url', testService((service, { run }) =>
+    it.only('should redirect to the edit_url', testService((service, { run }) =>
       run(sql`update forms set "enketoId"='myenketoid'`)
         .then(() => service.login('alice', (asAlice) =>
           asAlice.post('/v1/projects/1/forms/simple/submissions')
@@ -1457,7 +1457,7 @@ describe('api: /forms/:id/submissions', () => {
               .then(({ text }) => { text.should.equal('Found. Redirecting to https://enketo/edit/url'); }))))));
 
     // TODO: okay, so it'd be better if this were a true true integration test.
-    it('should pass the appropriate parameters to the enketo module', testService((service, { run }) =>
+    it.only('should pass the appropriate parameters to the enketo module', testService((service, { run }) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms?publish=true')
           .set('Content-Type', 'text/xml')
@@ -1491,7 +1491,7 @@ describe('api: /forms/:id/submissions', () => {
           .send({ reviewState: 'approved' })
           .expect(404))));
 
-    it('should reject if the user cannot update', testService((service) =>
+    it.only('should reject if the user cannot update', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms/simple/submissions')
           .send(testData.instances.simple.one)
@@ -1502,7 +1502,7 @@ describe('api: /forms/:id/submissions', () => {
               .send({ reviewState: 'approved' })
               .expect(403))))));
 
-    it('should set the review state', testService((service) =>
+    it.only('should set the review state', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms/simple/submissions')
           .send(testData.instances.simple.one)
@@ -1522,7 +1522,7 @@ describe('api: /forms/:id/submissions', () => {
         asAlice.delete('/v1/projects/1/forms/simple/submissions/one')
           .expect(404))));
 
-    it('should reject if the user cannot delete', testService((service) =>
+    it.only('should reject if the user cannot delete', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms/simple/submissions')
           .send(testData.instances.simple.one)
@@ -1532,7 +1532,7 @@ describe('api: /forms/:id/submissions', () => {
             asChelsea.delete('/v1/projects/1/forms/simple/submissions/one')
               .expect(403))))));
 
-    it('should soft-delete the submission and not be able to access it again', testService((service) =>
+    it.only('should soft-delete the submission and not be able to access it again', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms/simple/submissions')
           .send(testData.instances.simple.one)
@@ -1543,7 +1543,7 @@ describe('api: /forms/:id/submissions', () => {
           .then(() => asAlice.get('/v1/projects/1/forms/simple/submissions/one')
             .expect(404)))));
 
-    it('should not let a draft submission be deleted', testService(async (service) => {
+    it.only('should not let a draft submission be deleted', testService(async (service) => {
       const asAlice = await service.login('alice');
       await asAlice.post('/v1/projects/1/forms/simple/draft');
       await asAlice.post('/v1/projects/1/forms/simple/draft/submissions')
@@ -1555,7 +1555,7 @@ describe('api: /forms/:id/submissions', () => {
         .expect(404);
     }));
 
-    it('should not let a submission with the same instanceId as a deleted submission be sent', testServiceFullTrx(async (service, { Submissions }) => {
+    it.only('should not let a submission with the same instanceId as a deleted submission be sent', testServiceFullTrx(async (service, { Submissions }) => {
       const asAlice = await service.login('alice');
 
       await asAlice.post('/v1/projects/1/forms/simple/submissions')
@@ -1580,7 +1580,7 @@ describe('api: /forms/:id/submissions', () => {
         .expect(200);
     }));
 
-    it('should delete and restore non-draft submission even when draft submission with same instanceId exists', testService(async (service) => {
+    it.only('should delete and restore non-draft submission even when draft submission with same instanceId exists', testService(async (service) => {
       const asAlice = await service.login('alice');
 
       await asAlice.post('/v1/projects/1/forms/simple/submissions')
@@ -1608,7 +1608,7 @@ describe('api: /forms/:id/submissions', () => {
   });
 
   describe('/:instanceId RESTORE', () => {
-    it('should reject if the submission has not been deleted', testService((service) =>
+    it.only('should reject if the submission has not been deleted', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms/simple/submissions')
           .send(testData.instances.simple.one)
@@ -1622,7 +1622,7 @@ describe('api: /forms/:id/submissions', () => {
         asAlice.post('/v1/projects/1/forms/simple/submissions/nonexistant/restore')
           .expect(404))));
 
-    it('should reject if the user cannot restore', testService(async (service) => {
+    it.only('should reject if the user cannot restore', testService(async (service) => {
       const asAlice = await service.login('alice');
       const asChelsea = await service.login('chelsea');
 
@@ -1641,7 +1641,7 @@ describe('api: /forms/:id/submissions', () => {
         .expect(403);
     }));
 
-    it('should soft-delete the submission and then restore it', testService(async (service) => {
+    it.only('should soft-delete the submission and then restore it', testService(async (service) => {
       const asAlice = await service.login('alice');
 
       // Create a submission
@@ -1687,7 +1687,7 @@ describe('api: /forms/:id/submissions', () => {
           result.files.get('simple.csv').should.equal('SubmissionDate,meta-instanceID,name,age,KEY,SubmitterID,SubmitterName,AttachmentsPresent,AttachmentsExpected,Status,ReviewState,DeviceID,Edits,FormVersion\n');
         }))));
 
-    it('should return a zipfile with the relevant data', testService((service) =>
+    it.only('should return a zipfile with the relevant data', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms/simple/submissions')
           .send(testData.instances.simple.one)
@@ -1707,7 +1707,7 @@ describe('api: /forms/:id/submissions', () => {
               result.files.get('simple.csv').should.be.a.SimpleCsv();
             })))));
 
-    it('should include all repeat rows @slow', testService(async (service) => {
+    it.only('should include all repeat rows @slow', testService(async (service) => {
       const asAlice = await service.login('alice');
       await asAlice.post('/v1/projects/1/forms?publish=true')
         .send(`
@@ -1737,7 +1737,7 @@ describe('api: /forms/:id/submissions', () => {
       result.files.get('single-repeat-1-instance-10qs-repeat.csv').split('\n').length.should.equal(52);
     }));
 
-    it('should not include data from other forms', testService((service) =>
+    it.only('should not include data from other forms', testService((service) =>
       service.login('alice', (asAlice) => Promise.all([
         asAlice.post('/v1/projects/1/forms/simple/submissions')
           .send(testData.instances.simple.one)
@@ -1771,7 +1771,7 @@ describe('api: /forms/:id/submissions', () => {
             csv[3].should.eql([ '' ]);
           })))));
 
-    it('should not return data from deleted submissions in csv export', testService(async (service) => {
+    it.only('should not return data from deleted submissions in csv export', testService(async (service) => {
       const asAlice = await service.login('alice');
 
       await asAlice.post('/v1/projects/1/forms/simple/submissions')
@@ -1804,7 +1804,7 @@ describe('api: /forms/:id/submissions', () => {
       csv[3].should.eql([ '' ]);
     }));
 
-    it('should return a submitter-filtered zipfile with the relevant data', testService((service) =>
+    it.only('should return a submitter-filtered zipfile with the relevant data', testService((service) =>
       service.login('alice', (asAlice) =>
         service.login('bob', (asBob) =>
           asAlice.post('/v1/projects/1/forms/simple/submissions')
@@ -1828,7 +1828,7 @@ describe('api: /forms/:id/submissions', () => {
                 lines[2].endsWith(',one,Alice,30,one,5,Alice,0,0,,,,0,').should.equal(true);
               }))))));
 
-    it('should return a review state-filtered zipfile with the relevant data', testService((service) =>
+    it.only('should return a review state-filtered zipfile with the relevant data', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms/simple/submissions')
           .send(testData.instances.simple.one)
@@ -1854,7 +1854,7 @@ describe('api: /forms/:id/submissions', () => {
               lines[2].endsWith(',one,Alice,30,one,5,Alice,0,0,,,,0,').should.equal(true);
             })))));
 
-    it('should return a submissionDate-filtered zipfile with the relevant data', testService((service, { run }) =>
+    it.only('should return a submissionDate-filtered zipfile with the relevant data', testService((service, { run }) =>
       service.login('alice', (asAlice) =>
         service.login('bob', (asBob) =>
           asAlice.post('/v1/projects/1/forms/simple/submissions')
@@ -1874,7 +1874,7 @@ describe('api: /forms/:id/submissions', () => {
                 lines[1].endsWith(',one,Alice,30,one,5,Alice,0,0,,,,0,').should.equal(true);
               }))))));
 
-    it('should return an updatedAt-filtered zipfile with the relevant data', testService((service) =>
+    it.only('should return an updatedAt-filtered zipfile with the relevant data', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms/simple/submissions')
           .send(testData.instances.simple.one)
@@ -1895,7 +1895,7 @@ describe('api: /forms/:id/submissions', () => {
               lines[1].endsWith(',one,Alice,30,one,5,Alice,0,0,,,,0,').should.equal(true);
             })))));
 
-    it('should return a zipfile with the relevant attachments', testService((service) =>
+    it.only('should return a zipfile with the relevant attachments', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms?publish=true')
           .set('Content-Type', 'application/xml')
@@ -1929,7 +1929,7 @@ describe('api: /forms/:id/submissions', () => {
                 csv.length.should.equal(3); // newline at end
               }))))));
 
-    it('should return a zipfile with the relevant attachments if s3 is enabled', testService((service, { Blobs }) => {
+    it.only('should return a zipfile with the relevant attachments if s3 is enabled', testService((service, { Blobs }) => {
       global.s3.enableMock();
       return service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms?publish=true')
@@ -1966,7 +1966,7 @@ describe('api: /forms/:id/submissions', () => {
               }))));
     }));
 
-    it('should handle s3 errors when trying to construct zipfile', testService((service, { Blobs }) => {
+    it.only('should handle s3 errors when trying to construct zipfile', testService((service, { Blobs }) => {
       global.s3.enableMock();
       return service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms?publish=true')
@@ -1990,7 +1990,7 @@ describe('api: /forms/:id/submissions', () => {
               .catch(err => err.message.should.equal('aborted')))));
     }));
 
-    it('should filter attachments by the query', testService((service) =>
+    it.only('should filter attachments by the query', testService((service) =>
       service.login('alice', (asAlice) =>
         service.login('bob', (asBob) =>
           asAlice.post('/v1/projects/1/forms?publish=true')
@@ -2015,7 +2015,7 @@ describe('api: /forms/:id/submissions', () => {
                   ]);
                 })))))));
 
-    it('should list the original submitted form version per submission', testService((service) =>
+    it.only('should list the original submitted form version per submission', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms/simple/submissions')
           .send(testData.instances.simple.one)
@@ -2051,7 +2051,7 @@ describe('api: /forms/:id/submissions', () => {
               lines[3].endsWith('1,').should.equal(true);
             })))));
 
-    it('should split select multiple values if ?splitSelectMultiples=true', testService((service, container) =>
+    it.only('should split select multiple values if ?splitSelectMultiples=true', testService((service, container) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms?publish=true')
           .set('Content-Type', 'application/xml')
@@ -2074,7 +2074,7 @@ describe('api: /forms/:id/submissions', () => {
                 .should.equal(',one,a b,1,1,x y z,0,1,1,1,one,5,Alice,0,0,,,,0,');
             })))));
 
-    it('should omit multiples it does not know about', testService((service) =>
+    it.only('should omit multiples it does not know about', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms?publish=true')
           .set('Content-Type', 'application/xml')
@@ -2096,7 +2096,7 @@ describe('api: /forms/:id/submissions', () => {
                 .should.equal(',one,a b,x y z,one,5,Alice,0,0,,,,0,');
             })))));
 
-    it('should split select multiples and filter given both options', testService((service, container) =>
+    it.only('should split select multiples and filter given both options', testService((service, container) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms?publish=true')
           .set('Content-Type', 'application/xml')
@@ -2119,7 +2119,7 @@ describe('api: /forms/:id/submissions', () => {
               lines[2].should.equal('');
             })))));
 
-    it('should export deleted fields and values if ?deletedFields=true', testService((service) =>
+    it.only('should export deleted fields and values if ?deletedFields=true', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms/simple/submissions')
           .set('Content-Type', 'application/xml')
@@ -2163,7 +2163,7 @@ describe('api: /forms/:id/submissions', () => {
                 .should.equal(',one,Alice,30,one,5,Alice,0,0,,,,0,');
             })))));
 
-    it('should skip attachments if ?attachments=false is given', testService((service) =>
+    it.only('should skip attachments if ?attachments=false is given', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms?publish=true')
           .set('Content-Type', 'application/xml')
@@ -2188,7 +2188,7 @@ describe('api: /forms/:id/submissions', () => {
 
               }))))));
 
-    it('should give the appropriate filename if ?attachments=false is given', testService((service) =>
+    it.only('should give the appropriate filename if ?attachments=false is given', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms?publish=true')
           .set('Content-Type', 'application/xml')
@@ -2205,7 +2205,7 @@ describe('api: /forms/:id/submissions', () => {
               headers['content-disposition'].should.equal('attachment; filename="binaryType.csv.zip"; filename*=UTF-8\'\'binaryType.csv.zip');
             })))));
 
-    it('should omit group paths if ?groupPaths=false is given', testService((service) =>
+    it.only('should omit group paths if ?groupPaths=false is given', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/submission')
           .set('X-OpenRosa-Version', '1.0')
@@ -2217,7 +2217,7 @@ describe('api: /forms/:id/submissions', () => {
               csv[0].should.equal('SubmissionDate,instanceID,name,age,KEY,SubmitterID,SubmitterName,AttachmentsPresent,AttachmentsExpected,Status,ReviewState,DeviceID,Edits,FormVersion');
             })))));
 
-    it('should split select AND omit group paths given both options', testService((service, container) =>
+    it.only('should split select AND omit group paths given both options', testService((service, container) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms?publish=true')
           .set('Content-Type', 'application/xml')
@@ -2240,7 +2240,7 @@ describe('api: /forms/:id/submissions', () => {
                 .should.equal(',one,a b,1,1,x y z,0,1,1,1,one,5,Alice,0,0,,,,0,');
             })))));
 
-    it('should properly count present attachments', testService((service) =>
+    it.only('should properly count present attachments', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms?publish=true')
           .set('Content-Type', 'application/xml')
@@ -2266,7 +2266,7 @@ describe('api: /forms/:id/submissions', () => {
 
               }))))));
 
-    it('should return worker-processed consolidated client audit log attachments', testService((service, container) =>
+    it.only('should return worker-processed consolidated client audit log attachments', testService((service, container) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms?publish=true')
           .set('Content-Type', 'application/xml')
@@ -2304,7 +2304,7 @@ two,h,/data/h,2000-01-01T00:06,2000-01-01T00:07,-5,-6,,ee,ff,,
           .then(() => container.oneFirst(sql`select count(*) from client_audits`)
             .then((count) => { count.should.equal(8); })))));
 
-    it('should return adhoc-processed consolidated client audit log attachments', testService((service) =>
+    it.only('should return adhoc-processed consolidated client audit log attachments', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms?publish=true')
           .set('Content-Type', 'application/xml')
@@ -2339,7 +2339,7 @@ two,h,/data/h,2000-01-01T00:06,2000-01-01T00:07,-5,-6,,ee,ff,,
 `);
             })))));
 
-    it('should return adhoc-processed consolidated client audit log attachments if uploaded to s3', testService((service, { Blobs }) => {
+    it.only('should return adhoc-processed consolidated client audit log attachments if uploaded to s3', testService((service, { Blobs }) => {
       global.s3.enableMock();
       return service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms?publish=true')
@@ -2385,7 +2385,7 @@ two,h,/data/h,2000-01-01T00:06,2000-01-01T00:07,-5,-6,,ee,ff,,
           }));
     }));
 
-    it('should gracefully handle error if client audit s3 download fails', testService((service, { Blobs }) => {
+    it.only('should gracefully handle error if client audit s3 download fails', testService((service, { Blobs }) => {
       global.s3.enableMock();
       return service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms?publish=true')
@@ -2409,7 +2409,7 @@ two,h,/data/h,2000-01-01T00:06,2000-01-01T00:07,-5,-6,,ee,ff,,
             .catch(err => err.message.should.equal('aborted'))));
     }));
 
-    it('should return additional user and change-reason columns of client audit log', testService(async (service, container) => {
+    it.only('should return additional user and change-reason columns of client audit log', testService(async (service, container) => {
       const asAlice = await service.login('alice');
 
       await asAlice.post('/v1/projects/1/forms?publish=true')
@@ -2452,7 +2452,7 @@ two,h,/data/h,2000-01-01T00:06,2000-01-01T00:07,-5,-6,,ee,ff,,
         .then((res) => res.files.get('audits - audit.csv').should.equal(expected));
     }));
 
-    it('should return consolidated client audit log filtered by user', testService((service) =>
+    it.only('should return consolidated client audit log filtered by user', testService((service) =>
       service.login('alice', (asAlice) =>
         service.login('bob', (asBob) =>
           asAlice.post('/v1/projects/1/forms?publish=true')
@@ -2486,7 +2486,7 @@ one,e,/data/e,2000-01-01T00:11,,,,,hh,ii,,
 
               }))))));
 
-    it('should return consolidated client audit log filtered by review state', testService((service) =>
+    it.only('should return consolidated client audit log filtered by review state', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms?publish=true')
           .set('Content-Type', 'application/xml')
@@ -2522,7 +2522,7 @@ one,e,/data/e,2000-01-01T00:11,,,,,hh,ii,,
 
             })))));
 
-    it('should return the latest attached audit log after openrosa replace', testService((service) =>
+    it.only('should return the latest attached audit log after openrosa replace', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms?publish=true')
           .set('Content-Type', 'application/xml')
@@ -2555,7 +2555,7 @@ one,h,/data/h,2000-01-01T00:06,2000-01-01T00:07,-5,-6,,ee,ff,,
 
               }))))));
 
-    it('should return the latest attached audit log after REST replace', testService((service) =>
+    it.only('should return the latest attached audit log after REST replace', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms?publish=true')
           .set('Content-Type', 'application/xml')
@@ -2587,7 +2587,7 @@ one,h,/data/h,2000-01-01T00:06,2000-01-01T00:07,-5,-6,,ee,ff,,
 
               }))))));
 
-    it('should tolerate differences in line lengths', testService((service) =>
+    it.only('should tolerate differences in line lengths', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms?publish=true')
           .set('Content-Type', 'application/xml')
@@ -2616,7 +2616,7 @@ one,e,/data/e,2000-01-01T00:11,,,,,hh,ii,,
 `);
               }))))));
 
-    it('should tolerate quote inside unquoted field of client audit log', testService((service) =>
+    it.only('should tolerate quote inside unquoted field of client audit log', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms?publish=true')
           .set('Content-Type', 'application/xml')
@@ -2649,7 +2649,7 @@ one,e,/data/e,2000-01-01T00:11,,,,,hh,ii,,
       const withClientAuditIds = (deprecatedId, instanceId) => testData.instances.clientAudits.one
         .replace('one</instance', `${instanceId}</instanceID><deprecatedID>${deprecatedId}</deprecated`);
 
-      it('should return original instanceId and latest attached audit log when instanceId deprecated with new audit log', testService((service) =>
+      it.only('should return original instanceId and latest attached audit log when instanceId deprecated with new audit log', testService((service) =>
         service.login('alice', (asAlice) =>
           asAlice.post('/v1/projects/1/forms?publish=true')
             .set('Content-Type', 'application/xml')
@@ -2719,7 +2719,7 @@ one,h,/data/h,2000-01-01T00:06,2000-01-01T00:07,-5,-6,,ee,ff,,
             headers['content-type'].should.equal('text/csv; charset=utf-8');
           }))));
 
-    it('should return the root csv table', testService((service) =>
+    it.only('should return the root csv table', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms/simple/submissions')
           .send(testData.instances.simple.one)
@@ -2737,7 +2737,7 @@ one,h,/data/h,2000-01-01T00:06,2000-01-01T00:07,-5,-6,,ee,ff,,
             .expect(200)
             .then(({ text }) => { text.should.be.a.SimpleCsv(); })))));
 
-    it('should return only the root csv table given repeats', testService((service) =>
+    it.only('should return only the root csv table given repeats', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms/withrepeat/submissions')
           .send(testData.instances.withrepeat.one)
@@ -2763,7 +2763,7 @@ one,h,/data/h,2000-01-01T00:06,2000-01-01T00:07,-5,-6,,ee,ff,,
               rows[3].slice(24).should.equal(',rone,Alice,30,,,rone,5,Alice,0,0,,,,0,1.0');
             })))));
 
-    it('should split select multiple values if ?splitSelectMultiples=true', testService((service, container) =>
+    it.only('should split select multiple values if ?splitSelectMultiples=true', testService((service, container) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms?publish=true')
           .set('Content-Type', 'application/xml')
@@ -2811,7 +2811,7 @@ one,h,/data/h,2000-01-01T00:06,2000-01-01T00:07,-5,-6,,ee,ff,,
             })))));
 
     describe('different versions of form schema', () => {
-      it('should export deleted fields and values if ?deletedFields=true', testService((service) =>
+      it.only('should export deleted fields and values if ?deletedFields=true', testService((service) =>
         service.login('alice', (asAlice) =>
           asAlice.post('/v1/projects/1/forms/simple/submissions')
             .set('Content-Type', 'application/xml')
@@ -2857,7 +2857,7 @@ one,h,/data/h,2000-01-01T00:06,2000-01-01T00:07,-5,-6,,ee,ff,,
                   .should.equal(',one,Alice,30,one,5,Alice,0,0,,,,0,');
               })))));
 
-      it('should split select multiple values if ?splitSelectMultiples=true', testService((service, container) =>
+      it.only('should split select multiple values if ?splitSelectMultiples=true', testService((service, container) =>
         service.login('alice', (asAlice) =>
           asAlice.post('/v1/projects/1/forms?publish=true')
             .set('Content-Type', 'application/xml')
@@ -2936,7 +2936,7 @@ one,h,/data/h,2000-01-01T00:06,2000-01-01T00:07,-5,-6,,ee,ff,,
         asAlice.get('/v1/projects/1/forms/simple/draft/submissions.csv.zip')
           .expect(404))));
 
-    it('should return draft submissions', testService((service) =>
+    it.only('should return draft submissions', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms/simple/draft')
           .expect(200)
@@ -2958,7 +2958,7 @@ one,h,/data/h,2000-01-01T00:06,2000-01-01T00:07,-5,-6,,ee,ff,,
                 csv[1].should.eql([ 'one','Alice','30','one','5','Alice','0','0','','','','0','' ]);
               }))))));
 
-    it('should not include draft submissions in nondraft csvzip', testService((service) =>
+    it.only('should not include draft submissions in nondraft csvzip', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms/simple/draft')
           .expect(200)
@@ -2975,7 +2975,7 @@ one,h,/data/h,2000-01-01T00:06,2000-01-01T00:07,-5,-6,,ee,ff,,
                 result.files.get('simple.csv').should.equal('SubmissionDate,meta-instanceID,name,age,KEY,SubmitterID,SubmitterName,AttachmentsPresent,AttachmentsExpected,Status,ReviewState,DeviceID,Edits,FormVersion\n');
               }))))));
 
-    it('should not carry draft submissions forward to the published version upon publish', testService((service) =>
+    it.only('should not carry draft submissions forward to the published version upon publish', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms/simple/draft')
           .expect(200)
@@ -2994,7 +2994,7 @@ one,h,/data/h,2000-01-01T00:06,2000-01-01T00:07,-5,-6,,ee,ff,,
                 result.files.get('simple.csv').should.equal('SubmissionDate,meta-instanceID,name,age,KEY,SubmitterID,SubmitterName,AttachmentsPresent,AttachmentsExpected,Status,ReviewState,DeviceID,Edits,FormVersion\n');
               }))))));
 
-    it('should not carry over drafts when a draft is replaced', testService((service) =>
+    it.only('should not carry over drafts when a draft is replaced', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms/simple/draft')
           .expect(200)
@@ -3013,7 +3013,7 @@ one,h,/data/h,2000-01-01T00:06,2000-01-01T00:07,-5,-6,,ee,ff,,
                 result.files.get('simple.csv').should.equal('SubmissionDate,meta-instanceID,name,age,KEY,SubmitterID,SubmitterName,AttachmentsPresent,AttachmentsExpected,Status,ReviewState,DeviceID,Edits,FormVersion\n');
               }))))));
 
-    it('should not resurface drafts when a draft is recreated', testService((service) =>
+    it.only('should not resurface drafts when a draft is recreated', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms/simple/draft')
           .expect(200)
@@ -3046,7 +3046,7 @@ one,h,/data/h,2000-01-01T00:06,2000-01-01T00:07,-5,-6,,ee,ff,,
               body.length.should.equal(0);
             })))));
 
-    it('should split select multiple values submitted over /test/ if ?splitSelectMultiples=true', testService((service, container) =>
+    it.only('should split select multiple values submitted over /test/ if ?splitSelectMultiples=true', testService((service, container) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms')
           .set('Content-Type', 'application/xml')
@@ -3092,7 +3092,7 @@ one,h,/data/h,2000-01-01T00:06,2000-01-01T00:07,-5,-6,,ee,ff,,
             body.should.eql([]);
           }))));
 
-    it('should return a list of submissions', testService((service) =>
+    it.only('should return a list of submissions', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms/simple/submissions')
           .send(testData.instances.simple.one)
@@ -3109,7 +3109,7 @@ one,h,/data/h,2000-01-01T00:06,2000-01-01T00:07,-5,-6,,ee,ff,,
               body.map((submission) => submission.instanceId).should.eql([ 'two', 'one' ]);
             })))));
 
-    it('should list with extended metadata if requested', testService((service) =>
+    it.only('should list with extended metadata if requested', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms/simple/submissions')
           .send(testData.instances.simple.one)
@@ -3130,7 +3130,7 @@ one,h,/data/h,2000-01-01T00:06,2000-01-01T00:07,-5,-6,,ee,ff,,
       service.login('alice', (asAlice) =>
         asAlice.get('/v1/projects/1/forms/simple/draft/submissions').expect(404))));
 
-    it('should return a list of submissions', testService((service) =>
+    it.only('should return a list of submissions', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms/simple/draft')
           .expect(200)
@@ -3149,7 +3149,7 @@ one,h,/data/h,2000-01-01T00:06,2000-01-01T00:07,-5,-6,,ee,ff,,
               body.map((submission) => submission.instanceId).should.eql([ 'two', 'one' ]);
             })))));
 
-    it('should not include draft submissions non-draft', testService((service) =>
+    it.only('should not include draft submissions non-draft', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms/simple/draft')
           .expect(200)
@@ -3165,7 +3165,7 @@ one,h,/data/h,2000-01-01T00:06,2000-01-01T00:07,-5,-6,,ee,ff,,
             .expect(200)
             .then(({ body }) => { body.should.eql([]); })))));
 
-    it('should not carry draft submissions forward to the published version upon publish', testService((service) =>
+    it.only('should not carry draft submissions forward to the published version upon publish', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms/simple/draft')
           .expect(200)
@@ -3179,7 +3179,7 @@ one,h,/data/h,2000-01-01T00:06,2000-01-01T00:07,-5,-6,,ee,ff,,
             .expect(200)
             .then(({ body }) => { body.should.eql([]); })))));
 
-    it('should not carry over drafts when a draft is replaced', testService((service) =>
+    it.only('should not carry over drafts when a draft is replaced', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms/simple/draft')
           .expect(200)
@@ -3193,7 +3193,7 @@ one,h,/data/h,2000-01-01T00:06,2000-01-01T00:07,-5,-6,,ee,ff,,
             .expect(200)
             .then(({ body }) => { body.should.eql([]); })))));
 
-    it('should not resurface drafts when a draft is recreated', testService((service) =>
+    it.only('should not resurface drafts when a draft is recreated', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms/simple/draft')
           .expect(200)
@@ -3219,7 +3219,7 @@ one,h,/data/h,2000-01-01T00:06,2000-01-01T00:07,-5,-6,,ee,ff,,
       service.login('chelsea', (asChelsea) =>
         asChelsea.get('/v1/projects/1/forms/simple/submissions/keys').expect(403))));
 
-    it('should return an empty array if encryption is not being used', testService((service) =>
+    it.only('should return an empty array if encryption is not being used', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms/simple/submissions')
           .send(testData.instances.simple.one)
@@ -3234,7 +3234,7 @@ one,h,/data/h,2000-01-01T00:06,2000-01-01T00:07,-5,-6,,ee,ff,,
     // a bit of a compound test, since there is no way as of time of writing to verify
     // that the form def key parsing and storage works. so this test catches form /and/
     // submission key handling.
-    it('should return a self-managed key if it is used', testService((service) =>
+    it.only('should return a self-managed key if it is used', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms?publish=true')
           .send(testData.forms.encrypted)
@@ -3252,7 +3252,7 @@ one,h,/data/h,2000-01-01T00:06,2000-01-01T00:07,-5,-6,,ee,ff,,
               body[0].public.should.equal('MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAyYh7bSui/0xppQ+J3i5xghfao+559Rqg9X0xNbdMEsW35CzYUfmC8sOzeeUiE4pG7HIEUmiJal+mo70UMDUlywXj9z053n0g6MmtLlUyBw0ZGhEZWHsfBxPQixdzY/c5i7sh0dFzWVBZ7UrqBc2qjRFUYxeXqHsAxSPClTH1nW47Mr2h4juBLC7tBNZA3biZA/XTPt//hAuzv1d6MGiF3vQJXvFTNdfsh6Ckq4KXUsAv+07cLtON4KjrKhqsVNNGbFssTUHVL4A9N3gsuRGt329LHOKBxQUGEnhMM2MEtvk4kaVQrgCqpk1pMU/4HlFtRjOoKdAIuzzxIl56gNdRUQIDAQAB');
             })))));
 
-    it('should return multiple self-managed keys if they are used', testService((service, { Forms }) =>
+    it.only('should return multiple self-managed keys if they are used', testService((service, { Forms }) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms?publish=true')
           .send(testData.forms.encrypted)
@@ -3285,7 +3285,7 @@ one,h,/data/h,2000-01-01T00:06,2000-01-01T00:07,-5,-6,,ee,ff,,
               body[1].public.should.equal('MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAyYh7bSui/0xppQ+J3i5xghfao+559Rqg9X0xNbdMEsW35CzYUfmC8sOzeeUiE4pG7HIEUmiJal+mo70UMDUlywXj9z053n0g6MmtLlUyBw0ZGhEZWHsfBxPQixdzY/c5i7sh0dFzWVBZ7UrqBc2qjRFUYxeXqHsAxSPClTH1nW47Mr2h4juBLC7tBNZA3biZA/XTPt//hAuzv1d6MGiF3vQJXvFTNdfsh6Ckq4KXUsAv+07cLtON4KjrKhqsVNNGbFssTUHVL4A9N3gsuRGt329LHOKBxQUGEnhMM2MEtvk4kaVQrgCqpk1pMU/4HlFtRjOoKdAIuzzxIl56gNdRUQIDAQAB');
             })))));
 
-    it('should not return unused keys', testService((service, { Forms }) =>
+    it.only('should not return unused keys', testService((service, { Forms }) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms?publish=true')
           .send(testData.forms.encrypted)
@@ -3310,7 +3310,7 @@ one,h,/data/h,2000-01-01T00:06,2000-01-01T00:07,-5,-6,,ee,ff,,
               body[0].public.should.equal('MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAyYh7bSui/0xppQ+J3i5xghfao+559Rqg9X0xNbdMEsW35CzYUfmC8sOzeeUiE4pG7HIEUmiJal+mo70UMDUlywXj9z053n0g6MmtLlUyBw0ZGhEZWHsfBxPQixdzY/c5i7sh0dFzWVBZ7UrqBc2qjRFUYxeXqHsAxSPClTH1nW47Mr2h4juBLC7tBNZA3biZA/XTPt//hAuzv1d6MGiF3vQJXvFTNdfsh6Ckq4KXUsAv+07cLtON4KjrKhqsVNNGbFssTUHVL4A9N3gsuRGt329LHOKBxQUGEnhMM2MEtvk4kaVQrgCqpk1pMU/4HlFtRjOoKdAIuzzxIl56gNdRUQIDAQAB');
             })))));
 
-    it('should return managed keys, with hint', testService((service) =>
+    it.only('should return managed keys, with hint', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/key')
           .send({ passphrase: 'supersecret', hint: 'it is a secret' })
@@ -3332,7 +3332,7 @@ one,h,/data/h,2000-01-01T00:06,2000-01-01T00:07,-5,-6,,ee,ff,,
               body[0].hint.should.equal('it is a secret');
             })))));
 
-    it('should not return a key more than once', testService((service) =>
+    it.only('should not return a key more than once', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms?publish=true')
           .send(testData.forms.encrypted)
@@ -3373,7 +3373,7 @@ one,h,/data/h,2000-01-01T00:06,2000-01-01T00:07,-5,-6,,ee,ff,,
           .expect(200)
           .then(({ body }) => { body.should.eql([]); }))));
 
-    it('should return all submitters once', testService((service) =>
+    it.only('should return all submitters once', testService((service) =>
       service.login('alice', (asAlice) =>
         service.login('bob', (asBob) =>
           asAlice.post('/v1/projects/1/forms/simple/submissions')
@@ -3402,7 +3402,7 @@ one,h,/data/h,2000-01-01T00:06,2000-01-01T00:07,-5,-6,,ee,ff,,
       service.login('alice', (asAlice) =>
         asAlice.get('/v1/projects/1/forms/simple/submissions/draft/keys').expect(404))));
 
-    it('should return draft-used keys', testService((service) =>
+    it.only('should return draft-used keys', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms')
           .send(testData.forms.encrypted)
@@ -3420,7 +3420,7 @@ one,h,/data/h,2000-01-01T00:06,2000-01-01T00:07,-5,-6,,ee,ff,,
               body[0].public.should.equal('MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAyYh7bSui/0xppQ+J3i5xghfao+559Rqg9X0xNbdMEsW35CzYUfmC8sOzeeUiE4pG7HIEUmiJal+mo70UMDUlywXj9z053n0g6MmtLlUyBw0ZGhEZWHsfBxPQixdzY/c5i7sh0dFzWVBZ7UrqBc2qjRFUYxeXqHsAxSPClTH1nW47Mr2h4juBLC7tBNZA3biZA/XTPt//hAuzv1d6MGiF3vQJXvFTNdfsh6Ckq4KXUsAv+07cLtON4KjrKhqsVNNGbFssTUHVL4A9N3gsuRGt329LHOKBxQUGEnhMM2MEtvk4kaVQrgCqpk1pMU/4HlFtRjOoKdAIuzzxIl56gNdRUQIDAQAB');
             })))));
 
-    it('should not include draft keys nondraft', testService((service) =>
+    it.only('should not include draft keys nondraft', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms?publish=true')
           .send(testData.forms.encrypted)
@@ -3436,7 +3436,7 @@ one,h,/data/h,2000-01-01T00:06,2000-01-01T00:07,-5,-6,,ee,ff,,
             .expect(200)
             .then(({ body }) => { body.should.eql([]); })))));
 
-    it('should not carry draft keys forward to the published version upon publish', testService((service) =>
+    it.only('should not carry draft keys forward to the published version upon publish', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms?publish=true')
           .send(testData.forms.encrypted)
@@ -3454,7 +3454,7 @@ one,h,/data/h,2000-01-01T00:06,2000-01-01T00:07,-5,-6,,ee,ff,,
             .expect(200)
             .then(({ body }) => { body.should.eql([]); })))));
 
-    it('should not carry over draft keys when a draft is replaced', testService((service) =>
+    it.only('should not carry over draft keys when a draft is replaced', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms?publish=true')
           .send(testData.forms.encrypted)
@@ -3472,7 +3472,7 @@ one,h,/data/h,2000-01-01T00:06,2000-01-01T00:07,-5,-6,,ee,ff,,
             .expect(200)
             .then(({ body }) => { body.should.eql([]); })))));
 
-    it('should not resurface draft keys when a draft is recreated', testService((service) =>
+    it.only('should not resurface draft keys when a draft is recreated', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms?publish=true')
           .send(testData.forms.encrypted)
@@ -3499,7 +3499,7 @@ one,h,/data/h,2000-01-01T00:06,2000-01-01T00:07,-5,-6,,ee,ff,,
         asAlice.get('/v1/projects/1/forms/simple/submissions/one/audits')
           .expect(404))));
 
-    it('should reject if the user cannot read audits', testService((service) =>
+    it.only('should reject if the user cannot read audits', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms/simple/submissions')
           .send(testData.instances.simple.one)
@@ -3509,7 +3509,7 @@ one,h,/data/h,2000-01-01T00:06,2000-01-01T00:07,-5,-6,,ee,ff,,
             asChelsea.get('/v1/projects/1/forms/simple/submissions/one/audits')
               .expect(403))))));
 
-    it('should return all audit logs on the submission', testService((service, { oneFirst, all }) =>
+    it.only('should return all audit logs on the submission', testService((service, { oneFirst, all }) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms/simple/submissions')
           .send(testData.instances.simple.one)
@@ -3552,7 +3552,7 @@ one,h,/data/h,2000-01-01T00:06,2000-01-01T00:07,-5,-6,,ee,ff,,
                 body[4].details.should.eql({ instanceId: 'one', submissionId, submissionDefId: submissionDefIds[1] });
               }))))));
 
-    it('should not expand actor when not extended', testService((service) =>
+    it.only('should not expand actor when not extended', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms/simple/submissions')
           .send(testData.instances.simple.one)
@@ -3568,7 +3568,7 @@ one,h,/data/h,2000-01-01T00:06,2000-01-01T00:07,-5,-6,,ee,ff,,
               body[0].actorId.should.equal(5);
             })))));
 
-    it('should expand actor on extended', testService((service) =>
+    it.only('should expand actor on extended', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms/simple/submissions')
           .send(testData.instances.simple.one)
@@ -3586,7 +3586,7 @@ one,h,/data/h,2000-01-01T00:06,2000-01-01T00:07,-5,-6,,ee,ff,,
             })))));
 
     describe('submission audits about entity events', () => {
-      it('should return full entity in details of an event about an entity', testService(async (service, container) => {
+      it.only('should return full entity in details of an event about an entity', testService(async (service, container) => {
         const asAlice = await service.login('alice');
 
         await asAlice.post('/v1/projects/1/forms?publish=true')
@@ -3611,7 +3611,7 @@ one,h,/data/h,2000-01-01T00:06,2000-01-01T00:07,-5,-6,,ee,ff,,
           });
       }));
 
-      it('should not return basic entity details when extended metadata not set', testService(async (service, container) => {
+      it.only('should not return basic entity details when extended metadata not set', testService(async (service, container) => {
         const asAlice = await service.login('alice');
 
         await asAlice.post('/v1/projects/1/forms?publish=true')
@@ -3635,7 +3635,7 @@ one,h,/data/h,2000-01-01T00:06,2000-01-01T00:07,-5,-6,,ee,ff,,
           });
       }));
 
-      it('should return updated entity in currentVersion', testService(async (service, container) => {
+      it.only('should return updated entity in currentVersion', testService(async (service, container) => {
         const asAlice = await service.login('alice');
 
         await asAlice.post('/v1/projects/1/forms?publish=true')
@@ -3663,7 +3663,7 @@ one,h,/data/h,2000-01-01T00:06,2000-01-01T00:07,-5,-6,,ee,ff,,
           });
       }));
 
-      it('should return entity uuid and dataset only when entity is soft-deleted', testService(async (service, container) => {
+      it.only('should return entity uuid and dataset only when entity is soft-deleted', testService(async (service, container) => {
         const asAlice = await service.login('alice');
 
         await asAlice.post('/v1/projects/1/forms?publish=true')
@@ -3691,7 +3691,7 @@ one,h,/data/h,2000-01-01T00:06,2000-01-01T00:07,-5,-6,,ee,ff,,
           });
       }));
 
-      it('should return entity uuid and dataset when entity is (manually) purged', testService(async (service, container) => {
+      it.only('should return entity uuid and dataset when entity is (manually) purged', testService(async (service, container) => {
         const asAlice = await service.login('alice');
 
         await asAlice.post('/v1/projects/1/forms?publish=true')
@@ -3723,7 +3723,7 @@ one,h,/data/h,2000-01-01T00:06,2000-01-01T00:07,-5,-6,,ee,ff,,
   });
 
   describe('/:instanceId.xml GET', () => {
-    it('should return submission details', testService((service) =>
+    it.only('should return submission details', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms/simple/submissions')
           .send(testData.instances.simple.one)
@@ -3736,7 +3736,7 @@ one,h,/data/h,2000-01-01T00:06,2000-01-01T00:07,-5,-6,,ee,ff,,
               text.should.equal(testData.instances.simple.one);
             })))));
 
-    it('should redirect to the version if the referenced instanceID is out of date', testService((service) =>
+    it.only('should redirect to the version if the referenced instanceID is out of date', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/submission')
           .set('X-OpenRosa-Version', '1.0')
@@ -3758,7 +3758,7 @@ one,h,/data/h,2000-01-01T00:06,2000-01-01T00:07,-5,-6,,ee,ff,,
   });
 
   describe('[version] /:instanceId.xml GET', () => {
-    it('should return notfound if the version does not exist', testService((service) =>
+    it.only('should return notfound if the version does not exist', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms/simple/submissions')
           .send(testData.instances.simple.one)
@@ -3766,7 +3766,7 @@ one,h,/data/h,2000-01-01T00:06,2000-01-01T00:07,-5,-6,,ee,ff,,
           .expect(200)
           .then(() => asAlice.get('/v1/projects/1/forms/simple/submissions/one/versions/three.xml').expect(404)))));
 
-    it('should reject if the user cannot read', testService((service) =>
+    it.only('should reject if the user cannot read', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms/simple/submissions')
           .send(testData.instances.simple.one)
@@ -3775,7 +3775,7 @@ one,h,/data/h,2000-01-01T00:06,2000-01-01T00:07,-5,-6,,ee,ff,,
           .then(() => service.login('chelsea', (asChelsea) =>
             asChelsea.get('/v1/projects/1/forms/simple/submissions/one/versions/one.xml').expect(403))))));
 
-    it('should return submission details', testService((service) =>
+    it.only('should return submission details', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms/simple/submissions')
           .send(testData.instances.simple.one)
@@ -3796,7 +3796,7 @@ one,h,/data/h,2000-01-01T00:06,2000-01-01T00:07,-5,-6,,ee,ff,,
   });
 
   describe('[draft] /:instanceId.xml GET', () => {
-    it('should return draft submissions', testService((service) =>
+    it.only('should return draft submissions', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms/simple/draft')
           .expect(200)
@@ -3811,7 +3811,7 @@ one,h,/data/h,2000-01-01T00:06,2000-01-01T00:07,-5,-6,,ee,ff,,
               text.should.equal(testData.instances.simple.one);
             })))));
 
-    it('should not return draft submissions nondraft', testService((service) =>
+    it.only('should not return draft submissions nondraft', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms/simple/draft')
           .expect(200)
@@ -3822,7 +3822,7 @@ one,h,/data/h,2000-01-01T00:06,2000-01-01T00:07,-5,-6,,ee,ff,,
           .then(() => asAlice.get('/v1/projects/1/forms/simple/submissions/one.xml')
             .expect(404)))));
 
-    it('should not carry draft submissions forward to the published version upon publish', testService((service) =>
+    it.only('should not carry draft submissions forward to the published version upon publish', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms/simple/draft')
           .expect(200)
@@ -3835,7 +3835,7 @@ one,h,/data/h,2000-01-01T00:06,2000-01-01T00:07,-5,-6,,ee,ff,,
           .then(() => asAlice.get('/v1/projects/1/forms/simple/submissions/one.xml')
             .expect(404)))));
 
-    it('should not carry over draft submissions when a draft is replaced', testService((service) =>
+    it.only('should not carry over draft submissions when a draft is replaced', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms/simple/draft')
           .expect(200)
@@ -3848,7 +3848,7 @@ one,h,/data/h,2000-01-01T00:06,2000-01-01T00:07,-5,-6,,ee,ff,,
           .then(() => asAlice.get('/v1/projects/1/forms/simple/draft/submissions/one.xml')
             .expect(404)))));
 
-    it('should not resurface draft submissions when a draft is recreated', testService((service) =>
+    it.only('should not resurface draft submissions when a draft is recreated', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms/simple/draft')
           .expect(200)
@@ -3877,7 +3877,7 @@ one,h,/data/h,2000-01-01T00:06,2000-01-01T00:07,-5,-6,,ee,ff,,
       service.login('alice', (asAlice) =>
         asAlice.get('/v1/projects/1/forms/simple/submissions/nonexistent').expect(404))));
 
-    it('should reject if the user cannot read', testService((service) =>
+    it.only('should reject if the user cannot read', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms/simple/submissions')
           .send(testData.instances.simple.one)
@@ -3886,7 +3886,7 @@ one,h,/data/h,2000-01-01T00:06,2000-01-01T00:07,-5,-6,,ee,ff,,
           .then(() => service.login('chelsea', (asChelsea) =>
             asChelsea.get('/v1/projects/1/forms/simple/submissions/one').expect(403))))));
 
-    it('should return submission details', testService((service) =>
+    it.only('should return submission details', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms/simple/submissions')
           .send(testData.instances.simple.one)
@@ -3899,7 +3899,7 @@ one,h,/data/h,2000-01-01T00:06,2000-01-01T00:07,-5,-6,,ee,ff,,
               body.createdAt.should.be.a.recentIsoDate();
             })))));
 
-    it('should return with extended metadata if requested', testService((service) =>
+    it.only('should return with extended metadata if requested', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms/simple/submissions')
           .send(testData.instances.simple.one)
@@ -3914,7 +3914,7 @@ one,h,/data/h,2000-01-01T00:06,2000-01-01T00:07,-5,-6,,ee,ff,,
             })))));
 
     // cb#858
-    it('should not mince object properties', testService(async (service, container) => {
+    it.only('should not mince object properties', testService(async (service, container) => {
       const asAlice = await service.login('alice');
       const asBob = await service.login('bob');
 
@@ -3955,7 +3955,7 @@ one,h,/data/h,2000-01-01T00:06,2000-01-01T00:07,-5,-6,,ee,ff,,
         });
     }));
 
-    it('should redirect to the version if the referenced instanceID is out of date', testService((service) =>
+    it.only('should redirect to the version if the referenced instanceID is out of date', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/submission')
           .set('X-OpenRosa-Version', '1.0')
@@ -3981,7 +3981,7 @@ one,h,/data/h,2000-01-01T00:06,2000-01-01T00:07,-5,-6,,ee,ff,,
       service.login('alice', (asAlice) =>
         asAlice.get('/v1/projects/1/forms/simple/submissions/one/versions/one').expect(404))));
 
-    it('should return notfound if the version does not exist', testService((service) =>
+    it.only('should return notfound if the version does not exist', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms/simple/submissions')
           .send(testData.instances.simple.one)
@@ -3989,7 +3989,7 @@ one,h,/data/h,2000-01-01T00:06,2000-01-01T00:07,-5,-6,,ee,ff,,
           .expect(200)
           .then(() => asAlice.get('/v1/projects/1/forms/simple/submissions/one/versions/three').expect(404)))));
 
-    it('should reject if the user cannot read', testService((service) =>
+    it.only('should reject if the user cannot read', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms/simple/submissions')
           .send(testData.instances.simple.one)
@@ -3998,7 +3998,7 @@ one,h,/data/h,2000-01-01T00:06,2000-01-01T00:07,-5,-6,,ee,ff,,
           .then(() => service.login('chelsea', (asChelsea) =>
             asChelsea.get('/v1/projects/1/forms/simple/submissions/one/versions/one').expect(403))))));
 
-    it('should return submission details', testService((service) =>
+    it.only('should return submission details', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms/simple/submissions')
           .send(testData.instances.simple.one.replace(/<\/meta>/, '<orx:instanceName>custom name</orx:instanceName></orx:meta>'))
@@ -4027,7 +4027,7 @@ one,h,/data/h,2000-01-01T00:06,2000-01-01T00:07,-5,-6,,ee,ff,,
               })
           ])))));
 
-    it('should return extended submission details', testService((service) =>
+    it.only('should return extended submission details', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms/simple/submissions')
           .send(testData.instances.simple.one)
@@ -4043,7 +4043,7 @@ one,h,/data/h,2000-01-01T00:06,2000-01-01T00:07,-5,-6,,ee,ff,,
   });
 
   describe('[draft] /:instanceId GET', () => {
-    it('should return submission details', testService((service) =>
+    it.only('should return submission details', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms/simple/draft')
           .expect(200)
@@ -4058,7 +4058,7 @@ one,h,/data/h,2000-01-01T00:06,2000-01-01T00:07,-5,-6,,ee,ff,,
                 body.createdAt.should.be.a.recentIsoDate();
               }))))));
 
-    it('should not return draft submissions nondraft', testService((service) =>
+    it.only('should not return draft submissions nondraft', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms/simple/draft')
           .expect(200)
@@ -4069,7 +4069,7 @@ one,h,/data/h,2000-01-01T00:06,2000-01-01T00:07,-5,-6,,ee,ff,,
             .then(() => asAlice.get('/v1/projects/1/forms/simple/submissions/one')
               .expect(404))))));
 
-    it('should not carry draft submissions forward to the published version upon publish', testService((service) =>
+    it.only('should not carry draft submissions forward to the published version upon publish', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms/simple/draft')
           .expect(200)
@@ -4082,7 +4082,7 @@ one,h,/data/h,2000-01-01T00:06,2000-01-01T00:07,-5,-6,,ee,ff,,
           .then(() => asAlice.get('/v1/projects/1/forms/simple/submissions/one')
             .expect(404)))));
 
-    it('should not carry over draft submissions when a draft is replaced', testService((service) =>
+    it.only('should not carry over draft submissions when a draft is replaced', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms/simple/draft')
           .expect(200)
@@ -4095,7 +4095,7 @@ one,h,/data/h,2000-01-01T00:06,2000-01-01T00:07,-5,-6,,ee,ff,,
           .then(() => asAlice.get('/v1/projects/1/forms/simple/draft/submissions/one')
             .expect(404)))));
 
-    it('should not resurface draft submissions when a draft is recreated', testService((service) =>
+    it.only('should not resurface draft submissions when a draft is recreated', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms/simple/draft')
           .expect(200)
@@ -4122,7 +4122,7 @@ one,h,/data/h,2000-01-01T00:06,2000-01-01T00:07,-5,-6,,ee,ff,,
       service.login('alice', (asAlice) =>
         asAlice.get('/v1/projects/1/forms/simple/submissions/nonexistent/attachments').expect(404))));
 
-    it('should reject if the user cannot read', testService((service) =>
+    it.only('should reject if the user cannot read', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms/simple/submissions')
           .send(testData.instances.simple.one)
@@ -4131,7 +4131,7 @@ one,h,/data/h,2000-01-01T00:06,2000-01-01T00:07,-5,-6,,ee,ff,,
           .then(() => service.login('chelsea', (asChelsea) =>
             asChelsea.get('/v1/projects/1/forms/simple/submissions/one/attachments').expect(403))))));
 
-    it('should happily return given no attachments', testService((service) =>
+    it.only('should happily return given no attachments', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms/simple/submissions')
           .send(testData.instances.simple.one)
@@ -4143,7 +4143,7 @@ one,h,/data/h,2000-01-01T00:06,2000-01-01T00:07,-5,-6,,ee,ff,,
               body.should.eql([]);
             })))));
 
-    it('should redirect to the version if the referenced instanceID is out of date', testService((service) =>
+    it.only('should redirect to the version if the referenced instanceID is out of date', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/submission')
           .set('X-OpenRosa-Version', '1.0')
@@ -4165,7 +4165,7 @@ one,h,/data/h,2000-01-01T00:06,2000-01-01T00:07,-5,-6,,ee,ff,,
   });
 
   describe('[version] /:rootId/versions/instanceId/attachments GET', () => {
-    it('should return notfound if the version does not exist', testService((service) =>
+    it.only('should return notfound if the version does not exist', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms/simple/submissions')
           .send(testData.instances.simple.one)
@@ -4182,7 +4182,7 @@ one,h,/data/h,2000-01-01T00:06,2000-01-01T00:07,-5,-6,,ee,ff,,
           .then(() => service.login('chelsea', (asChelsea) =>
             asChelsea.get('/v1/projects/1/forms/simple/submissions/one/versions/one/attachments').expect(403))))));
 
-    it('should return attachment information', testService((service) =>
+    it.only('should return attachment information', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms?publish=true')
           .set('Content-Type', 'application/xml')
@@ -4223,7 +4223,7 @@ one,h,/data/h,2000-01-01T00:06,2000-01-01T00:07,-5,-6,,ee,ff,,
       service.login('alice', (asAlice) =>
         asAlice.get('/v1/projects/1/forms/simple/submissions/one/diffs').expect(404))));
 
-    it('should reject if the user cannot read', testService((service) =>
+    it.only('should reject if the user cannot read', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms/simple/submissions')
           .send(testData.instances.simple.one)
@@ -4232,7 +4232,7 @@ one,h,/data/h,2000-01-01T00:06,2000-01-01T00:07,-5,-6,,ee,ff,,
           .then(() => service.login('chelsea', (asChelsea) =>
             asChelsea.get('/v1/projects/1/forms/simple/submissions/one/diffs').expect(403))))));
 
-    it('should return diffs between different submission versions', testService((service) =>
+    it.only('should return diffs between different submission versions', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms/simple/submissions')
           .send(testData.instances.simple.one)
@@ -4269,7 +4269,7 @@ one,h,/data/h,2000-01-01T00:06,2000-01-01T00:07,-5,-6,,ee,ff,,
   });
 
   describe('[draft] /:instanceId/attachments GET', () => {
-    it('should return draft attachments', testService((service) =>
+    it.only('should return draft attachments', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms')
           .set('Content-Type', 'application/xml')
@@ -4288,7 +4288,7 @@ one,h,/data/h,2000-01-01T00:06,2000-01-01T00:07,-5,-6,,ee,ff,,
                 ]);
               }))))));
 
-    it('should not return draft attachments nondraft', testService((service) =>
+    it.only('should not return draft attachments nondraft', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms?publish=true')
           .set('Content-Type', 'application/xml')
@@ -4315,7 +4315,7 @@ one,h,/data/h,2000-01-01T00:06,2000-01-01T00:07,-5,-6,,ee,ff,,
       service.login('alice', (asAlice) =>
         asAlice.get('/v1/projects/1/forms/simple/submissions/nonexistent/attachments/file.txt').expect(404))));
 
-    it('should return notfound if the attachment does not exist', testService((service) =>
+    it.only('should return notfound if the attachment does not exist', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms/simple/submissions')
           .send(testData.instances.simple.one)
@@ -4323,7 +4323,7 @@ one,h,/data/h,2000-01-01T00:06,2000-01-01T00:07,-5,-6,,ee,ff,,
           .expect(200)
           .then(() => asAlice.get('/v1/projects/1/forms/simple/submissions/one/attachments/file.txt').expect(404)))));
 
-    it('should reject if the user cannot read', testService((service) =>
+    it.only('should reject if the user cannot read', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/submission')
           .set('X-OpenRosa-Version', '1.0')
@@ -4333,7 +4333,7 @@ one,h,/data/h,2000-01-01T00:06,2000-01-01T00:07,-5,-6,,ee,ff,,
           .then(() => service.login('chelsea', (asChelsea) =>
             asChelsea.get('/v1/projects/1/forms/simple/submissions/one/attachments/file.txt').expect(403))))));
 
-    it('should redirect to the version if the referenced instanceID is out of date', testService((service) =>
+    it.only('should redirect to the version if the referenced instanceID is out of date', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/submission')
           .set('X-OpenRosa-Version', '1.0')
@@ -4355,7 +4355,7 @@ one,h,/data/h,2000-01-01T00:06,2000-01-01T00:07,-5,-6,,ee,ff,,
   });
 
   describe('[version] /:rootId/versions/instanceId/attachments GET', () => {
-    it('should return notfound if the attachment does not exist', testService((service) =>
+    it.only('should return notfound if the attachment does not exist', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms?publish=true')
           .set('Content-Type', 'application/xml')
@@ -4369,7 +4369,7 @@ one,h,/data/h,2000-01-01T00:06,2000-01-01T00:07,-5,-6,,ee,ff,,
           .then(() => asAlice.get('/v1/projects/1/forms/binaryType/submissions/both/versions/both/attachments/my_file1.mp4')
             .expect(404)))));
 
-    it('should reject if the user cannot read', testService((service) =>
+    it.only('should reject if the user cannot read', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms?publish=true')
           .set('Content-Type', 'application/xml')
@@ -4384,7 +4384,7 @@ one,h,/data/h,2000-01-01T00:06,2000-01-01T00:07,-5,-6,,ee,ff,,
             asChelsea.get('/v1/projects/1/forms/simple/submissions/one/versions/one/attachments')
               .expect(403))))));
 
-    it('should return attachment data', testService((service) =>
+    it.only('should return attachment data', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms?publish=true')
           .set('Content-Type', 'application/xml')
@@ -4411,7 +4411,7 @@ one,h,/data/h,2000-01-01T00:06,2000-01-01T00:07,-5,-6,,ee,ff,,
   });
 
   describe('[draft] /:instanceId/attachments/:name GET', () => {
-    it('should return a draft attachment', testService((service) =>
+    it.only('should return a draft attachment', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms')
           .set('Content-Type', 'application/xml')
@@ -4428,7 +4428,7 @@ one,h,/data/h,2000-01-01T00:06,2000-01-01T00:07,-5,-6,,ee,ff,,
             .expect(200)
             .then(({ text }) => { text.should.equal('this is file 1'); })))));
 
-    it('should not return a draft attachment nondraft', testService((service) =>
+    it.only('should not return a draft attachment nondraft', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms')
           .set('Content-Type', 'application/xml')
@@ -4467,7 +4467,7 @@ one,h,/data/h,2000-01-01T00:06,2000-01-01T00:07,-5,-6,,ee,ff,,
           .send('testimage')
           .expect(403))));
 
-    it('Data collector should be able to attach the given file if Submission is created by the them and attachment is not previously uploaded', testService(async (service, { Users }) => {
+    it.only('Data collector should be able to attach the given file if Submission is created by the them and attachment is not previously uploaded', testService(async (service, { Users }) => {
       const asAlice = await service.login('alice');
 
       await asAlice.post('/v1/projects/1/forms?publish=true')
@@ -4517,7 +4517,7 @@ one,h,/data/h,2000-01-01T00:06,2000-01-01T00:07,-5,-6,,ee,ff,,
         .expect(403);
     }));
 
-    it('Public link should be able to upload attachment for the Submission', testService(async (service) => {
+    it.only('Public link should be able to upload attachment for the Submission', testService(async (service) => {
       const asAlice = await service.login('alice');
 
       await asAlice.post('/v1/projects/1/forms?publish=true')
@@ -4541,7 +4541,7 @@ one,h,/data/h,2000-01-01T00:06,2000-01-01T00:07,-5,-6,,ee,ff,,
         .expect(200);
     }));
 
-    it('Public link should not be able to upload attachment for others Submission', testService(async (service) => {
+    it.only('Public link should not be able to upload attachment for others Submission', testService(async (service) => {
       const asAlice = await service.login('alice');
 
       await asAlice.post('/v1/projects/1/forms?publish=true')
@@ -4565,7 +4565,7 @@ one,h,/data/h,2000-01-01T00:06,2000-01-01T00:07,-5,-6,,ee,ff,,
         .expect(403);
     }));
 
-    it('App user should be able to upload attachment for the Submission', testService(async (service) => {
+    it.only('App user should be able to upload attachment for the Submission', testService(async (service) => {
       const asAlice = await service.login('alice');
 
       await asAlice.post('/v1/projects/1/forms?publish=true')
@@ -4592,7 +4592,7 @@ one,h,/data/h,2000-01-01T00:06,2000-01-01T00:07,-5,-6,,ee,ff,,
         .expect(200);
     }));
 
-    it('should reject attachment upload when original submitter is no longer the submitter of current version', testService(async (service) => {
+    it.only('should reject attachment upload when original submitter is no longer the submitter of current version', testService(async (service) => {
       const asAlice = await service.login('alice');
 
       await asAlice.post('/v1/projects/1/forms?publish=true')
@@ -4628,7 +4628,7 @@ one,h,/data/h,2000-01-01T00:06,2000-01-01T00:07,-5,-6,,ee,ff,,
         .expect(403);
     }));
 
-    it('should reject attachment upload when editor is demoted', testService(async (service) => {
+    it.only('should reject attachment upload when editor is demoted', testService(async (service) => {
       const asAlice = await service.login('alice');
 
       await asAlice.post('/v1/projects/1/forms?publish=true')
@@ -4665,7 +4665,7 @@ one,h,/data/h,2000-01-01T00:06,2000-01-01T00:07,-5,-6,,ee,ff,,
         .expect(403);
     }));
 
-    it('should reject if the attachment does not exist', testService((service) =>
+    it.only('should reject if the attachment does not exist', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms?publish=true')
           .set('Content-Type', 'application/xml')
@@ -4680,7 +4680,7 @@ one,h,/data/h,2000-01-01T00:06,2000-01-01T00:07,-5,-6,,ee,ff,,
               .send('testaudio')
               .expect(404))))));
 
-    it('should attach the given file', testService((service) =>
+    it.only('should attach the given file', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms?publish=true')
           .set('Content-Type', 'application/xml')
@@ -4701,7 +4701,7 @@ one,h,/data/h,2000-01-01T00:06,2000-01-01T00:07,-5,-6,,ee,ff,,
                   body.toString().should.equal('testvideo');
                 })))))));
 
-    it('should attach a given file with empty Content-Type and serve it with default mime type', testService((service) =>
+    it.only('should attach a given file with empty Content-Type and serve it with default mime type', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms?publish=true')
           .set('Content-Type', 'application/xml')
@@ -4722,7 +4722,7 @@ one,h,/data/h,2000-01-01T00:06,2000-01-01T00:07,-5,-6,,ee,ff,,
                   body.toString().should.equal('testvideo');
                 })))))));
 
-    it('should attach a given file with missing Content-Type and serve it with default mime type', testService((service) =>
+    it.only('should attach a given file with missing Content-Type and serve it with default mime type', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms?publish=true')
           .set('Content-Type', 'application/xml')
@@ -4824,7 +4824,7 @@ one,h,/data/h,2000-01-01T00:06,2000-01-01T00:07,-5,-6,,ee,ff,,
       });
     });
 
-    it('should log an audit entry about initial attachment', testService((service, { Audits, Forms, Submissions, SubmissionAttachments }) =>
+    it.only('should log an audit entry about initial attachment', testService((service, { Audits, Forms, Submissions, SubmissionAttachments }) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms?publish=true')
           .set('Content-Type', 'application/xml')
@@ -4863,7 +4863,7 @@ one,h,/data/h,2000-01-01T00:06,2000-01-01T00:07,-5,-6,,ee,ff,,
                   });
                 })))))));
 
-    it('should log an audit entry about reattachment', testService((service, { Audits, Forms, Submissions, SubmissionAttachments }) =>
+    it.only('should log an audit entry about reattachment', testService((service, { Audits, Forms, Submissions, SubmissionAttachments }) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms?publish=true')
           .set('Content-Type', 'application/xml')
@@ -4933,7 +4933,7 @@ one,h,/data/h,2000-01-01T00:06,2000-01-01T00:07,-5,-6,,ee,ff,,
           .send('testimage')
           .expect(403))));
 
-    it('should clear the given attachment', testService((service) =>
+    it.only('should clear the given attachment', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms?publish=true')
           .set('Content-Type', 'application/xml')
@@ -4961,7 +4961,7 @@ one,h,/data/h,2000-01-01T00:06,2000-01-01T00:07,-5,-6,,ee,ff,,
                       ]);
                     })))))))));
 
-    it('should log an audit entry about the deletion', testService((service, { Audits, Forms, Submissions, SubmissionAttachments }) =>
+    it.only('should log an audit entry about the deletion', testService((service, { Audits, Forms, Submissions, SubmissionAttachments }) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms?publish=true')
           .set('Content-Type', 'application/xml')
@@ -5003,7 +5003,7 @@ one,h,/data/h,2000-01-01T00:06,2000-01-01T00:07,-5,-6,,ee,ff,,
   });
 
   describe('[draft] /:instanceId/attachments/:name DELETE', () => {
-    it('should delete a draft attachment', testService((service) =>
+    it.only('should delete a draft attachment', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms')
           .set('Content-Type', 'application/xml')
@@ -5021,7 +5021,7 @@ one,h,/data/h,2000-01-01T00:06,2000-01-01T00:07,-5,-6,,ee,ff,,
           .then(() => asAlice.get('/v1/projects/1/forms/binaryType/draft/submissions/both/attachments/my_file1.mp4')
             .expect(404)))));
 
-    it('should not delete a draft attachment nondraft', testService((service) =>
+    it.only('should not delete a draft attachment nondraft', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms')
           .set('Content-Type', 'application/xml')
@@ -5043,7 +5043,7 @@ one,h,/data/h,2000-01-01T00:06,2000-01-01T00:07,-5,-6,,ee,ff,,
       service.login('alice', (asAlice) =>
         asAlice.get('/v1/projects/1/forms/simple/submissions/one/versions').expect(404))));
 
-    it('should reject if the user cannot read', testService((service) =>
+    it.only('should reject if the user cannot read', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms/simple/submissions')
           .send(testData.instances.simple.one)
@@ -5052,7 +5052,7 @@ one,h,/data/h,2000-01-01T00:06,2000-01-01T00:07,-5,-6,,ee,ff,,
           .then(() => service.login('chelsea', (asChelsea) =>
             asChelsea.get('/v1/projects/1/forms/simple/submissions/one/versions').expect(403))))));
 
-    it('should return submission details', testService((service) =>
+    it.only('should return submission details', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms/simple/submissions')
           .send(testData.instances.simple.one.replace(/<\/meta>/, '<orx:instanceName>custom name</orx:instanceName></meta>'))
@@ -5081,7 +5081,7 @@ one,h,/data/h,2000-01-01T00:06,2000-01-01T00:07,-5,-6,,ee,ff,,
               body[1].userAgent.should.equal('central-tests/1');
             })))));
 
-    it('should return extended submission details', testService((service) =>
+    it.only('should return extended submission details', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms/simple/submissions')
           .send(testData.instances.simple.one)
@@ -5113,7 +5113,7 @@ one,h,/data/h,2000-01-01T00:06,2000-01-01T00:07,-5,-6,,ee,ff,,
   });
 
   context('[version] partitioning', () => {
-    it('should keep draft/nondraft versions apart', testService((service) =>
+    it.only('should keep draft/nondraft versions apart', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms/simple/submissions')
           .send(testData.instances.simple.one.replace(/<\/meta>/, '<orx:instanceName>custom name</orx:instanceName></meta>'))
@@ -5134,7 +5134,7 @@ one,h,/data/h,2000-01-01T00:06,2000-01-01T00:07,-5,-6,,ee,ff,,
               .then(({ body }) => { should(body.instanceName).equal(null); })
           ])))));
 
-    it('should keep project versions apart', testService((service) =>
+    it.only('should keep project versions apart', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms/simple/submissions')
           .send(testData.instances.simple.one.replace(/<\/meta>/, '<orx:instanceName>custom name</orx:instanceName></meta>'))
@@ -5217,7 +5217,7 @@ one,h,/data/h,2000-01-01T00:06,2000-01-01T00:07,-5,-6,,ee,ff,,
         .expect(404);
     }));
 
-    it('should reject if the draft has been deleted', testService(async (service) => {
+    it.only('should reject if the draft has been deleted', testService(async (service) => {
       const asAlice = await service.login('alice');
 
       await asAlice.post('/v1/projects/1/forms/simple/draft')

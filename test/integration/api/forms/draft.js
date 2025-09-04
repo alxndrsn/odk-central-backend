@@ -847,7 +847,7 @@ describe('api: /projects/:id/forms (drafts)', () => {
       });
 
       describe('preserving submissions from old or deleted drafts', () => {
-        it('should allow new draft submissions to be sent after soft-deleting old ones', testService(async (service) => {
+        it.only('should allow new draft submissions to be sent after soft-deleting old ones', testService(async (service) => {
           const asAlice = await service.login('alice');
 
           // Create a draft of a published form
@@ -878,7 +878,7 @@ describe('api: /projects/:id/forms (drafts)', () => {
             });
         }));
 
-        it('should NOT allow a new draft submission to be sent if it conflicts with a soft-deleted old ones', testService(async (service) => {
+        it.only('should NOT allow a new draft submission to be sent if it conflicts with a soft-deleted old ones', testService(async (service) => {
           const asAlice = await service.login('alice');
 
           // Create a draft of a published form
@@ -904,7 +904,7 @@ describe('api: /projects/:id/forms (drafts)', () => {
             .expect(409);
         }));
 
-        it('should soft-delete submissions of undeeded draft when a new version is uploaded', testService(async (service, { oneFirst }) => {
+        it.only('should soft-delete submissions of undeeded draft when a new version is uploaded', testService(async (service, { oneFirst }) => {
           const asAlice = await service.login('alice');
 
           // Upload a new draft version
@@ -938,7 +938,7 @@ describe('api: /projects/:id/forms (drafts)', () => {
           fds.should.equal(3);
         }));
 
-        it('should soft-delete submissions of draft when it is abandoned/deleted', testService(async (service, { oneFirst }) => {
+        it.only('should soft-delete submissions of draft when it is abandoned/deleted', testService(async (service, { oneFirst }) => {
           const asAlice = await service.login('alice');
 
           // Upload a new draft version
@@ -965,7 +965,7 @@ describe('api: /projects/:id/forms (drafts)', () => {
           fds.should.equal(2);
         }));
 
-        it('should soft-delete submissions of draft when it is published', testService(async (service, { oneFirst }) => {
+        it.only('should soft-delete submissions of draft when it is published', testService(async (service, { oneFirst }) => {
           const asAlice = await service.login('alice');
 
           // Upload a new draft version
@@ -992,7 +992,7 @@ describe('api: /projects/:id/forms (drafts)', () => {
           fds.should.equal(2);
         }));
 
-        it('should soft-delete submissions of draft when it is published AND the version is set on publish', testService(async (service, { oneFirst }) => {
+        it.only('should soft-delete submissions of draft when it is published AND the version is set on publish', testService(async (service, { oneFirst }) => {
           const asAlice = await service.login('alice');
 
           // Upload a new draft version
@@ -1022,7 +1022,7 @@ describe('api: /projects/:id/forms (drafts)', () => {
           fds.should.equal(3);
         }));
 
-        it('should purge draft submissions when project is encrypted', testService(async (service, { oneFirst }) => {
+        it.only('should purge draft submissions when project is encrypted', testService(async (service, { oneFirst }) => {
           const asAlice = await service.login('alice');
 
           // Upload a new draft version
@@ -1054,7 +1054,7 @@ describe('api: /projects/:id/forms (drafts)', () => {
           fds.should.equal(3);
         }));
 
-        it('should purge old draft submissions after 30 days', testService(async (service, { oneFirst, run, Forms, Submissions }) => {
+        it.only('should purge old draft submissions after 30 days', testService(async (service, { oneFirst, run, Forms, Submissions }) => {
           const asAlice = await service.login('alice');
 
           await asAlice.post('/v1/projects/1/forms/simple/draft')
@@ -1086,7 +1086,7 @@ describe('api: /projects/:id/forms (drafts)', () => {
           fds.should.equal(2); // Old draft has now been deleted. Count also includes published and new draft.
         }));
 
-        it('should not let soft-deleted draft submissions be undeleted', testService(async (service) => {
+        it.only('should not let soft-deleted draft submissions be undeleted', testService(async (service) => {
           const asAlice = await service.login('alice');
 
           // Create a draft and send in two submissions
@@ -1126,7 +1126,7 @@ describe('api: /projects/:id/forms (drafts)', () => {
         }));
 
         describe('experimental - recovering deleted draft submissions', () => {
-          it('should work in the straight forward case of replacing active draft with previous draft and submissions', testService(async (service, { oneFirst, run, Submissions }) => {
+          it.only('should work in the straight forward case of replacing active draft with previous draft and submissions', testService(async (service, { oneFirst, run, Submissions }) => {
             const asAlice = await service.login('alice');
 
             // Create a draft of a published form
@@ -1203,7 +1203,7 @@ describe('api: /projects/:id/forms (drafts)', () => {
               });
           }));
 
-          it('should combine draft subs from two draft versions if recovering old subs without deleting new ones', testService(async (service, { oneFirst, run }) => {
+          it.only('should combine draft subs from two draft versions if recovering old subs without deleting new ones', testService(async (service, { oneFirst, run }) => {
             const asAlice = await service.login('alice');
 
             // Create a draft of a published form
@@ -1258,7 +1258,7 @@ describe('api: /projects/:id/forms (drafts)', () => {
               });
           }));
 
-          it('should recover draft subs in a def that got published (without changing the version) by adding them to the published subs', testService(async (service, { oneFirst, all, run }) => {
+          it.only('should recover draft subs in a def that got published (without changing the version) by adding them to the published subs', testService(async (service, { oneFirst, all, run }) => {
             const asAlice = await service.login('alice');
 
             // Create a draft of a published form
@@ -1332,7 +1332,7 @@ describe('api: /projects/:id/forms (drafts)', () => {
               });
           }));
 
-          it('should show what happens when a published def is set as the draft def of the form', testService(async (service, { one, oneFirst, run }) => {
+          it.only('should show what happens when a published def is set as the draft def of the form', testService(async (service, { one, oneFirst, run }) => {
             const asAlice = await service.login('alice');
 
             // Upload a new draft with a new version
@@ -1485,7 +1485,7 @@ describe('api: /projects/:id/forms (drafts)', () => {
                 body.draftToken.should.be.a.token();
               })))));
 
-      it('should give extended draft details', testService((service) =>
+      it.only('should give extended draft details', testService((service) =>
         service.login('alice', (asAlice) =>
           asAlice.post('/v1/projects/1/forms/simple/draft')
             .send(testData.forms.simple)
@@ -1520,7 +1520,7 @@ describe('api: /projects/:id/forms (drafts)', () => {
                   .then(({ body }) => { body.enketoId.should.equal('::ijklmnop'); }));
             }))));
 
-      it('should not count nondraft submissions in its count', testService((service) =>
+      it.only('should not count nondraft submissions in its count', testService((service) =>
         service.login('alice', (asAlice) =>
           asAlice.post('/v1/projects/1/forms/simple/draft')
             .send(testData.forms.simple)

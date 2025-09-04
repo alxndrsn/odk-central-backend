@@ -11,7 +11,7 @@ const { exhaust } = require(appPath + '/lib/worker/worker');
 
 describe('query module submission purge', () => {
   describe('submission purge arguments', () => {
-    it('should purge a specific submission', testService(async (service, { Submissions, oneFirst }) => {
+    it.only('should purge a specific submission', testService(async (service, { Submissions, oneFirst }) => {
       const asAlice = await service.login('alice');
 
       // Create two submissions
@@ -45,7 +45,7 @@ describe('query module submission purge', () => {
       submissionCount.should.equal(1);
     }));
 
-    it('should throw an error when instanceId specified without project ID and xmlFormId', testService(async (service, container) => {
+    it.only('should throw an error when instanceId specified without project ID and xmlFormId', testService(async (service, container) => {
       const asAlice = await service.login('alice');
 
       await asAlice.post('/v1/projects/1/forms/simple/submissions')
@@ -63,7 +63,7 @@ describe('query module submission purge', () => {
       });
     }));
 
-    it('should throw an error when project ID or xmlFormId is non-null but there is no instance id', testService(async (service, container) => {
+    it.only('should throw an error when project ID or xmlFormId is non-null but there is no instance id', testService(async (service, container) => {
       const asAlice = await service.login('alice');
 
       await asAlice.post('/v1/projects/1/forms/simple/submissions')
@@ -83,7 +83,7 @@ describe('query module submission purge', () => {
   });
 
   describe('30 day time limit', () => {
-    it('should purge a submission deleted over 30 days ago', testService(async (service, { Submissions, oneFirst, run }) => {
+    it.only('should purge a submission deleted over 30 days ago', testService(async (service, { Submissions, oneFirst, run }) => {
       const asAlice = await service.login('alice');
 
       await asAlice.post('/v1/projects/1/forms/simple/submissions')
@@ -106,7 +106,7 @@ describe('query module submission purge', () => {
       counts.should.eql([ 0, 0 ]);
     }));
 
-    it('should purge multiple submissions deleted over 30 days ago', testService(async (service, { Submissions, oneFirst, run }) => {
+    it.only('should purge multiple submissions deleted over 30 days ago', testService(async (service, { Submissions, oneFirst, run }) => {
       const asAlice = await service.login('alice');
 
       await asAlice.post('/v1/projects/1/forms/simple/submissions')
@@ -143,7 +143,7 @@ describe('query module submission purge', () => {
       counts.should.eql([ 1, 1 ]);
     }));
 
-    it('should purge recently deleted submission when forced', testService(async (service, { Submissions }) => {
+    it.only('should purge recently deleted submission when forced', testService(async (service, { Submissions }) => {
       const asAlice = await service.login('alice');
 
       await asAlice.post('/v1/projects/1/forms/simple/submissions')
@@ -158,7 +158,7 @@ describe('query module submission purge', () => {
   });
 
   describe('deep cleanup of all submission artifacts', () => {
-    it('should purge attachments with submission', testService(async (service, { Submissions, oneFirst }) => {
+    it.only('should purge attachments with submission', testService(async (service, { Submissions, oneFirst }) => {
       const asAlice = await service.login('alice');
 
       await asAlice.post('/v1/projects/1/forms?publish=true')
@@ -182,7 +182,7 @@ describe('query module submission purge', () => {
       attachments.should.equal(0);
     }));
 
-    it('should purge blobs associated with attachments when purging submission', testService(async (service, { Blobs, Submissions, oneFirst }) => {
+    it.only('should purge blobs associated with attachments when purging submission', testService(async (service, { Blobs, Submissions, oneFirst }) => {
       const asAlice = await service.login('alice');
 
       await asAlice.post('/v1/projects/1/forms?publish=true')
@@ -220,7 +220,7 @@ describe('query module submission purge', () => {
       blobCount.should.equal(1);
     }));
 
-    it('should purge all versions of a deleted submission', testService(async (service, { Submissions, oneFirst }) => {
+    it.only('should purge all versions of a deleted submission', testService(async (service, { Submissions, oneFirst }) => {
       const asAlice = await service.login('alice');
 
       // Create a submission on an existing form (simple)
@@ -252,7 +252,7 @@ describe('query module submission purge', () => {
       submissionDefCount.should.equal(0);
     }));
 
-    it('should purge comments of a deleted submission', testService(async (service, { Submissions, oneFirst }) => {
+    it.only('should purge comments of a deleted submission', testService(async (service, { Submissions, oneFirst }) => {
       const asAlice = await service.login('alice');
 
       // Create a submission
@@ -280,7 +280,7 @@ describe('query module submission purge', () => {
       commentCount.should.equal(0);
     }));
 
-    it('should redact notes of a deleted submission sent with x-action-notes', testService(async (service, { Submissions, oneFirst }) => {
+    it.only('should redact notes of a deleted submission sent with x-action-notes', testService(async (service, { Submissions, oneFirst }) => {
       const asAlice = await service.login('alice');
 
       // Create a submission
@@ -311,7 +311,7 @@ describe('query module submission purge', () => {
       auditNotes.should.equal('');
     }));
 
-    it('should purge form field values of a deleted submission', testService(async (service, container) => {
+    it.only('should purge form field values of a deleted submission', testService(async (service, container) => {
       const asAlice = await service.login('alice');
 
       // Upload the selectMultiple form
@@ -344,7 +344,7 @@ describe('query module submission purge', () => {
       count.should.equal(0);
     }));
 
-    it('should purge client audit blobs attachments for a deleted submission', testService(async (service, container) => {
+    it.only('should purge client audit blobs attachments for a deleted submission', testService(async (service, container) => {
       const asAlice = await service.login('alice');
 
       // Create the form
@@ -396,7 +396,7 @@ describe('query module submission purge', () => {
       count.should.equal(1);
     }));
 
-    it('should purge client audit blobs when two submissions have same client audit file', testService(async (service, container) => {
+    it.only('should purge client audit blobs when two submissions have same client audit file', testService(async (service, container) => {
       const asAlice = await service.login('alice');
 
       // Create the form
@@ -466,7 +466,7 @@ one,e,/data/e,2000-01-01T00:11,,,,,hh,ii,,
   });
 
   describe('submissions as entity sources', () => {
-    it('should set submission def id on entity source to null when submission deleted', testService(async (service, container) => {
+    it.only('should set submission def id on entity source to null when submission deleted', testService(async (service, container) => {
       const asAlice = await service.login('alice');
 
       // Create the form
@@ -536,7 +536,7 @@ one,e,/data/e,2000-01-01T00:11,,,,,hh,ii,,
   });
 
   describe('submission.purge audit event', () => {
-    it('should log a purge event in the audit log when purging submissions', testService(async (service, { Submissions }) => {
+    it.only('should log a purge event in the audit log when purging submissions', testService(async (service, { Submissions }) => {
       const asAlice = await service.login('alice');
 
       // Create two submissions

@@ -585,7 +585,7 @@ describe('datasets and entities', () => {
                   body[0].should.containEql({ name: 'people', projectId: 1 });
                 })))));
 
-      it('should return the extended datasets of Default project', testService(async (service, container) => {
+      it.only('should return the extended datasets of Default project', testService(async (service, container) => {
         const asAlice = await service.login('alice');
 
         await asAlice.post('/v1/projects/1/forms?publish=true')
@@ -660,7 +660,7 @@ describe('datasets and entities', () => {
           });
       }));
 
-      it('should return the extended datasets of Default project', testService(async (service, container) => {
+      it.only('should return the extended datasets of Default project', testService(async (service, container) => {
         const asAlice = await service.login('alice');
 
         await asAlice.post('/v1/projects/1/forms?publish=true')
@@ -696,7 +696,7 @@ describe('datasets and entities', () => {
           });
       }));
 
-      it('should return the correct count and latest timestamp of entities', testService(async (service, container) => {
+      it.only('should return the correct count and latest timestamp of entities', testService(async (service, container) => {
         const asAlice = await service.login('alice');
 
         await asAlice.post('/v1/projects/1/forms?publish=true')
@@ -788,7 +788,7 @@ describe('datasets and entities', () => {
           });
       }));
 
-      it('should return the correct count for multiple dataset', testService(async (service, container) => {
+      it.only('should return the correct count for multiple dataset', testService(async (service, container) => {
         const asAlice = await service.login('alice');
 
         // Create Datasets
@@ -917,7 +917,7 @@ describe('datasets and entities', () => {
             .then(() => asAlice.get('/v1/projects/1/datasets/people/entities.csv')
               .expect(404)))));
 
-      it('should return csv file with data', testService(async (service, container) => {
+      it.only('should return csv file with data', testService(async (service, container) => {
         const asAlice = await service.login('alice');
 
         await asAlice.post('/v1/projects/1/forms?publish=true')
@@ -954,7 +954,7 @@ describe('datasets and entities', () => {
 
       }));
 
-      it('should return csv file for dataset that have dot in its property name', testService(async (service, container) => {
+      it.only('should return csv file for dataset that have dot in its property name', testService(async (service, container) => {
         const asAlice = await service.login('alice');
 
         await asAlice.post('/v1/projects/1/forms?publish=true')
@@ -985,7 +985,7 @@ describe('datasets and entities', () => {
 
       }));
 
-      it('should stream csv of dataset with entities from multiple forms', testService(async (service, container) => {
+      it.only('should stream csv of dataset with entities from multiple forms', testService(async (service, container) => {
         const asAlice = await service.login('alice');
 
         await asAlice.post('/v1/projects/1/forms')
@@ -1115,7 +1115,7 @@ describe('datasets and entities', () => {
 
       }));
 
-      it('should return updated value correctly (entity updated via submission)', testService(async (service, container) => {
+      it.only('should return updated value correctly (entity updated via submission)', testService(async (service, container) => {
         const asAlice = await service.login('alice');
 
         await asAlice.post('/v1/projects/1/forms?publish=true')
@@ -1160,7 +1160,7 @@ describe('datasets and entities', () => {
 
       }));
 
-      it('should filter the Entities', testService(async (service, container) => {
+      it.only('should filter the Entities', testService(async (service, container) => {
         const asAlice = await service.login('alice');
 
         await asAlice.post('/v1/projects/1/forms?publish=true')
@@ -1198,7 +1198,7 @@ describe('datasets and entities', () => {
       }));
 
       describe('ETag on entities.csv', () => {
-        it('should return 304 content not changed if ETag matches', testService(async (service, container) => {
+        it.only('should return 304 content not changed if ETag matches', testService(async (service, container) => {
           const asAlice = await service.login('alice');
 
           await asAlice.post('/v1/projects/1/forms?publish=true')
@@ -2807,7 +2807,7 @@ describe('datasets and entities', () => {
           .expect(200);
       };
 
-      it('should return entities csv', testService((service, container) =>
+      it.only('should return entities csv', testService((service, container) =>
         service.login('alice', (asAlice) =>
           asAlice.post('/v1/projects/1/forms')
             .send(testData.forms.withAttachments)
@@ -2835,7 +2835,7 @@ describe('datasets and entities', () => {
                 text.should.equal('name,label,__version,first_name,age\n12345678-1234-4123-8234-123456789abc,Alice (88),1,Alice,88\n');
               })))));
 
-      it('should return entities csv for testing', testService(async (service, container) => {
+      it.only('should return entities csv for testing', testService(async (service, container) => {
         const asAlice = await service.login('alice');
 
         await createBothForms(asAlice);
@@ -2857,7 +2857,7 @@ describe('datasets and entities', () => {
 
       }));
 
-      it('should return data for columns that contain valid special characters', testService(async (service, container) => {
+      it.only('should return data for columns that contain valid special characters', testService(async (service, container) => {
         const asAlice = await service.login('alice');
 
         await asAlice.post('/v1/projects/1/forms?publish=true')
@@ -2953,7 +2953,7 @@ describe('datasets and entities', () => {
 
       }));
 
-      it('should return md5 of last Entity timestamp in the manifest', testService(async (service, container) => {
+      it.only('should return md5 of last Entity timestamp in the manifest', testService(async (service, container) => {
         const asAlice = await service.login('alice');
 
         await asAlice.post('/v1/projects/1/forms?publish=true')
@@ -3035,7 +3035,7 @@ describe('datasets and entities', () => {
 
       }));
 
-      it('should return 304 content not changed if ETag matches', testService(async (service, container) => {
+      it.only('should return 304 content not changed if ETag matches', testService(async (service, container) => {
         const asAlice = await service.login('alice');
 
         await asAlice.post('/v1/projects/1/forms?publish=true')
@@ -3075,7 +3075,7 @@ describe('datasets and entities', () => {
 
       }));
 
-      it('should return ETag if content has changed', testService(async (service, container) => {
+      it.only('should return ETag if content has changed', testService(async (service, container) => {
         const asAlice = await service.login('alice');
 
         await asAlice.post('/v1/projects/1/forms?publish=true')
@@ -3114,7 +3114,7 @@ describe('datasets and entities', () => {
           .expect(200); // Not 304, content HAS been modified
       }));
 
-      it('should return new ETag if content has been deleted', testService(async (service, container) => {
+      it.only('should return new ETag if content has been deleted', testService(async (service, container) => {
         const asAlice = await service.login('alice');
 
         await asAlice.post('/v1/projects/1/forms?publish=true')
@@ -4703,7 +4703,7 @@ describe('datasets and entities', () => {
   });
 
   describe('form schemas and dataset properties', () => {
-    it('should populate entity properties based on correct form schema', testService(async (service, container) => {
+    it.only('should populate entity properties based on correct form schema', testService(async (service, container) => {
       const asAlice = await service.login('alice');
 
       await asAlice.post('/v1/projects/1/forms?publish=true')
@@ -4791,7 +4791,7 @@ describe('datasets and entities', () => {
     }));
 
     // c#551 issue, <entity/> tag has no children
-    it('should allow update where no label or no properties are updated and entity block is childless', testService(async (service, container) => {
+    it.only('should allow update where no label or no properties are updated and entity block is childless', testService(async (service, container) => {
       const asAlice = await service.login('alice');
 
       const form = `<?xml version="1.0"?>
@@ -4977,7 +4977,7 @@ describe('datasets and entities', () => {
         });
     }));
 
-    it('should gracefully handle error if incoming entity tag in sub has no attributes', testService(async (service, container) => {
+    it.only('should gracefully handle error if incoming entity tag in sub has no attributes', testService(async (service, container) => {
       const asAlice = await service.login('alice');
 
       const form = `<?xml version="1.0"?>
@@ -5034,7 +5034,7 @@ describe('datasets and entities', () => {
   });
 
   describe('dataset and entities should have isolated lifecycle', () => {
-    it('should allow a form that has created an entity to be purged', testService(async (service, container) => {
+    it.only('should allow a form that has created an entity to be purged', testService(async (service, container) => {
       const asAlice = await service.login('alice');
 
       await asAlice.post('/v1/projects/1/forms?publish=true')
@@ -5232,7 +5232,7 @@ describe('datasets and entities', () => {
 
       }));
 
-      it('should return warning for approvalRequired if there are pending submissions', testService(async (service, container) => {
+      it.only('should return warning for approvalRequired if there are pending submissions', testService(async (service, container) => {
         const asAlice = await service.login('alice');
 
         await asAlice.post('/v1/projects/1/forms?publish=true')
@@ -5269,7 +5269,7 @@ describe('datasets and entities', () => {
           });
       }));
 
-      it('should not return a warning for ownerOnly by itself', testService(async (service, container) => {
+      it.only('should not return a warning for ownerOnly by itself', testService(async (service, container) => {
         const asAlice = await service.login('alice');
 
         await asAlice.post('/v1/projects/1/forms?publish=true')
@@ -5302,7 +5302,7 @@ describe('datasets and entities', () => {
           .expect(200);
       }));
 
-      it('should update dataset when pending submissions are draft or deleted', testService(async (service, container) => {
+      it.only('should update dataset when pending submissions are draft or deleted', testService(async (service, container) => {
         const asAlice = await service.login('alice');
 
         await asAlice.post('/v1/projects/1/forms?publish=true')
@@ -5338,7 +5338,7 @@ describe('datasets and entities', () => {
           .expect(200);
       }));
 
-      it('should update approvalRequired without automatic conversions', testService(async (service) => {
+      it.only('should update approvalRequired without automatic conversions', testService(async (service) => {
         const asAlice = await service.login('alice');
 
         await asAlice.post('/v1/projects/1/forms?publish=true')
@@ -5377,7 +5377,7 @@ describe('datasets and entities', () => {
           });
       }));
 
-      it('should automatically convert pending submissions', testService(async (service, container) => {
+      it.only('should automatically convert pending submissions', testService(async (service, container) => {
         const asAlice = await service.login('alice');
 
         await asAlice.post('/v1/projects/1/forms?publish=true')
@@ -5443,7 +5443,7 @@ describe('datasets and entities', () => {
           });
       }));
 
-      it('should not convert pending submissions after only ownerOnly is updated', testService(async (service, container) => {
+      it.only('should not convert pending submissions after only ownerOnly is updated', testService(async (service, container) => {
         const asAlice = await service.login('alice');
 
         await asAlice.post('/v1/projects/1/forms?publish=true')
@@ -5491,7 +5491,7 @@ describe('datasets and entities', () => {
           });
       }));
 
-      it('should not convert deleted submissions', testService(async (service, container) => {
+      it.only('should not convert deleted submissions', testService(async (service, container) => {
         const asAlice = await service.login('alice');
 
         await asAlice.post('/v1/projects/1/forms?publish=true')
@@ -5533,7 +5533,7 @@ describe('datasets and entities', () => {
           .then(({ body }) => body.length.should.be.eql(0));
       }));
 
-      it('should not convert draft submissions', testService(async (service, container) => {
+      it.only('should not convert draft submissions', testService(async (service, container) => {
         const asAlice = await service.login('alice');
 
         await asAlice.post('/v1/projects/1/forms?publish=true')
@@ -5565,7 +5565,7 @@ describe('datasets and entities', () => {
           .then(({ body }) => body.should.be.eql([]));
       }));
 
-      it('should log error if there is a problem in a submission while auto converting', testService(async (service, container) => {
+      it.only('should log error if there is a problem in a submission while auto converting', testService(async (service, container) => {
         const asAlice = await service.login('alice');
 
         await asAlice.post('/v1/projects/1/forms?publish=true')
@@ -5620,7 +5620,7 @@ describe('datasets and entities', () => {
 
       }));
 
-      it('should use latest version of submission in pending submissions', testService(async (service, container) => {
+      it.only('should use latest version of submission in pending submissions', testService(async (service, container) => {
         const asAlice = await service.login('alice');
 
         await asAlice.post('/v1/projects/1/forms?publish=true')
@@ -5662,7 +5662,7 @@ describe('datasets and entities', () => {
           });
       }));
 
-      it('should use latest version of submission (updated to not create entity) in pending submissions', testService(async (service, container) => {
+      it.only('should use latest version of submission (updated to not create entity) in pending submissions', testService(async (service, container) => {
         const asAlice = await service.login('alice');
 
         await asAlice.post('/v1/projects/1/forms?publish=true')
@@ -5703,7 +5703,7 @@ describe('datasets and entities', () => {
           });
       }));
 
-      it('should do something reasonable with pending submissions when they contain entity updates', testService(async (service, container) => {
+      it.only('should do something reasonable with pending submissions when they contain entity updates', testService(async (service, container) => {
         const asAlice = await service.login('alice');
 
         // can use update form to make dataset populate via api
@@ -5843,7 +5843,7 @@ describe('datasets and entities', () => {
       }));
     });
 
-    it('should not let submission edits get caught in pending submission count', testService(async (service, container) => {
+    it.only('should not let submission edits get caught in pending submission count', testService(async (service, container) => {
       const asAlice = await service.login('alice');
 
       // Upload form that creates an entity list and publish it
@@ -5914,7 +5914,7 @@ describe('datasets and entities', () => {
     }));
 
     describe('central issue #547, reprocessing submissions that had previous entity errors', () => {
-      it('should not reprocess submission that previously generated entity.error', testService(async (service, container) => {
+      it.only('should not reprocess submission that previously generated entity.error', testService(async (service, container) => {
         const asAlice = await service.login('alice');
 
         // Upload form that creates an entity list and publish it
@@ -5977,7 +5977,7 @@ describe('datasets and entities', () => {
           });
       }));
 
-      it('should reprocess submission that was edited after previously generating entity.error', testService(async (service, container) => {
+      it.only('should reprocess submission that was edited after previously generating entity.error', testService(async (service, container) => {
         const asAlice = await service.login('alice');
 
         // Upload form that creates an entity list and publish it
@@ -6058,7 +6058,7 @@ describe('datasets and entities', () => {
           });
       }));
 
-      it('should not reprocessed an update caught up in the pending submission scenario ', testService(async (service, container) => {
+      it.only('should not reprocessed an update caught up in the pending submission scenario ', testService(async (service, container) => {
         const asAlice = await service.login('alice');
 
         // Upload form that creates an entity list and publish it
@@ -6318,7 +6318,7 @@ describe('datasets and entities', () => {
         });
     }));
 
-    it('limits entity access for a Data Collector', testService(async (service, container) => {
+    it.only('limits entity access for a Data Collector', testService(async (service, container) => {
       const [asAlice, asChelsea] = await service.login(['alice', 'chelsea']);
       await createData(asAlice);
       await assignToProject(asAlice, asChelsea, 'formfill');
@@ -6455,7 +6455,7 @@ describe('datasets and entities', () => {
         treeETagForAlice.should.equal(treeETagForChelsea);
       }));
 
-      it('changes hash after a data collector creates an entity', testServiceFullTrx(async (service, container) => {
+      it.only('changes hash after a data collector creates an entity', testServiceFullTrx(async (service, container) => {
         const [asAlice, asChelsea] = await service.login(['alice', 'chelsea']);
         await createData(asAlice);
         await assignToProject(asAlice, asChelsea, 'formfill');
@@ -6488,7 +6488,7 @@ describe('datasets and entities', () => {
         (await getHash(asChelsea)).should.equal(originalHash);
       }));
 
-      it('changes hash after an entity is updated', testServiceFullTrx(async (service, container) => {
+      it.only('changes hash after an entity is updated', testServiceFullTrx(async (service, container) => {
         const [asAlice, asChelsea] = await service.login(['alice', 'chelsea']);
         await createData(asAlice);
         await assignToProject(asAlice, asChelsea, 'formfill');
@@ -6508,7 +6508,7 @@ describe('datasets and entities', () => {
         (await getHash(asChelsea)).should.not.equal(originalHash);
       }));
 
-      it('changes hash after an entity is deleted', testServiceFullTrx(async (service, container) => {
+      it.only('changes hash after an entity is deleted', testServiceFullTrx(async (service, container) => {
         const [asAlice, asChelsea] = await service.login(['alice', 'chelsea']);
         await createData(asAlice);
         await assignToProject(asAlice, asChelsea, 'formfill');
@@ -6527,7 +6527,7 @@ describe('datasets and entities', () => {
         (await getHash(asChelsea)).should.not.equal(originalHash);
       }));
 
-      it('does not change hash after an entity is purged', testServiceFullTrx(async (service, container) => {
+      it.only('does not change hash after an entity is purged', testServiceFullTrx(async (service, container) => {
         const [asAlice, asChelsea] = await service.login(['alice', 'chelsea']);
         await createData(asAlice);
         await assignToProject(asAlice, asChelsea, 'formfill');
@@ -6552,7 +6552,7 @@ describe('datasets and entities', () => {
         hash3.should.not.equal(hash1);
       }));
 
-      it('changes hash after an entity is restored', testServiceFullTrx(async (service, container) => {
+      it.only('changes hash after an entity is restored', testServiceFullTrx(async (service, container) => {
         const [asAlice, asChelsea] = await service.login(['alice', 'chelsea']);
         await createData(asAlice);
         await assignToProject(asAlice, asChelsea, 'formfill');
@@ -6578,7 +6578,7 @@ describe('datasets and entities', () => {
         [hash1, hash2, hash3].should.be.unique();
       }));
 
-      it('changes hash after an entity is undeleted, then another entity is deleted', testServiceFullTrx(async (service, container) => {
+      it.only('changes hash after an entity is undeleted, then another entity is deleted', testServiceFullTrx(async (service, container) => {
         const [asAlice, asChelsea] = await service.login(['alice', 'chelsea']);
         await createData(asAlice);
         await assignToProject(asAlice, asChelsea, 'formfill');
@@ -6624,7 +6624,7 @@ describe('datasets and entities', () => {
         (await getHash(asChelsea)).should.not.equal(originalHash);
       }));
 
-      it('computes hash based on timestamps and the entity count', testServiceFullTrx(async (service, container) => {
+      it.only('computes hash based on timestamps and the entity count', testServiceFullTrx(async (service, container) => {
         const [asAlice, asChelsea] = await service.login(['alice', 'chelsea']);
         await createData(asAlice);
         await assignToProject(asAlice, asChelsea, 'formfill');

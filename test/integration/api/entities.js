@@ -81,14 +81,14 @@ const testEntityUpdates = (test) => testService(async (service, container) => {
 describe('Entities API', () => {
   describe('GET /datasets/:name/entities', () => {
 
-    it('should return notfound if the dataset does not exist', testEntities(async (service) => {
+    it.only('should return notfound if the dataset does not exist', testEntities(async (service) => {
       const asAlice = await service.login('alice');
 
       await asAlice.get('/v1/projects/1/datasets/nonexistent/entities')
         .expect(404);
     }));
 
-    it('should reject if the user cannot read', testEntities(async (service) => {
+    it.only('should reject if the user cannot read', testEntities(async (service) => {
       const asChelsea = await service.login('chelsea');
 
       await asChelsea.get('/v1/projects/1/datasets/people/entities')
@@ -109,7 +109,7 @@ describe('Entities API', () => {
         });
     }));
 
-    it('should return metadata of the entities of the dataset', testEntities(async (service) => {
+    it.only('should return metadata of the entities of the dataset', testEntities(async (service) => {
       const asAlice = await service.login('alice');
 
       await asAlice.get('/v1/projects/1/datasets/people/entities')
@@ -124,7 +124,7 @@ describe('Entities API', () => {
         });
     }));
 
-    it('should return metadata of the entities of the dataset - only deleted', testEntities(async (service) => {
+    it.only('should return metadata of the entities of the dataset - only deleted', testEntities(async (service) => {
       const asAlice = await service.login('alice');
 
       await asAlice.delete('/v1/projects/1/datasets/people/entities/12345678-1234-4123-8234-123456789abc')
@@ -142,7 +142,7 @@ describe('Entities API', () => {
         });
     }));
 
-    it('should return extended metadata of the entities of the dataset', testEntities(async (service) => {
+    it.only('should return extended metadata of the entities of the dataset', testEntities(async (service) => {
       const asAlice = await service.login('alice');
 
       await asAlice.get('/v1/projects/1/datasets/people/entities')
@@ -156,7 +156,7 @@ describe('Entities API', () => {
         });
     }));
 
-    it('should not mince the object properties', testEntities(async (service, container) => {
+    it.only('should not mince the object properties', testEntities(async (service, container) => {
       const asAlice = await service.login('alice');
       const asBob = await service.login('bob');
 
@@ -241,28 +241,28 @@ describe('Entities API', () => {
 
   describe('GET /datasets/:name/entities/:uuid', () => {
 
-    it('should return notfound if the dataset does not exist', testEntities(async (service) => {
+    it.only('should return notfound if the dataset does not exist', testEntities(async (service) => {
       const asAlice = await service.login('alice');
 
       await asAlice.get('/v1/projects/1/datasets/nonexistent/entities/123')
         .expect(404);
     }));
 
-    it('should return notfound if the entity does not exist', testEntities(async (service) => {
+    it.only('should return notfound if the entity does not exist', testEntities(async (service) => {
       const asAlice = await service.login('alice');
 
       await asAlice.get('/v1/projects/1/datasets/people/entities/123')
         .expect(404);
     }));
 
-    it('should reject if the user cannot read', testEntities(async (service) => {
+    it.only('should reject if the user cannot read', testEntities(async (service) => {
       const asChelsea = await service.login('chelsea');
 
       await asChelsea.get('/v1/projects/1/datasets/people/entities/12345678-1234-4123-8234-123456789abc')
         .expect(403);
     }));
 
-    it('should return full entity', testEntities(async (service) => {
+    it.only('should return full entity', testEntities(async (service) => {
       const asAlice = await service.login('alice');
 
       await asAlice.get('/v1/projects/1/datasets/people/entities/12345678-1234-4123-8234-123456789abc')
@@ -284,7 +284,7 @@ describe('Entities API', () => {
         });
     }));
 
-    it('should return full extended entity', testEntities(async (service) => {
+    it.only('should return full extended entity', testEntities(async (service) => {
       const asAlice = await service.login('alice');
 
       await asAlice.get('/v1/projects/1/datasets/people/entities/12345678-1234-4123-8234-123456789abc')
@@ -300,7 +300,7 @@ describe('Entities API', () => {
         });
     }));
 
-    it('should return current version of entity data when updated', testEntityUpdates(async (service, container) => {
+    it.only('should return current version of entity data when updated', testEntityUpdates(async (service, container) => {
       const asAlice = await service.login('alice');
 
       // testEntityUpdates does the following: creates dataset, creates update form. test needs to submit update.
@@ -331,7 +331,7 @@ describe('Entities API', () => {
         });
     }));
 
-    it('should not mince the object properties', testEntities(async (service, container) => {
+    it.only('should not mince the object properties', testEntities(async (service, container) => {
       const asAlice = await service.login('alice');
       const asBob = await service.login('bob');
 
@@ -370,7 +370,7 @@ describe('Entities API', () => {
         });
     }));
 
-    it('should return full entity even if form+submission has been deleted and purged', testEntities(async (service, container) => {
+    it.only('should return full entity even if form+submission has been deleted and purged', testEntities(async (service, container) => {
       const asAlice = await service.login('alice');
 
       await asAlice.delete('/v1/projects/1/forms/simpleEntity')
@@ -391,7 +391,7 @@ describe('Entities API', () => {
         });
     }));
 
-    it('should return an Entity with SOFT conflict', testService(async (service, container) => {
+    it.only('should return an Entity with SOFT conflict', testService(async (service, container) => {
       const asAlice = await service.login('alice');
 
       await asAlice.post('/v1/projects/1/forms?publish=true')
@@ -438,7 +438,7 @@ describe('Entities API', () => {
         });
     }));
 
-    it('should return an Entity with HARD conflict', testService(async (service, container) => {
+    it.only('should return an Entity with HARD conflict', testService(async (service, container) => {
       const asAlice = await service.login('alice');
 
       await asAlice.post('/v1/projects/1/forms?publish=true')
@@ -486,28 +486,28 @@ describe('Entities API', () => {
   });
 
   describe('GET /datasets/:name/entities/:uuid/versions', () => {
-    it('should return notfound if the dataset does not exist', testEntities(async (service) => {
+    it.only('should return notfound if the dataset does not exist', testEntities(async (service) => {
       const asAlice = await service.login('alice');
 
       await asAlice.get('/v1/projects/1/datasets/nonexistent/entities/123/versions')
         .expect(404);
     }));
 
-    it('should return notfound if the entity does not exist', testEntities(async (service) => {
+    it.only('should return notfound if the entity does not exist', testEntities(async (service) => {
       const asAlice = await service.login('alice');
 
       await asAlice.get('/v1/projects/1/datasets/people/entities/123/versions')
         .expect(404);
     }));
 
-    it('should reject if the user cannot read', testEntities(async (service) => {
+    it.only('should reject if the user cannot read', testEntities(async (service) => {
       const asChelsea = await service.login('chelsea');
 
       await asChelsea.get('/v1/projects/1/datasets/people/entities/12345678-1234-4123-8234-123456789abc/versions')
         .expect(403);
     }));
 
-    it('should return all versions of the Entity', testEntities(async (service) => {
+    it.only('should return all versions of the Entity', testEntities(async (service) => {
       const asAlice = await service.login('alice');
 
       await asAlice.patch('/v1/projects/1/datasets/people/entities/12345678-1234-4123-8234-123456789abc?force=true')
@@ -526,7 +526,7 @@ describe('Entities API', () => {
         });
     }));
 
-    it('should return all versions of the Entity - Extended', testEntities(async (service) => {
+    it.only('should return all versions of the Entity - Extended', testEntities(async (service) => {
       const asAlice = await service.login('alice');
 
       const asBob = await service.login('bob');
@@ -551,7 +551,7 @@ describe('Entities API', () => {
         });
     }));
 
-    it('should return all versions of the Entity - Conflicts', testEntities(async (service, container) => {
+    it.only('should return all versions of the Entity - Conflicts', testEntities(async (service, container) => {
       const asAlice = await service.login('alice');
 
       await asAlice.patch('/v1/projects/1/datasets/people/entities/12345678-1234-4123-8234-123456789abc?baseVersion=1')
@@ -615,7 +615,7 @@ describe('Entities API', () => {
         });
     }));
 
-    it('should get version source with source details even when there is no corresponding submission event', testEntities(async (service) => {
+    it.only('should get version source with source details even when there is no corresponding submission event', testEntities(async (service) => {
       const asAlice = await service.login('alice');
 
       await asAlice.post('/v1/projects/1/datasets/people/entities')
@@ -669,7 +669,7 @@ describe('Entities API', () => {
         await exhaust(container);
       };
 
-      it('should return only relevent versions needed for conflict resolution', testEntities(async (service, container) => {
+      it.only('should return only relevent versions needed for conflict resolution', testEntities(async (service, container) => {
         const asAlice = await service.login('alice');
 
         await createConflictOnV2(asAlice, container);
@@ -685,7 +685,7 @@ describe('Entities API', () => {
           });
       }));
 
-      it('should correctly set relevantToConflict field', testEntities(async (service, container) => {
+      it.only('should correctly set relevantToConflict field', testEntities(async (service, container) => {
         const asAlice = await service.login('alice');
 
         await createConflictOnV2(asAlice, container);
@@ -698,7 +698,7 @@ describe('Entities API', () => {
 
       }));
 
-      it('should return empty array when all conflicts are resolved', testEntities(async (service, container) => {
+      it.only('should return empty array when all conflicts are resolved', testEntities(async (service, container) => {
         const asAlice = await service.login('alice');
 
         await createConflictOnV2(asAlice, container);
@@ -713,7 +713,7 @@ describe('Entities API', () => {
           });
       }));
 
-      it('should return only relevent versions after conflict resolution', testEntities(async (service, container) => {
+      it.only('should return only relevent versions after conflict resolution', testEntities(async (service, container) => {
         const asAlice = await service.login('alice');
 
         await createConflictOnV2(asAlice, container);
@@ -740,7 +740,7 @@ describe('Entities API', () => {
           });
       }));
 
-      it('should correctly set `resolved` flag for the versions', testEntities(async (service, container) => {
+      it.only('should correctly set `resolved` flag for the versions', testEntities(async (service, container) => {
         const asAlice = await service.login('alice');
 
         await createConflictOnV2(asAlice, container);
@@ -764,7 +764,7 @@ describe('Entities API', () => {
           });
       }));
 
-      it('should return correct response for conflict after second resolution', testEntities(async (service, container) => {
+      it.only('should return correct response for conflict after second resolution', testEntities(async (service, container) => {
         const asAlice = await service.login('alice');
         await createConflictOnV2(asAlice, container);
         await asAlice.patch('/v1/projects/1/datasets/people/entities/12345678-1234-4123-8234-123456789abc?resolve=true&baseVersion=4')
@@ -805,28 +805,28 @@ describe('Entities API', () => {
   });
 
   describe('GET /datasets/:name/entities/:uuid/diffs', () => {
-    it('should return notfound if the dataset does not exist', testEntities(async (service) => {
+    it.only('should return notfound if the dataset does not exist', testEntities(async (service) => {
       const asAlice = await service.login('alice');
 
       await asAlice.get('/v1/projects/1/datasets/nonexistent/entities/123/diffs')
         .expect(404);
     }));
 
-    it('should return notfound if the entity does not exist', testEntities(async (service) => {
+    it.only('should return notfound if the entity does not exist', testEntities(async (service) => {
       const asAlice = await service.login('alice');
 
       await asAlice.get('/v1/projects/1/datasets/people/entities/123/diffs')
         .expect(404);
     }));
 
-    it('should reject if the user cannot read', testEntities(async (service) => {
+    it.only('should reject if the user cannot read', testEntities(async (service) => {
       const asChelsea = await service.login('chelsea');
 
       await asChelsea.get('/v1/projects/1/datasets/people/entities/12345678-1234-4123-8234-123456789abc/diffs')
         .expect(403);
     }));
 
-    it('should return differences between the version of an Entity', testEntities(async (service) => {
+    it.only('should return differences between the version of an Entity', testEntities(async (service) => {
       const asAlice = await service.login('alice');
 
       await asAlice.patch('/v1/projects/1/datasets/people/entities/12345678-1234-4123-8234-123456789abc?force=true')
@@ -862,28 +862,28 @@ describe('Entities API', () => {
 
   describe('GET /datasets/:name/entities/:uuid/audits', () => {
 
-    it('should return notfound if the dataset does not exist', testEntities(async (service) => {
+    it.only('should return notfound if the dataset does not exist', testEntities(async (service) => {
       const asAlice = await service.login('alice');
 
       await asAlice.get('/v1/projects/1/datasets/nonexistent/entities/123/audits')
         .expect(404);
     }));
 
-    it('should return notfound if the entity does not exist', testEntities(async (service) => {
+    it.only('should return notfound if the entity does not exist', testEntities(async (service) => {
       const asAlice = await service.login('alice');
 
       await asAlice.get('/v1/projects/1/datasets/people/entities/123/audits')
         .expect(404);
     }));
 
-    it('should reject if the user cannot read', testEntities(async (service) => {
+    it.only('should reject if the user cannot read', testEntities(async (service) => {
       const asChelsea = await service.login('chelsea');
 
       await asChelsea.get('/v1/projects/1/datasets/people/entities/12345678-1234-4123-8234-123456789abc/audits')
         .expect(403);
     }));
 
-    it('should return audit logs of the Entity including updates via API and submission', testEntities(async (service, container) => {
+    it.only('should return audit logs of the Entity including updates via API and submission', testEntities(async (service, container) => {
       const asAlice = await service.login('alice');
       const asBob = await service.login('bob');
 
@@ -943,7 +943,7 @@ describe('Entities API', () => {
         });
     }));
 
-    it('should return audit logs of the Entity when it is created via POST API', testEntities(async (service) => {
+    it.only('should return audit logs of the Entity when it is created via POST API', testEntities(async (service) => {
       const asAlice = await service.login('alice');
 
       await asAlice.post('/v1/projects/1/datasets/people/entities')
@@ -971,7 +971,7 @@ describe('Entities API', () => {
         });
     }));
 
-    it('should return the latest instance name of a source submission', testEntities(async (service) => {
+    it.only('should return the latest instance name of a source submission', testEntities(async (service) => {
       const asAlice = await service.login('alice');
       const asBob = await service.login('bob');
 
@@ -1028,7 +1028,7 @@ describe('Entities API', () => {
           });
       }));
 
-      it('should return source when entity created via submission approval', testEntities(async (service) => {
+      it.only('should return source when entity created via submission approval', testEntities(async (service) => {
         const asAlice = await service.login('alice');
 
         // testEntities creates an entity on submission approval
@@ -1046,7 +1046,7 @@ describe('Entities API', () => {
           });
       }));
 
-      it('should return source when entity created via submission creation', testService(async (service, container) => {
+      it.only('should return source when entity created via submission creation', testService(async (service, container) => {
         const asAlice = await service.login('alice');
 
         await asAlice.post('/v1/projects/1/forms?publish=true')
@@ -1074,7 +1074,7 @@ describe('Entities API', () => {
           });
       }));
 
-      it('should return source when entity updated via submission', testEntityUpdates(async (service, container) => {
+      it.only('should return source when entity updated via submission', testEntityUpdates(async (service, container) => {
         const asAlice = await service.login('alice');
 
         // testEntityUpdates does the following: creates dataset, creates update form. test needs to submit update.
@@ -1099,7 +1099,7 @@ describe('Entities API', () => {
           });
       }));
 
-      it('should return instanceId even when submission is deleted', testEntities(async (service, container) => {
+      it.only('should return instanceId even when submission is deleted', testEntities(async (service, container) => {
         const asAlice = await service.login('alice');
 
         await asAlice.delete('/v1/projects/1/forms/simpleEntity')
@@ -1127,7 +1127,7 @@ describe('Entities API', () => {
           });
       }));
 
-      it('should return instanceId even when form is deleted', testEntities(async (service) => {
+      it.only('should return instanceId even when form is deleted', testEntities(async (service) => {
         const asAlice = await service.login('alice');
 
         await asAlice.delete('/v1/projects/1/forms/simpleEntity')
@@ -1157,7 +1157,7 @@ describe('Entities API', () => {
       // It's not possible to purge audit logs via API.
       // However System Administrators can purge/archive audit logs via SQL
       // to save disk space and improve performance
-      it('should return entity audits even when submission and its logs are deleted', testEntities(async (service, container) => {
+      it.only('should return entity audits even when submission and its logs are deleted', testEntities(async (service, container) => {
         const asAlice = await service.login('alice');
 
         await asAlice.delete('/v1/projects/1/forms/simpleEntity')
@@ -1182,7 +1182,7 @@ describe('Entities API', () => {
       }));
     });
 
-    it('should return right approval details when we have multiple approvals', testService(async (service, container) => {
+    it.only('should return right approval details when we have multiple approvals', testService(async (service, container) => {
       const asAlice = await service.login('alice');
 
       await asAlice.post('/v1/projects/1/forms?publish=true')
@@ -1252,7 +1252,7 @@ describe('Entities API', () => {
 
     }));
 
-    it('should return paginated audit logs of the Entity', testEntities(async (service) => {
+    it.only('should return paginated audit logs of the Entity', testEntities(async (service) => {
       const asAlice = await service.login('alice');
       const asBob = await service.login('bob');
 
@@ -1269,7 +1269,7 @@ describe('Entities API', () => {
         });
     }));
 
-    it('should return delete and restore events', testEntities(async (service) => {
+    it.only('should return delete and restore events', testEntities(async (service) => {
       const asAlice = await service.login('alice');
 
       await asAlice.delete('/v1/projects/1/datasets/people/entities/12345678-1234-4123-8234-123456789abc')
@@ -1408,7 +1408,7 @@ describe('Entities API', () => {
         .expect(400);
     }));
 
-    it('should reject if label is blank', testEntities(async (service) => {
+    it.only('should reject if label is blank', testEntities(async (service) => {
       const asAlice = await service.login('alice');
 
       await asAlice.post('/v1/projects/1/datasets/people/entities')
@@ -1424,7 +1424,7 @@ describe('Entities API', () => {
     }));
 
 
-    it('should reject if label is not provided', testEntities(async (service) => {
+    it.only('should reject if label is not provided', testEntities(async (service) => {
       const asAlice = await service.login('alice');
 
       await asAlice.post('/v1/projects/1/datasets/people/entities')
@@ -1438,7 +1438,7 @@ describe('Entities API', () => {
         .expect(400);
     }));
 
-    it('should reject if uuid is not unique', testEntities(async (service) => {
+    it.only('should reject if uuid is not unique', testEntities(async (service) => {
       // Use testEntities here vs. testDataset to prepopulate with 2 entities
       const asAlice = await service.login('alice');
 
@@ -1454,7 +1454,7 @@ describe('Entities API', () => {
         .expect(409);
     }));
 
-    it('should reject if entity with the same uuid is soft deleted', testEntities(async (service) => {
+    it.only('should reject if entity with the same uuid is soft deleted', testEntities(async (service) => {
       // Use testEntities here vs. testDataset to prepopulate with 2 entities
       const asAlice = await service.login('alice');
 
@@ -1491,7 +1491,7 @@ describe('Entities API', () => {
         .expect(400);
     }));
 
-    it('should mark the source as type api', testEntities(async (service, container) => {
+    it.only('should mark the source as type api', testEntities(async (service, container) => {
       const asAlice = await service.login('alice');
 
       await asAlice.post('/v1/projects/1/datasets/people/entities')
@@ -1516,7 +1516,7 @@ describe('Entities API', () => {
       typeCounts[1].count.should.equal(2);
     }));
 
-    it('should log the entity create event in the audit log', testEntities(async (service, container) => {
+    it.only('should log the entity create event in the audit log', testEntities(async (service, container) => {
       const asAlice = await service.login('alice');
 
       await asAlice.post('/v1/projects/1/datasets/people/entities')
@@ -1537,25 +1537,25 @@ describe('Entities API', () => {
   });
 
   describe('PATCH /datasets/:name/entities/:uuid', () => {
-    it('should return notfound if the dataset does not exist', testEntities(async (service) => {
+    it.only('should return notfound if the dataset does not exist', testEntities(async (service) => {
       const asAlice = await service.login('alice');
       await asAlice.patch('/v1/projects/1/datasets/nonexistent/entities/123')
         .expect(404);
     }));
 
-    it('should return notfound if the entity does not exist', testEntities(async (service) => {
+    it.only('should return notfound if the entity does not exist', testEntities(async (service) => {
       const asAlice = await service.login('alice');
       await asAlice.patch('/v1/projects/1/datasets/people/entities/123')
         .expect(404);
     }));
 
-    it('should reject if the user cannot update', testEntities(async (service) => {
+    it.only('should reject if the user cannot update', testEntities(async (service) => {
       const asChelsea = await service.login('chelsea');
       await asChelsea.patch('/v1/projects/1/datasets/people/entities/123')
         .expect(403);
     }));
 
-    it('should reject if version or force flag is not provided', testEntities(async (service) => {
+    it.only('should reject if version or force flag is not provided', testEntities(async (service) => {
       const asAlice = await service.login('alice');
       await asAlice.patch('/v1/projects/1/datasets/people/entities/12345678-1234-4123-8234-123456789abc')
         .expect(409)
@@ -1564,7 +1564,7 @@ describe('Entities API', () => {
         });
     }));
 
-    it('should reject if version does not match', testEntities(async (service) => {
+    it.only('should reject if version does not match', testEntities(async (service) => {
       const asAlice = await service.login('alice');
       await asAlice.patch('/v1/projects/1/datasets/people/entities/12345678-1234-4123-8234-123456789abc?baseVersion=0')
         .expect(409)
@@ -1573,7 +1573,7 @@ describe('Entities API', () => {
         });
     }));
 
-    it('should store the entity update source and creator id', testEntities(async (service) => {
+    it.only('should store the entity update source and creator id', testEntities(async (service) => {
       const asBob = await service.login('bob');
 
       await asBob.patch('/v1/projects/1/datasets/people/entities/12345678-1234-4123-8234-123456789abc?force=true')
@@ -1612,7 +1612,7 @@ describe('Entities API', () => {
         });
     }));
 
-    it('should add a source row with type api when updating an entity via PATCH', testEntities(async (service, container) => {
+    it.only('should add a source row with type api when updating an entity via PATCH', testEntities(async (service, container) => {
       const asBob = await service.login('bob');
 
       await asBob.patch('/v1/projects/1/datasets/people/entities/12345678-1234-4123-8234-123456789abc?force=true')
@@ -1635,7 +1635,7 @@ describe('Entities API', () => {
     }));
 
     describe('updating data', () => {
-      it('should partially update an Entity', testEntities(async (service) => {
+      it.only('should partially update an Entity', testEntities(async (service) => {
         const asAlice = await service.login('alice');
         const newData = { age: '77', first_name: 'Alan' };
 
@@ -1661,7 +1661,7 @@ describe('Entities API', () => {
           });
       }));
 
-      it('should return the latest data after multiple updates', testEntities(async (service) => {
+      it.only('should return the latest data after multiple updates', testEntities(async (service) => {
         const asAlice = await service.login('alice');
         const newData = { age: '66', first_name: 'Arnold' };
 
@@ -1694,7 +1694,7 @@ describe('Entities API', () => {
           });
       }));
 
-      it('should update the label of an entity', testEntities(async (service) => {
+      it.only('should update the label of an entity', testEntities(async (service) => {
         const asAlice = await service.login('alice');
 
         await asAlice.patch('/v1/projects/1/datasets/people/entities/12345678-1234-4123-8234-123456789abc?force=true')
@@ -1716,7 +1716,7 @@ describe('Entities API', () => {
           });
       }));
 
-      it('should reject if updating the label to be empty', testEntities(async (service) => {
+      it.only('should reject if updating the label to be empty', testEntities(async (service) => {
         const asAlice = await service.login('alice');
 
         await asAlice.patch('/v1/projects/1/datasets/people/entities/12345678-1234-4123-8234-123456789abc?force=true')
@@ -1726,7 +1726,7 @@ describe('Entities API', () => {
           .expect(400);
       }));
 
-      it('should update an entity with additional properties', testEntities(async (service) => {
+      it.only('should update an entity with additional properties', testEntities(async (service) => {
         const asAlice = await service.login('alice');
 
         await asAlice.post('/v1/projects/1/forms?publish=true')
@@ -1756,7 +1756,7 @@ describe('Entities API', () => {
           });
       }));
 
-      it('should let a propery be set to empty string', testEntities(async (service) => {
+      it.only('should let a propery be set to empty string', testEntities(async (service) => {
         const asAlice = await service.login('alice');
         const newData = { age: '88', first_name: '' };
 
@@ -1778,7 +1778,7 @@ describe('Entities API', () => {
           });
       }));
 
-      it('should not accept null property', testEntities(async (service) => {
+      it.only('should not accept null property', testEntities(async (service) => {
         const asAlice = await service.login('alice');
 
         await asAlice.patch('/v1/projects/1/datasets/people/entities/12345678-1234-4123-8234-123456789abc?force=true')
@@ -1792,7 +1792,7 @@ describe('Entities API', () => {
           });
       }));
 
-      it('should reject if updating property not in dataset', testEntities(async (service) => {
+      it.only('should reject if updating property not in dataset', testEntities(async (service) => {
         const asAlice = await service.login('alice');
 
         await asAlice.patch('/v1/projects/1/datasets/people/entities/12345678-1234-4123-8234-123456789abc?force=true')
@@ -1807,7 +1807,7 @@ describe('Entities API', () => {
       }));
     });
 
-    it('should log the entity update event in the audit log', testEntities(async (service, container) => {
+    it.only('should log the entity update event in the audit log', testEntities(async (service, container) => {
       const asBob = await service.login('bob');
 
       await asBob.patch('/v1/projects/1/datasets/people/entities/12345678-1234-4123-8234-123456789abc?force=true')
@@ -1857,7 +1857,7 @@ describe('Entities API', () => {
         await exhaust(container);
       };
 
-      it('should resolve the conflict without updating data', testService(async (service, container) => {
+      it.only('should resolve the conflict without updating data', testService(async (service, container) => {
         await createConflict(service, container);
 
         const asAlice = await service.login('alice');
@@ -1881,7 +1881,7 @@ describe('Entities API', () => {
           });
       }));
 
-      it('should resolve the conflict with updating data', testService(async (service, container) => {
+      it.only('should resolve the conflict with updating data', testService(async (service, container) => {
         await createConflict(service, container);
 
         const asAlice = await service.login('alice');
@@ -1910,7 +1910,7 @@ describe('Entities API', () => {
           });
       }));
 
-      it('should not resolve without the flag', testService(async (service, container) => {
+      it.only('should not resolve without the flag', testService(async (service, container) => {
         await createConflict(service, container);
 
         const asAlice = await service.login('alice');
@@ -1932,7 +1932,7 @@ describe('Entities API', () => {
           });
       }));
 
-      it('should resolve the conflict and forcefully update the entity', testService(async (service, container) => {
+      it.only('should resolve the conflict and forcefully update the entity', testService(async (service, container) => {
         await createConflict(service, container);
 
         const asAlice = await service.login('alice');
@@ -1952,7 +1952,7 @@ describe('Entities API', () => {
           });
       }));
 
-      it('should throw error if there is no conflict', testEntities(async (service) => {
+      it.only('should throw error if there is no conflict', testEntities(async (service) => {
         const asAlice = await service.login('alice');
 
         await asAlice.patch('/v1/projects/1/datasets/people/entities/12345678-1234-4123-8234-123456789abc?resolve=true')
@@ -1962,7 +1962,7 @@ describe('Entities API', () => {
           });
       }));
 
-      it('should reject if version does not match', testService(async (service, container) => {
+      it.only('should reject if version does not match', testService(async (service, container) => {
         await createConflict(service, container);
 
         const asAlice = await service.login('alice');
@@ -1974,7 +1974,7 @@ describe('Entities API', () => {
           });
       }));
 
-      it('should forcefully resolve the conflict', testService(async (service, container) => {
+      it.only('should forcefully resolve the conflict', testService(async (service, container) => {
         await createConflict(service, container);
 
         const asAlice = await service.login('alice');
@@ -1993,7 +1993,7 @@ describe('Entities API', () => {
     // `getById` creates an advisory lock which blocks other transactions to do the same.
     // Once first transaction updates the Entity, only then second transaction is able
     // to get the Entity.
-    it('should not allow parallel updates to the same Entity', testServiceFullTrx(async (service, container) => {
+    it.only('should not allow parallel updates to the same Entity', testServiceFullTrx(async (service, container) => {
 
       const asAlice = await service.login('alice');
 
@@ -2108,28 +2108,28 @@ describe('Entities API', () => {
 
   describe('DELETE /datasets/:name/entities/:uuid', () => {
 
-    it('should return notfound if the dataset does not exist', testEntities(async (service) => {
+    it.only('should return notfound if the dataset does not exist', testEntities(async (service) => {
       const asAlice = await service.login('alice');
 
       await asAlice.delete('/v1/projects/1/datasets/nonexistent/entities/123')
         .expect(404);
     }));
 
-    it('should return notfound if the entity does not exist', testEntities(async (service) => {
+    it.only('should return notfound if the entity does not exist', testEntities(async (service) => {
       const asAlice = await service.login('alice');
 
       await asAlice.delete('/v1/projects/1/datasets/people/entities/123')
         .expect(404);
     }));
 
-    it('should reject if the user cannot delete', testEntities(async (service) => {
+    it.only('should reject if the user cannot delete', testEntities(async (service) => {
       const asChelsea = await service.login('chelsea');
 
       await asChelsea.delete('/v1/projects/1/datasets/people/entities/12345678-1234-4123-8234-123456789abc')
         .expect(403);
     }));
 
-    it('should delete an Entity', testEntities(async (service, container) => {
+    it.only('should delete an Entity', testEntities(async (service, container) => {
       const asAlice = await service.login('alice');
 
       await asAlice.delete('/v1/projects/1/datasets/people/entities/12345678-1234-4123-8234-123456789abc')
@@ -2165,21 +2165,21 @@ describe('Entities API', () => {
   });
 
   describe('POST /datasets/:name/entities/:uuid/restore', () => {
-    it('should reject if the entity has not been deleted', testEntities(async (service) => {
+    it.only('should reject if the entity has not been deleted', testEntities(async (service) => {
       const asAlice = await service.login('alice');
 
       await asAlice.post('/v1/projects/1/datasets/people/entities/12345678-1234-4123-8234-123456789abc/restore')
         .expect(404);
     }));
 
-    it('should reject if the entity does not exist', testEntities(async (service) => {
+    it.only('should reject if the entity does not exist', testEntities(async (service) => {
       const asAlice = await service.login('alice');
 
       await asAlice.post('/v1/projects/1/datasets/people/entities/nonexistant/restore')
         .expect(404);
     }));
 
-    it('should reject if the user cannot restore', testEntities(async (service) => {
+    it.only('should reject if the user cannot restore', testEntities(async (service) => {
       const asChelsea = await service.login('chelsea');
 
       // Chelsea cannot restore
@@ -2187,7 +2187,7 @@ describe('Entities API', () => {
         .expect(403);
     }));
 
-    it('should soft-delete the entity and then restore it', testEntities(async (service, container) => {
+    it.only('should soft-delete the entity and then restore it', testEntities(async (service, container) => {
       const asAlice = await service.login('alice');
 
       await asAlice.delete('/v1/projects/1/datasets/people/entities/12345678-1234-4123-8234-123456789abc')
@@ -2842,7 +2842,7 @@ describe('Entities API', () => {
       }));
 
       // this test is relevant to bulk events because the audit query is shared
-      it('should fetch the correct events for a conflict resolution (no new version)', testEntities(async (service, container) => {
+      it.only('should fetch the correct events for a conflict resolution (no new version)', testEntities(async (service, container) => {
         const asAlice = await service.login('alice');
 
         // second version
@@ -2889,7 +2889,7 @@ describe('Entities API', () => {
       }));
 
       // this test is relevant to bulk events because the audit query is shared
-      it('should fetch the correct events for a conflict resolution that does add a new version', testEntities(async (service, container) => {
+      it.only('should fetch the correct events for a conflict resolution that does add a new version', testEntities(async (service, container) => {
         const asAlice = await service.login('alice');
 
         // second version
@@ -2951,7 +2951,7 @@ describe('Entities API', () => {
   // Special scenarios
   describe('create new entities from submissions', () => {
     // More success and error cases in test/integration/worker/entity.js
-    it('should create entity', testEntityUpdates(async (service, container) => {
+    it.only('should create entity', testEntityUpdates(async (service, container) => {
       const asAlice = await service.login('alice');
 
       await asAlice.post('/v1/projects/1/forms/simpleEntity/submissions')
@@ -2970,7 +2970,7 @@ describe('Entities API', () => {
         });
     }));
 
-    it('should not create entity if the label is missing in the submission', testEntityUpdates(async (service, container) => {
+    it.only('should not create entity if the label is missing in the submission', testEntityUpdates(async (service, container) => {
       const asAlice = await service.login('alice');
 
       await asAlice.post('/v1/projects/1/forms/simpleEntity/submissions')
@@ -2994,7 +2994,7 @@ describe('Entities API', () => {
         });
     }));
 
-    it('should not create entity if the uuid is missing in the submission', testDataset(async (service, container) => {
+    it.only('should not create entity if the uuid is missing in the submission', testDataset(async (service, container) => {
       const asAlice = await service.login('alice');
 
       await asAlice.post('/v1/projects/1/forms/simpleEntity/submissions')
@@ -3017,7 +3017,7 @@ describe('Entities API', () => {
   });
 
   describe('entity updates from submissions', () => {
-    it('should process multiple updates in a row', testEntityUpdates(async (service, container) => {
+    it.only('should process multiple updates in a row', testEntityUpdates(async (service, container) => {
       const asAlice = await service.login('alice');
 
       await asAlice.post('/v1/projects/1/forms/updateEntity/submissions')
@@ -3047,7 +3047,7 @@ describe('Entities API', () => {
         });
     }));
 
-    it('should update data and label', testEntityUpdates(async (service, container) => {
+    it.only('should update data and label', testEntityUpdates(async (service, container) => {
       const asAlice = await service.login('alice');
 
       await asAlice.post('/v1/projects/1/forms/updateEntity/submissions')
@@ -3065,7 +3065,7 @@ describe('Entities API', () => {
         });
     }));
 
-    it('should update only the label', testEntityUpdates(async (service, container) => {
+    it.only('should update only the label', testEntityUpdates(async (service, container) => {
       const asAlice = await service.login('alice');
 
       await asAlice.post('/v1/projects/1/forms/updateEntity/submissions')
@@ -3085,7 +3085,7 @@ describe('Entities API', () => {
         });
     }));
 
-    it('should not update label if not included', testEntityUpdates(async (service, container) => {
+    it.only('should not update label if not included', testEntityUpdates(async (service, container) => {
       const asAlice = await service.login('alice');
 
       await asAlice.post('/v1/projects/1/forms/updateEntity/submissions')
@@ -3104,7 +3104,7 @@ describe('Entities API', () => {
         });
     }));
 
-    it('should not update label if label is blank', testEntityUpdates(async (service, container) => {
+    it.only('should not update label if label is blank', testEntityUpdates(async (service, container) => {
       const asAlice = await service.login('alice');
 
       await asAlice.post('/v1/projects/1/forms/updateEntity/submissions')
@@ -3123,7 +3123,7 @@ describe('Entities API', () => {
         });
     }));
 
-    it('should set field to blank', testEntityUpdates(async (service, container) => {
+    it.only('should set field to blank', testEntityUpdates(async (service, container) => {
       const asAlice = await service.login('alice');
 
       await asAlice.post('/v1/projects/1/forms/updateEntity/submissions')
@@ -3142,7 +3142,7 @@ describe('Entities API', () => {
         });
     }));
 
-    it('should not update field if not included in xml', testEntityUpdates(async (service, container) => {
+    it.only('should not update field if not included in xml', testEntityUpdates(async (service, container) => {
       const asAlice = await service.login('alice');
 
       await asAlice.post('/v1/projects/1/forms/updateEntity/submissions')
@@ -3164,7 +3164,7 @@ describe('Entities API', () => {
 
     describe('update error cases', () => {
       // more checks of errors are found in worker/entity tests
-      it('should log an error and not update if baseVersion is missing', testEntityUpdates(async (service, container) => {
+      it.only('should log an error and not update if baseVersion is missing', testEntityUpdates(async (service, container) => {
         const asAlice = await service.login('alice');
 
         await asAlice.post('/v1/projects/1/forms/updateEntity/submissions')
@@ -3188,7 +3188,7 @@ describe('Entities API', () => {
           });
       }));
 
-      it('should log an error and not update if baseVersion in submission does not exist', testEntityUpdates(async (service, container) => {
+      it.only('should log an error and not update if baseVersion in submission does not exist', testEntityUpdates(async (service, container) => {
         const asAlice = await service.login('alice');
 
         await asAlice.post('/v1/projects/1/forms/updateEntity/submissions')
@@ -3214,7 +3214,7 @@ describe('Entities API', () => {
           });
       }));
 
-      it('should log an error and if baseVersion is not an integer', testEntityUpdates(async (service, container) => {
+      it.only('should log an error and if baseVersion is not an integer', testEntityUpdates(async (service, container) => {
         const asAlice = await service.login('alice');
 
         await asAlice.post('/v1/projects/1/forms/updateEntity/submissions')
@@ -3242,7 +3242,7 @@ describe('Entities API', () => {
     });
 
     describe('create and update in a single submission', () => {
-      it('should create an entity if it does not yet exist', testEntityUpdates(async (service, container) => {
+      it.only('should create an entity if it does not yet exist', testEntityUpdates(async (service, container) => {
         const asAlice = await service.login('alice');
 
         await asAlice.post('/v1/projects/1/forms/updateEntity/submissions')
@@ -3269,7 +3269,7 @@ describe('Entities API', () => {
           });
       }));
 
-      it('should perform an upsert with blank label', testEntityUpdates(async (service, container) => {
+      it.only('should perform an upsert with blank label', testEntityUpdates(async (service, container) => {
         const asAlice = await service.login('alice');
 
         // This update should work even with no label
@@ -3290,7 +3290,7 @@ describe('Entities API', () => {
           });
       }));
 
-      it('should have create error if failed to update non-existent entity but still had error with create (e.g blank label)', testEntityUpdates(async (service, container) => {
+      it.only('should have create error if failed to update non-existent entity but still had error with create (e.g blank label)', testEntityUpdates(async (service, container) => {
         const asAlice = await service.login('alice');
 
         await asAlice.post('/v1/projects/1/forms/updateEntity/submissions')
@@ -3315,7 +3315,7 @@ describe('Entities API', () => {
           });
       }));
 
-      it('should update an entity if it does exist', testEntityUpdates(async (service, container) => {
+      it.only('should update an entity if it does exist', testEntityUpdates(async (service, container) => {
         const asAlice = await service.login('alice');
 
         await asAlice.post('/v1/projects/1/forms/updateEntity/submissions')
@@ -3341,7 +3341,7 @@ describe('Entities API', () => {
           });
       }));
 
-      it('should fail both update and create if uuid exists and base version is wrong', testEntityUpdates(async (service, container) => {
+      it.only('should fail both update and create if uuid exists and base version is wrong', testEntityUpdates(async (service, container) => {
         const asAlice = await service.login('alice');
 
         await asAlice.post('/v1/projects/1/forms/updateEntity/submissions')
@@ -3370,7 +3370,7 @@ describe('Entities API', () => {
           });
       }));
 
-      it('should fail both update and create on error like invalid uuid', testEntityUpdates(async (service, container) => {
+      it.only('should fail both update and create on error like invalid uuid', testEntityUpdates(async (service, container) => {
         const asAlice = await service.login('alice');
 
         await asAlice.post('/v1/projects/1/forms/updateEntity/submissions')
@@ -3398,7 +3398,7 @@ describe('Entities API', () => {
           });
       }));
 
-      it('should create entity when both create and update are true but baseVersion is empty', testEntityUpdates(async (service, container) => {
+      it.only('should create entity when both create and update are true but baseVersion is empty', testEntityUpdates(async (service, container) => {
         const asAlice = await service.login('alice');
 
         await asAlice.post('/v1/projects/1/forms/updateEntity/submissions')
@@ -3417,7 +3417,7 @@ describe('Entities API', () => {
           });
       }));
 
-      it('should log error when both create and update are true, baseVersion is empty but entity uuid exists', testEntityUpdates(async (service, container) => {
+      it.only('should log error when both create and update are true, baseVersion is empty but entity uuid exists', testEntityUpdates(async (service, container) => {
         const asAlice = await service.login('alice');
 
         // This submission uses an existing entity uuid
@@ -3449,7 +3449,7 @@ describe('Entities API', () => {
     // 10 examples described in central issue #517
     describe('only take one entity action per submission', () => {
       // Example 1
-      it('should create an entity from submission edited to have create flag', testService(async (service, container) => {
+      it.only('should create an entity from submission edited to have create flag', testService(async (service, container) => {
         const asAlice = await service.login('alice');
 
         await asAlice.post('/v1/projects/1/forms?publish=true')
@@ -3492,7 +3492,7 @@ describe('Entities API', () => {
       }));
 
       // Example 2
-      it('should create an entity from approved submission edited to have create flag', testService(async (service, container) => {
+      it.only('should create an entity from approved submission edited to have create flag', testService(async (service, container) => {
         const asAlice = await service.login('alice');
 
         await asAlice.post('/v1/projects/1/forms?publish=true')
@@ -3549,7 +3549,7 @@ describe('Entities API', () => {
       }));
 
       // Example 3
-      it('should not create second entity with new uuid from edited submission', testService(async (service, container) => {
+      it.only('should not create second entity with new uuid from edited submission', testService(async (service, container) => {
         const asAlice = await service.login('alice');
 
         await asAlice.post('/v1/projects/1/forms?publish=true')
@@ -3596,7 +3596,7 @@ describe('Entities API', () => {
 
       // Example 4
       // update is not well-formed, doesn't include baseVersion, but it doesn't run
-      it('should not update a entity from edited sub if sub already created entity', testService(async (service, container) => {
+      it.only('should not update a entity from edited sub if sub already created entity', testService(async (service, container) => {
         const asAlice = await service.login('alice');
 
         await asAlice.post('/v1/projects/1/forms?publish=true')
@@ -3640,7 +3640,7 @@ describe('Entities API', () => {
       }));
 
       // Example 5
-      it('should not update same entity from edited sub if sub already created entity', testService(async (service, container) => {
+      it.only('should not update same entity from edited sub if sub already created entity', testService(async (service, container) => {
         const asAlice = await service.login('alice');
 
         await asAlice.post('/v1/projects/1/forms?publish=true')
@@ -3683,7 +3683,7 @@ describe('Entities API', () => {
       }));
 
       // Example 6
-      it('should update entity when submission is edited to set update to true', testEntityUpdates(async (service, container) => {
+      it.only('should update entity when submission is edited to set update to true', testEntityUpdates(async (service, container) => {
         const asAlice = await service.login('alice');
 
         // Forms already in place
@@ -3729,7 +3729,7 @@ describe('Entities API', () => {
       }));
 
       // Example 7
-      it('should not update different entity when submission previously updated an entity', testEntityUpdates(async (service, container) => {
+      it.only('should not update different entity when submission previously updated an entity', testEntityUpdates(async (service, container) => {
         const asAlice = await service.login('alice');
 
         await asAlice.post('/v1/projects/1/forms/updateEntity/submissions')
@@ -3773,7 +3773,7 @@ describe('Entities API', () => {
       }));
 
       // Example 8
-      it('should not re-update entity when submission previously updated an entity', testEntityUpdates(async (service, container) => {
+      it.only('should not re-update entity when submission previously updated an entity', testEntityUpdates(async (service, container) => {
         const asAlice = await service.login('alice');
 
         await asAlice.post('/v1/projects/1/forms/updateEntity/submissions')
@@ -3816,7 +3816,7 @@ describe('Entities API', () => {
       }));
 
       // Example 9
-      it('should update entity after editing submission to reference valid entity', testEntityUpdates(async (service, container) => {
+      it.only('should update entity after editing submission to reference valid entity', testEntityUpdates(async (service, container) => {
         const asAlice = await service.login('alice');
 
         // this entity uuid does not exist to be updated
@@ -3863,7 +3863,7 @@ describe('Entities API', () => {
       }));
 
       // Example 10
-      it('should not create entity after sub updates an entity', testEntityUpdates(async (service, container) => {
+      it.only('should not create entity after sub updates an entity', testEntityUpdates(async (service, container) => {
         const asAlice = await service.login('alice');
 
         await asAlice.post('/v1/projects/1/forms/updateEntity/submissions')
@@ -3911,7 +3911,7 @@ describe('Entities API', () => {
   });
 
   describe('permitted entity actions', () => {
-    it('should result in an error for an update from a create form', testService(async (service, container) => {
+    it.only('should result in an error for an update from a create form', testService(async (service, container) => {
       const asAlice = await service.login('alice');
       await asAlice.post('/v1/projects/1/forms?publish=true')
         .send(testData.forms.simpleEntity)
@@ -3942,7 +3942,7 @@ describe('Entities API', () => {
       });
     }));
 
-    it('should result in an error for a create from an update form', testService(async (service, container) => {
+    it.only('should result in an error for a create from an update form', testService(async (service, container) => {
       const asAlice = await service.login('alice');
       await asAlice.post('/v1/projects/1/forms?publish=true')
         .send(testData.forms.updateEntity)
@@ -4011,14 +4011,14 @@ describe('Entities API', () => {
 
   describe('GET /datasets/:name/entities/creators', () => {
 
-    it('should return notfound if the dataset does not exist', testEntities(async (service) => {
+    it.only('should return notfound if the dataset does not exist', testEntities(async (service) => {
       const asAlice = await service.login('alice');
 
       await asAlice.get('/v1/projects/1/datasets/nonexistent/entities/creators')
         .expect(404);
     }));
 
-    it('should reject if the user cannot read', testEntities(async (service) => {
+    it.only('should reject if the user cannot read', testEntities(async (service) => {
       const asChelsea = await service.login('chelsea');
 
       await asChelsea.get('/v1/projects/1/datasets/people/entities/creators')

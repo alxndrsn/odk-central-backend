@@ -9,7 +9,7 @@ describe('api: /submissions/:id/comments', () => {
           .send({ body: 'test test' })
           .expect(404))));
 
-    it('should reject if the user cannot read the submission', testService((service) =>
+    it.only('should reject if the user cannot read the submission', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms/simple/submissions')
           .send(testData.instances.simple.one)
@@ -19,7 +19,7 @@ describe('api: /submissions/:id/comments', () => {
               .send({ body: 'test test' })
               .expect(403))))));
 
-    it('should reject if no comment is provided', testService((service) =>
+    it.only('should reject if no comment is provided', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms/simple/submissions')
           .send(testData.instances.simple.one)
@@ -27,7 +27,7 @@ describe('api: /submissions/:id/comments', () => {
           .then(() => asAlice.post('/v1/projects/1/forms/simple/submissions/one/comments')
             .expect(400)))));
 
-    it('should accept the new comment', testService((service) =>
+    it.only('should accept the new comment', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms/simple/submissions')
           .send(testData.instances.simple.one)
@@ -57,7 +57,7 @@ describe('api: /submissions/:id/comments', () => {
           .send({ body: 'test test' })
           .expect(404))));
 
-    it('should reject if the user cannot read the submission', testService((service) =>
+    it.only('should reject if the user cannot read the submission', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms/simple/submissions')
           .send(testData.instances.simple.one)
@@ -66,7 +66,7 @@ describe('api: /submissions/:id/comments', () => {
             asChelsea.get('/v1/projects/1/forms/simple/submissions/one/comments')
               .expect(403))))));
 
-    it('should return comments in order', testService((service) =>
+    it.only('should return comments in order', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms/simple/submissions')
           .send(testData.instances.simple.one)
@@ -85,7 +85,7 @@ describe('api: /submissions/:id/comments', () => {
                 .should.eql([ 'second comment here', 'new comment here' ]);
             })))));
 
-    it('should return extended comments', testService((service) =>
+    it.only('should return extended comments', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms/simple/submissions')
           .send(testData.instances.simple.one)

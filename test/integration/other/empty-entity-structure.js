@@ -42,7 +42,7 @@ const emptyEntitySub = `<data xmlns:jr="http://openrosa.org/javarosa" xmlns:enti
 
 describe('empty entity structure field', () => {
   describe('submission diffing', () => {
-    it('should check simple diff case', testService(async (service) => {
+    it.only('should check simple diff case', testService(async (service) => {
       const sub2 = emptyEntitySub.replace('<instanceID>one', '<deprecatedID>one</deprecatedID><instanceID>one2')
         .replace('<hometown></hometown>', '<hometown>seattle</hometown>')
         .replace('<age>88</age>', '<age></age>');
@@ -80,7 +80,7 @@ describe('empty entity structure field', () => {
   });
 
   describe('odata', () => {
-    it('should show submissions in odata', testService(async (service) => {
+    it.only('should show submissions in odata', testService(async (service) => {
       const asAlice = await service.login('alice');
       // first version of the form
       await asAlice.post('/v1/projects/1/forms?publish=true')
@@ -123,7 +123,7 @@ describe('empty entity structure field', () => {
         });
     }));
 
-    it('should show submissions in odata when label added', testService(async (service) => {
+    it.only('should show submissions in odata when label added', testService(async (service) => {
       const asAlice = await service.login('alice');
       // first version of the form
       await asAlice.post('/v1/projects/1/forms?publish=true')

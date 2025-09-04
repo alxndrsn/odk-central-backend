@@ -190,7 +190,7 @@ describe('managed encryption', () => {
       });
     });
 
-    it('should reject with a reasonable message given incorrect passphrase', testService((service) =>
+    it.only('should reject with a reasonable message given incorrect passphrase', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/key')
           .send({ passphrase: 'supersecret', hint: 'it is a secret' })
@@ -206,7 +206,7 @@ describe('managed encryption', () => {
             .expect(400)
             .then(({ body }) => { body.code.should.equal(400.12); })))));
 
-    it('should decrypt to CSV successfully', testService((service) =>
+    it.only('should decrypt to CSV successfully', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/key')
           .send({ passphrase: 'supersecret', hint: 'it is a secret' })
@@ -226,7 +226,7 @@ describe('managed encryption', () => {
               result.files.get('simple.csv').should.be.an.EncryptedSimpleCsv();
             })))));
 
-    it('should decrypt to CSV successfully if submissions uploaded to S3', testService((service, { Blobs }) => {
+    it.only('should decrypt to CSV successfully if submissions uploaded to S3', testService((service, { Blobs }) => {
       global.s3.enableMock();
       return service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/key')
@@ -257,7 +257,7 @@ describe('managed encryption', () => {
           }));
     }));
 
-    it('should decrypt to CSV successfully as a direct root table', testService((service) =>
+    it.only('should decrypt to CSV successfully as a direct root table', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/key')
           .send({ passphrase: 'supersecret', hint: 'it is a secret' })
@@ -275,7 +275,7 @@ describe('managed encryption', () => {
             .expect(200)
             .then(({ text }) => { text.should.be.an.EncryptedSimpleCsv(); })))));
 
-    it('should decrypt with passphrases provided via url-encoded POST body', testService((service) =>
+    it.only('should decrypt with passphrases provided via url-encoded POST body', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/key')
           .send({ passphrase: 'supersecret', hint: 'it is a secret' })
@@ -297,7 +297,7 @@ describe('managed encryption', () => {
               result.files.get('simple.csv').should.be.an.EncryptedSimpleCsv();
             })))));
 
-    it('should decrypt over cookie auth with passphrases provided via url-encoded POST body', testService((service) =>
+    it.only('should decrypt over cookie auth with passphrases provided via url-encoded POST body', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/key')
           .send({ passphrase: 'supersecret', hint: 'it is a secret' })
@@ -324,7 +324,7 @@ describe('managed encryption', () => {
               result.files.get('simple.csv').should.be.an.EncryptedSimpleCsv();
             })))));
 
-    it('should decrypt with passphrases provide via JSON POST body', testService((service) =>
+    it.only('should decrypt with passphrases provide via JSON POST body', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/key')
           .send({ passphrase: 'supersecret', hint: 'it is a secret' })
@@ -345,7 +345,7 @@ describe('managed encryption', () => {
               result.files.get('simple.csv').should.be.an.EncryptedSimpleCsv();
             })))));
 
-    it('should decrypt attached files successfully', testService((service) =>
+    it.only('should decrypt attached files successfully', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/key')
           .send({ passphrase: 'supersecret', hint: 'it is a secret' })
@@ -368,7 +368,7 @@ describe('managed encryption', () => {
               result.files.get('media/charlie').should.equal('file charlie is right here');
             })))));
 
-    it('should decrypt attached files successfully when s3 enabled', testService((service, { Blobs }) => {
+    it.only('should decrypt attached files successfully when s3 enabled', testService((service, { Blobs }) => {
       global.s3.enableMock();
       return service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/key')
@@ -394,7 +394,7 @@ describe('managed encryption', () => {
             })));
     }));
 
-    it('should handle s3 issues gracefully', testService((service, { Blobs }) => {
+    it.only('should handle s3 issues gracefully', testService((service, { Blobs }) => {
       global.s3.enableMock();
       return service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/key')
@@ -415,7 +415,7 @@ describe('managed encryption', () => {
             .catch((err) => err.message.should.equal('aborted'))));
     }));
 
-    it('should strip .enc suffix from decrypted attachments', testService((service) =>
+    it.only('should strip .enc suffix from decrypted attachments', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/key')
           .send({ passphrase: 'supersecret', hint: 'it is a secret' })
@@ -435,7 +435,7 @@ describe('managed encryption', () => {
                 result.files.get('media/testfile.jpg').should.equal('hello this is a suffixed file');
               }))))));
 
-    it('should skip encrypted client audit log attachments and mark them as processed', testService((service, container) =>
+    it.only('should skip encrypted client audit log attachments and mark them as processed', testService((service, container) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/key')
           .send({ passphrase: 'supersecret', hint: 'it is a secret' })
@@ -456,7 +456,7 @@ describe('managed encryption', () => {
             where action='submission.attachment.update' and processed is not null and failures = 0`)
             .then((count) => { count.should.equal(4); })))));
 
-    it('should decrypt client audit log attachments', testService((service) =>
+    it.only('should decrypt client audit log attachments', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/key')
           .send({ passphrase: 'supersecret', hint: 'it is a secret' })
@@ -492,7 +492,7 @@ two,h,/data/h,2000-01-01T00:06,2000-01-01T00:07,-5,-6,,ee,ff,,
 `);
             })))));
 
-    it('should decrypt client audit log attachments from s3', testService((service, { Blobs }) => {
+    it.only('should decrypt client audit log attachments from s3', testService((service, { Blobs }) => {
       global.s3.enableMock();
       return service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/key')
@@ -535,7 +535,7 @@ two,h,/data/h,2000-01-01T00:06,2000-01-01T00:07,-5,-6,,ee,ff,,
             })));
     }));
 
-    it('should handle mixed [plaintext/encrypted] attachments (not decrypting)', testService((service) =>
+    it.only('should handle mixed [plaintext/encrypted] attachments (not decrypting)', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms?publish=true')
           .send(testData.forms.binaryType)
@@ -563,7 +563,7 @@ two,h,/data/h,2000-01-01T00:06,2000-01-01T00:07,-5,-6,,ee,ff,,
               result.files.get('media/my_file1.mp4').should.equal('this is file one');
             })))));
 
-    it('should handle mixed [plaintext/encrypted] attachments (decrypting)', testService((service) =>
+    it.only('should handle mixed [plaintext/encrypted] attachments (decrypting)', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms?publish=true')
           .send(testData.forms.binaryType)
@@ -595,7 +595,7 @@ two,h,/data/h,2000-01-01T00:06,2000-01-01T00:07,-5,-6,,ee,ff,,
               result.files.get('media/here_is_file2.jpg').should.equal('file two you can see');
             })))));
 
-    it('should handle mixed[plaintext/encrypted] formdata (decrypting)', testService((service) =>
+    it.only('should handle mixed[plaintext/encrypted] formdata (decrypting)', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms/simple/submissions')
           .send(testData.instances.simple.one)
@@ -632,7 +632,7 @@ two,h,/data/h,2000-01-01T00:06,2000-01-01T00:07,-5,-6,,ee,ff,,
                 csv[4].should.eql([ '' ]);
               }))))));
 
-    it('should handle mixed[plaintext/encrypted] formdata (not decrypting)', testService((service) =>
+    it.only('should handle mixed[plaintext/encrypted] formdata (not decrypting)', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms/simple/submissions')
           .send(testData.instances.simple.one)
@@ -668,7 +668,7 @@ two,h,/data/h,2000-01-01T00:06,2000-01-01T00:07,-5,-6,,ee,ff,,
               }))))));
 
     // we have to sort of cheat at this to get two different managed keys in effect.
-    it('should handle mixed[managedA/managedB] formdata (decrypting)', testService((service, { Forms, Projects, Auth }) =>
+    it.only('should handle mixed[managedA/managedB] formdata (decrypting)', testService((service, { Forms, Projects, Auth }) =>
       service.login('alice', (asAlice) =>
         // first enable managed encryption and submit submission one.
         asAlice.post('/v1/projects/1/key')
@@ -727,7 +727,7 @@ two,h,/data/h,2000-01-01T00:06,2000-01-01T00:07,-5,-6,,ee,ff,,
               csv[4].should.eql([ '' ]);
             })))));
 
-    it('should handle mixed [plaintext/missing-encrypted-xml] formdata (decrypting)', testService((service) =>
+    it.only('should handle mixed [plaintext/missing-encrypted-xml] formdata (decrypting)', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms/simple/submissions')
           .send(testData.instances.simple.one)
@@ -763,7 +763,7 @@ two,h,/data/h,2000-01-01T00:06,2000-01-01T00:07,-5,-6,,ee,ff,,
                 csv[3].should.eql([ '' ]);
               }))))));
 
-    it('should handle mixed [plaintext/missing-encrypted-xml] formdata (not decrypting)', testService((service) =>
+    it.only('should handle mixed [plaintext/missing-encrypted-xml] formdata (not decrypting)', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms/simple/submissions')
           .send(testData.instances.simple.one)

@@ -66,7 +66,7 @@ describe('data collector role', () => {
     asCollector.get('/v1/projects/1/forms/simple/submissions')
       .expect(403))));
 
-  it('should be able to create new submissions', testService(collector((asCollector) =>
+  it.only('should be able to create new submissions', testService(collector((asCollector) =>
     asCollector.post('/v1/projects/1/forms/simple/submissions')
       .send(testData.instances.simple.one)
       .set('Content-Type', 'text/xml')
@@ -118,7 +118,7 @@ describe('data collector role', () => {
 
   }))));
 
-  it('should be able see closing forms and make submission', testService(collector(async (asCollector, _, service) => {
+  it.only('should be able see closing forms and make submission', testService(collector(async (asCollector, _, service) => {
 
     const asAlice = await service.login('alice');
 

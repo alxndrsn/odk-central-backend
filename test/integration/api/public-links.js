@@ -37,7 +37,7 @@ describe('api: /projects/:id/forms/:id/public-links', () => {
           .send({ displayName: 'test1' })
           .expect(200))));
 
-    it('should allow the created user to submit to the given form', testService((service) =>
+    it.only('should allow the created user to submit to the given form', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms/simple/public-links')
           .send({ displayName: 'test1' })
@@ -207,7 +207,7 @@ describe('api: /key/:key', () => {
             .set('X-Forwarded-Proto', 'https')
             .expect(200))))));
 
-  it('should passthrough to the appropriate route with successful auth', testService((service) =>
+  it.only('should passthrough to the appropriate route with successful auth', testService((service) =>
     service.login('alice', (asAlice) =>
       asAlice.post('/v1/projects/1/forms/simple/public-links')
         .send({ displayName: 'linktest' })

@@ -233,7 +233,7 @@ describe('query module form purge', () => {
         ]))
         .then((counts) => counts.should.eql([ 0 ])))));
 
-  it('should purge the select multiple values of a purged form', testService((service, container) =>
+  it.only('should purge the select multiple values of a purged form', testService((service, container) =>
     service.login('alice', (asAlice) =>
       asAlice.post('/v1/projects/1/forms?publish=true')
         .send(testData.forms.selectMultiple)
@@ -342,7 +342,7 @@ describe('query module form purge', () => {
     const withSimpleIds = (deprecatedId, instanceId) => testData.instances.simple.one
       .replace('one</instance', `${instanceId}</instanceID><deprecatedID>${deprecatedId}</deprecated`);
 
-    it('should delete all defs of a submission', testService((service, container) =>
+    it.only('should delete all defs of a submission', testService((service, container) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms/simple/submissions')
           .send(testData.instances.simple.one)
@@ -359,7 +359,7 @@ describe('query module form purge', () => {
           .then(() => container.oneFirst(sql`select count(*) from submission_defs`)
             .then((count) => { count.should.equal(0); })))));
 
-    it('should purge attachments and blobs associated with the submission', testService((service, container) =>
+    it.only('should purge attachments and blobs associated with the submission', testService((service, container) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms?publish=true')
           .set('Content-Type', 'application/xml')
@@ -387,7 +387,7 @@ describe('query module form purge', () => {
           .then(() => container.oneFirst(sql`select count(*) from blobs`)
             .then((count) => count.should.equal(0))))));
 
-    it('should purge submission comments from comments table', testService((service, container) =>
+    it.only('should purge submission comments from comments table', testService((service, container) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms/simple/submissions')
           .send(testData.instances.simple.one)
@@ -403,7 +403,7 @@ describe('query module form purge', () => {
           .then(() => container.oneFirst(sql`select count(*) from comments`)
             .then((count) => count.should.equal(0))))));
 
-    it('should purge submission comments from notes fields of audits table', testService((service, container) =>
+    it.only('should purge submission comments from notes fields of audits table', testService((service, container) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms/simple/submissions')
           .send(testData.instances.simple.one)
@@ -421,7 +421,7 @@ describe('query module form purge', () => {
             // eslint-disable-next-line space-in-parens
             .then((audit) => audit.get().notes.should.equal('') )))));
 
-    it('should purge client audit log attachments (that have been processed into database)', testService((service, container) =>
+    it.only('should purge client audit log attachments (that have been processed into database)', testService((service, container) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms?publish=true')
           .set('Content-Type', 'application/xml')

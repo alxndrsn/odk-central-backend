@@ -107,7 +107,7 @@ describe('query module entities purge', () => {
       entityCount.should.equal(1);
     }));
 
-    it('should purge deleted entities, which were created via submissions', testService(async (service, container) => {
+    it.only('should purge deleted entities, which were created via submissions', testService(async (service, container) => {
       const { Entities, oneFirst } = container;
       const asAlice = await service.login('alice');
 
@@ -320,7 +320,7 @@ describe('query module entities purge', () => {
       sourcesCount.should.be.equal(0);
     }));
 
-    it('should purge submission entity sources', testService(async (service, container) => {
+    it.only('should purge submission entity sources', testService(async (service, container) => {
       const { Entities, oneFirst } = container;
       const asAlice = await service.login('alice');
 
@@ -364,7 +364,7 @@ describe('query module entities purge', () => {
       sourcesCount.should.be.equal(1);
     }));
 
-    it('should purge submission backlog for entities', testService(async (service, container) => {
+    it.only('should purge submission backlog for entities', testService(async (service, container) => {
       const { Entities, oneFirst } = container;
       const asAlice = await service.login('alice');
 

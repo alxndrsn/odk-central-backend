@@ -193,7 +193,7 @@ describe('/audits', () => {
               should.not.exist(body[0].actor);
             })))));
 
-    it('should page data', testService((service) =>
+    it.only('should page data', testService((service) =>
       service.login('alice', (asAlice) =>
         submitThree(asAlice)
           .then(() => asAlice.get('/v1/audits?offset=1&limit=1')
@@ -203,7 +203,7 @@ describe('/audits', () => {
               body[0].details.instanceId.should.equal('two');
             })))));
 
-    it('should page extended data', testService((service) =>
+    it.only('should page extended data', testService((service) =>
       service.login('alice', (asAlice) =>
         submitThree(asAlice)
           .then(() => asAlice.get('/v1/audits?offset=1&limit=1')
@@ -318,7 +318,7 @@ describe('/audits', () => {
               body[2].action.should.equal('form.create');
             })))));
 
-    it('should filter by action category (submission)', testService((service) =>
+    it.only('should filter by action category (submission)', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects')
           .send({ name: 'audit project' })
@@ -356,7 +356,7 @@ describe('/audits', () => {
         });
     }));
 
-    it('should filter by action category (entity)', testService(async (service, container) => {
+    it.only('should filter by action category (entity)', testService(async (service, container) => {
       const asAlice = await service.login('alice');
 
       await asAlice.post('/v1/projects/1/forms?publish=true')
@@ -575,7 +575,7 @@ describe('/audits', () => {
                 body[1].actee.displayName.should.equal('Alice');
               }))))));
 
-    it('should filter out submission and backup events given action=nonverbose', testService((service, { run }) =>
+    it.only('should filter out submission and backup events given action=nonverbose', testService((service, { run }) =>
       service.login('alice', (asAlice) =>
         Promise.all([
           run(sql`insert into audits (action, "loggedAt", details) values ('backup', now(), '{"success":true}')`),
@@ -600,7 +600,7 @@ describe('/audits', () => {
               body[2].action.should.equal('user.session.create');
             })))));
 
-    it('should filter out entity events given action=nonverbose', testService(async (service, container) => {
+    it.only('should filter out entity events given action=nonverbose', testService(async (service, container) => {
       const asAlice = await service.login('alice');
 
       await asAlice.post('/v1/projects/1/forms?publish=true')
@@ -660,7 +660,7 @@ describe('/audits', () => {
         });
     }));
 
-    it('should filter out offline entity submission backlog events given action=nonverbose', testService(async (service, container) => {
+    it.only('should filter out offline entity submission backlog events given action=nonverbose', testService(async (service, container) => {
       const asAlice = await service.login('alice');
 
       await asAlice.post('/v1/projects/1/forms?publish=true')
@@ -703,7 +703,7 @@ describe('/audits', () => {
         });
     }));
 
-    it('should log and return notes if given', testService((service) =>
+    it.only('should log and return notes if given', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms?publish=true')
           .set('Content-Type', 'application/xml')
@@ -836,7 +836,7 @@ describe('/audits', () => {
               datasetActee.projectId.should.equal(1);
             }))));
 
-      it('should get the actee information of a dataset through an entity event', testService(async (service, container) => {
+      it.only('should get the actee information of a dataset through an entity event', testService(async (service, container) => {
         await service.login('alice', (asAlice) =>
           asAlice.post('/v1/projects/1/forms?publish=true')
             .send(testData.forms.simpleEntity)

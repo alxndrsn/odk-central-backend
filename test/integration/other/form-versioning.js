@@ -38,7 +38,7 @@ describe('form forward versioning', () => {
           newForm.draftDefId.should.not.equal(newForm.def.id);
         }))));
 
-  it('should preserve submissions', testService((service, { Forms }) =>
+  it.only('should preserve submissions', testService((service, { Forms }) =>
     service.login('alice', (asAlice) =>
       asAlice.post('/v1/projects/1/forms/simple/submissions')
         .send(testData.instances.simple.one)

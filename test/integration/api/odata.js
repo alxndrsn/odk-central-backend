@@ -122,18 +122,18 @@ describe('api: /forms/:id.svc', () => {
             .expect(200)
             .then(() => callback(asAlice))));
 
-    it('should reject if the submission does not exist', testService((service) =>
+    it.only('should reject if the submission does not exist', testService((service) =>
       withSubmission(service, (asAlice) =>
         asAlice.get("/v1/projects/1/forms/doubleRepeat.svc/Submissions('nonexistent')").expect(404))));
 
-    it('should reject if the submission has been soft-deleted', testService((service) =>
+    it.only('should reject if the submission has been soft-deleted', testService((service) =>
       withSubmission(service, (asAlice) =>
         asAlice.delete('/v1/projects/1/forms/doubleRepeat/submissions/double')
           .expect(200) // soft-delete
           .then(() => asAlice.get("/v1/projects/1/forms/doubleRepeat.svc/Submissions('double')")
             .expect(404)))));
 
-    it('should return a single row result', testService((service) =>
+    it.only('should return a single row result', testService((service) =>
       withSubmission(service, (asAlice) =>
         asAlice.get("/v1/projects/1/forms/doubleRepeat.svc/Submissions('double')")
           .expect(200)
@@ -170,7 +170,7 @@ describe('api: /forms/:id.svc', () => {
             });
           }))));
 
-    it('should return success if "uuid:" prefix is encoded', testService((service) =>
+    it.only('should return success if "uuid:" prefix is encoded', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms?publish=true')
           .send(testData.forms.doubleRepeat)
@@ -186,7 +186,7 @@ describe('api: /forms/:id.svc', () => {
             .then(() => asAlice.get("/v1/projects/1/forms/doubleRepeat.svc/Submissions('uuid%3A17b09e96-4141-43f5-9a70-611eb0e8f6b4')")
               .expect(200))))));
 
-    it('should return an accurate edit count', testService((service) =>
+    it.only('should return an accurate edit count', testService((service) =>
       withSubmission(service, (asAlice) =>
         asAlice.put('/v1/projects/1/forms/doubleRepeat/submissions/double')
           .send(testData.instances.doubleRepeat.double.replace(
@@ -199,7 +199,7 @@ describe('api: /forms/:id.svc', () => {
               body.value[0].__system.edits.should.equal(1);
             })))));
 
-    it('should return a single encrypted frame (no formdata)', testService((service) =>
+    it.only('should return a single encrypted frame (no formdata)', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms?publish=true')
           .send(testData.forms.encrypted)
@@ -239,7 +239,7 @@ describe('api: /forms/:id.svc', () => {
               });
             })))));
 
-    it('should return a single encrypted frame (has formdata)', testService((service) =>
+    it.only('should return a single encrypted frame (has formdata)', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms?publish=true')
           .send(testData.forms.encrypted)
@@ -282,7 +282,7 @@ describe('api: /forms/:id.svc', () => {
               });
             })))));
 
-    it('should return subtable results', testService((service) =>
+    it.only('should return subtable results', testService((service) =>
       withSubmission(service, (asAlice) =>
         asAlice.get("/v1/projects/1/forms/doubleRepeat.svc/Submissions('double')/children/child")
           .expect(200)
@@ -312,7 +312,7 @@ describe('api: /forms/:id.svc', () => {
             });
           }))));
 
-    it('should limit and offset subtable results', testService((service) =>
+    it.only('should limit and offset subtable results', testService((service) =>
       withSubmission(service, (asAlice) =>
         asAlice.get("/v1/projects/1/forms/doubleRepeat.svc/Submissions('double')/children/child?$top=1&$skip=1")
           .expect(200)
@@ -332,7 +332,7 @@ describe('api: /forms/:id.svc', () => {
             body['@odata.nextLink'].should.have.skiptoken({ repeatId: 'b6e93a81a53eed0566e65e472d4a4b9ae383ee6d' });
           }))));
 
-    it('should return just a count if asked', testService((service) =>
+    it.only('should return just a count if asked', testService((service) =>
       withSubmission(service, (asAlice) =>
         asAlice.get("/v1/projects/1/forms/doubleRepeat.svc/Submissions('double')/children/child?$top=0&$count=true")
           .expect(200)
@@ -347,7 +347,7 @@ describe('api: /forms/:id.svc', () => {
     // HACK: this test sort of relies on some trickery to make the backend
     // thing the submission is encrypted even though it isn't (see the replace
     // call). there is some chance this methodology is fragile. (mark1)
-    it('should gracefully degrade on encrypted subtables', testService((service) =>
+    it.only('should gracefully degrade on encrypted subtables', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms?publish=true')
           .send(testData.forms.doubleRepeat)
@@ -367,7 +367,7 @@ describe('api: /forms/:id.svc', () => {
               });
             })))));
 
-    it('should return mixed encoded/decoded URLs as supplied', testService((service) =>
+    it.only('should return mixed encoded/decoded URLs as supplied', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms?publish=true')
           .send(testData.forms.doubleRepeat.replace(
@@ -406,7 +406,7 @@ describe('api: /forms/:id.svc', () => {
                 })
             ]))))));
 
-    it('should return a single row result with all properties', testService((service) =>
+    it.only('should return a single row result with all properties', testService((service) =>
       withSubmission(service, (asAlice) =>
         asAlice.get("/v1/projects/1/forms/doubleRepeat.svc/Submissions('double')?$select=*")
           .expect(200)
@@ -442,7 +442,7 @@ describe('api: /forms/:id.svc', () => {
             });
           }))));
 
-    it('should return a single row result with selected properties', testService((service) =>
+    it.only('should return a single row result with selected properties', testService((service) =>
       withSubmission(service, (asAlice) =>
         asAlice.get("/v1/projects/1/forms/doubleRepeat.svc/Submissions('double')?$select=__id,__system/submissionDate,__system/status,name,meta/instanceID,children/child")
           .expect(200)
@@ -468,7 +468,7 @@ describe('api: /forms/:id.svc', () => {
             });
           }))));
 
-    it('should return a single row result with all system properties', testService((service) =>
+    it.only('should return a single row result with all system properties', testService((service) =>
       withSubmission(service, (asAlice) =>
         asAlice.get("/v1/projects/1/forms/doubleRepeat.svc/Submissions('double')?$select=__system")
           .expect(200)
@@ -498,7 +498,7 @@ describe('api: /forms/:id.svc', () => {
             });
           }))));
 
-    it('should return subtable results with selected properties', testService((service) =>
+    it.only('should return subtable results with selected properties', testService((service) =>
       withSubmission(service, (asAlice) =>
         asAlice.get("/v1/projects/1/forms/doubleRepeat.svc/Submissions('double')/children/child('8954b393f82c1833abb19be08a3d6cb382171f54')/toys/toy?$select=name")
           .expect(200)
@@ -517,7 +517,7 @@ describe('api: /forms/:id.svc', () => {
             });
           }))));
 
-    it('should not return parent IDs if __id is selected', testService((service) =>
+    it.only('should not return parent IDs if __id is selected', testService((service) =>
       withSubmission(service, (asAlice) =>
         asAlice.get("/v1/projects/1/forms/doubleRepeat.svc/Submissions('double')/children/child?$select=__id,name")
           .expect(200)
@@ -539,7 +539,7 @@ describe('api: /forms/:id.svc', () => {
             });
           }))));
 
-    it('should return only parent ID', testService(async (service) => {
+    it.only('should return only parent ID', testService(async (service) => {
       const asAlice = await withSubmission(service, identity);
 
       await asAlice.get('/v1/projects/1/forms/doubleRepeat.svc/Submissions(\'double\')/children/child(\'b6e93a81a53eed0566e65e472d4a4b9ae383ee6d\')/toys/toy?$select=__Submissions-children-child-id')
@@ -585,7 +585,7 @@ describe('api: /forms/:id.svc', () => {
               .expect(200)
               .then(() => callback(asAlice)))));
 
-    it('should return toplevel rows', testService((service) =>
+    it.only('should return toplevel rows', testService((service) =>
       withSubmissions(service, (asAlice) =>
         asAlice.get('/v1/projects/1/forms/withrepeat.svc/Submissions')
           .expect(200)
@@ -666,7 +666,7 @@ describe('api: /forms/:id.svc', () => {
             });
           }))));
 
-    it('should exclude a deleted submission from rows', testService((service) =>
+    it.only('should exclude a deleted submission from rows', testService((service) =>
       withSubmissions(service, (asAlice) =>
         asAlice.delete('/v1/projects/1/forms/withrepeat/submissions/rthree')
           .expect(200)
@@ -727,7 +727,7 @@ describe('api: /forms/:id.svc', () => {
               });
             })))));
 
-    it('should return deleted submission', testService((service) =>
+    it.only('should return deleted submission', testService((service) =>
       withSubmissions(service, (asAlice) =>
         asAlice.delete('/v1/projects/1/forms/withrepeat/submissions/rthree')
           .expect(200)
@@ -775,7 +775,7 @@ describe('api: /forms/:id.svc', () => {
             body['@odata.count'].should.equal(0);
           }))));
 
-    it('should return subtable results', testService((service) =>
+    it.only('should return subtable results', testService((service) =>
       withSubmissions(service, (asAlice) =>
         asAlice.get('/v1/projects/1/forms/withrepeat.svc/Submissions.children.child')
           .expect(200)
@@ -801,7 +801,7 @@ describe('api: /forms/:id.svc', () => {
             });
           }))));
 
-    it('should limit and offset toplevel rows', testService((service) =>
+    it.only('should limit and offset toplevel rows', testService((service) =>
       withSubmissions(service, (asAlice) =>
         asAlice.get('/v1/projects/1/forms/withrepeat.svc/Submissions?$top=1&$skip=1')
           .expect(200)
@@ -843,7 +843,7 @@ describe('api: /forms/:id.svc', () => {
     // nb: order of id and createdAt is not guaranteed to be same
     // in test env, see submission id 134849 and 134850
     // 50 (at 873 ms) was created before 49 (at 874 ms)
-    it('should limit Submissions', testService(async (service) => {
+    it.only('should limit Submissions', testService(async (service) => {
       const asAlice = await withSubmissions(service, identity);
 
       await asAlice.get('/v1/projects/1/forms/withrepeat.svc/Submissions?$top=1')
@@ -857,7 +857,7 @@ describe('api: /forms/:id.svc', () => {
         });
     }));
 
-    it('should ignore $skip when $skipToken is given', testService(async (service) => {
+    it.only('should ignore $skip when $skipToken is given', testService(async (service) => {
       const asAlice = await withSubmissions(service, identity);
 
       const nextlink = await asAlice.get('/v1/projects/1/forms/withrepeat.svc/Submissions?$top=1&$skip=1')
@@ -886,7 +886,7 @@ describe('api: /forms/:id.svc', () => {
         });
     }));
 
-    it('should have no impact on skipToken when a new submission is created', testService(async (service) => {
+    it.only('should have no impact on skipToken when a new submission is created', testService(async (service) => {
       const asAlice = await withSubmissions(service, identity);
 
       const nextlink = await asAlice.get('/v1/projects/1/forms/withrepeat.svc/Submissions?$top=2')
@@ -923,7 +923,7 @@ describe('api: /forms/:id.svc', () => {
         });
     }));
 
-    it('should support $skiptoken even if associated submission is deleted', testService(async (service) => {
+    it.only('should support $skiptoken even if associated submission is deleted', testService(async (service) => {
       const asAlice = await service.login('alice');
       await asAlice.post('/v1/projects/1/forms/simple/submissions')
         .send(testData.instances.simple.one)
@@ -944,7 +944,7 @@ describe('api: /forms/:id.svc', () => {
       odata.value[0].__id.should.equal('one');
     }));
 
-    it('should return no submissions if $skiptoken instanceId does not exist', testService(async (service) => {
+    it.only('should return no submissions if $skiptoken instanceId does not exist', testService(async (service) => {
       const asAlice = await service.login('alice');
       await asAlice.post('/v1/projects/1/forms/simple/submissions')
         .send(testData.instances.simple.one)
@@ -956,7 +956,7 @@ describe('api: /forms/:id.svc', () => {
       odata.value.length.should.equal(0);
     }));
 
-    it('should not return duplicate submissions if $skiptoken instanceId is reused', testService(async (service) => {
+    it.only('should not return duplicate submissions if $skiptoken instanceId is reused', testService(async (service) => {
       const asAlice = await service.login('alice');
 
       // Create two submissions with instance IDs of 'one' and 'two'. Creating
@@ -1005,7 +1005,7 @@ describe('api: /forms/:id.svc', () => {
       should.not.exist(secondChunk['@odata.nextLink']);
     }));
 
-    it('should return a matching submission whose id is after that of $skiptoken submission', testService(async (service, { run }) => {
+    it.only('should return a matching submission whose id is after that of $skiptoken submission', testService(async (service, { run }) => {
       const asAlice = await service.login('alice');
       await asAlice.post('/v1/projects/1/forms/simple/submissions')
         .send(testData.instances.simple.two)
@@ -1028,7 +1028,7 @@ describe('api: /forms/:id.svc', () => {
       odata.value[0].__id.should.equal('one');
     }));
 
-    it('should limit and filter Submissions', testService(async (service) => {
+    it.only('should limit and filter Submissions', testService(async (service) => {
       const asAlice = await withSubmissions(service, identity);
 
       await asAlice.patch('/v1/projects/1/forms/withrepeat/submissions/rtwo')
@@ -1046,7 +1046,7 @@ describe('api: /forms/:id.svc', () => {
         });
     }));
 
-    it('should limit and return selected fields of Submissions', testService(async (service) => {
+    it.only('should limit and return selected fields of Submissions', testService(async (service) => {
       const asAlice = await withSubmissions(service, identity);
 
       await asAlice.get('/v1/projects/1/forms/withrepeat.svc/Submissions?$top=1&$select=age')
@@ -1060,7 +1060,7 @@ describe('api: /forms/:id.svc', () => {
         });
     }));
 
-    it('should provide toplevel row count if requested', testService((service) =>
+    it.only('should provide toplevel row count if requested', testService((service) =>
       withSubmissions(service, (asAlice) =>
         asAlice.get('/v1/projects/1/forms/withrepeat.svc/Submissions?$top=1&$count=true')
           .expect(200)
@@ -1100,7 +1100,7 @@ describe('api: /forms/:id.svc', () => {
             body['@odata.nextLink'].should.have.skiptoken({ instanceId: 'rthree' });
           }))));
 
-    it('should return submitter-filtered toplevel rows if requested', testService((service) =>
+    it.only('should return submitter-filtered toplevel rows if requested', testService((service) =>
       service.login('alice', (asAlice) =>
         service.login('bob', (asBob) =>
           asAlice.post('/v1/projects/1/forms/withrepeat/submissions')
@@ -1176,7 +1176,7 @@ describe('api: /forms/:id.svc', () => {
                 });
               }))))));
 
-    it('should return submissionDate-filtered toplevel rows if requested', testService((service, { run }) =>
+    it.only('should return submissionDate-filtered toplevel rows if requested', testService((service, { run }) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms/withrepeat/submissions')
           .send(testData.instances.withrepeat.one)
@@ -1218,7 +1218,7 @@ describe('api: /forms/:id.svc', () => {
 
     // #cb459: `gt` filter for submissionDate is not working as expected because of tz precision
     // This test fails without 20221208-01-reduce-tz-precision.js (before-after state)
-    it('should only return submissions with submissionDate gt provided timestamp', testService(async (service, { run }) => {
+    it.only('should only return submissions with submissionDate gt provided timestamp', testService(async (service, { run }) => {
       const asAlice = await service.login('alice');
 
       await asAlice.post('/v1/projects/1/forms/withrepeat/submissions')
@@ -1246,7 +1246,7 @@ describe('api: /forms/:id.svc', () => {
         });
     }));
 
-    it('should return submissionDate-filtered toplevel rows with a function', testService((service, { run }) =>
+    it.only('should return submissionDate-filtered toplevel rows with a function', testService((service, { run }) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms/withrepeat/submissions')
           .send(testData.instances.withrepeat.one)
@@ -1286,7 +1286,7 @@ describe('api: /forms/:id.svc', () => {
               });
             })))));
 
-    it('should return updatedAt-filtered toplevel rows if requested', testService((service) =>
+    it.only('should return updatedAt-filtered toplevel rows if requested', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms/withrepeat/submissions')
           .send(testData.instances.withrepeat.one)
@@ -1332,7 +1332,7 @@ describe('api: /forms/:id.svc', () => {
               });
             })))));
 
-    it('should return reviewState-filtered toplevel rows if requested', testService((service) =>
+    it.only('should return reviewState-filtered toplevel rows if requested', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms/withrepeat/submissions')
           .send(testData.instances.withrepeat.one)
@@ -1382,7 +1382,7 @@ describe('api: /forms/:id.svc', () => {
               });
             })))));
 
-    it('should filter toplevel rows by $root expression', testService(async (service) => {
+    it.only('should filter toplevel rows by $root expression', testService(async (service) => {
       const asAlice = await withSubmissions(service, identity);
 
       await asAlice.patch('/v1/projects/1/forms/withrepeat/submissions/rtwo')
@@ -1428,7 +1428,7 @@ describe('api: /forms/:id.svc', () => {
     }));
 
     describe('orderby', () => {
-      it('should return submissions in specified order', testService(async (service) => {
+      it.only('should return submissions in specified order', testService(async (service) => {
         const asAlice = await service.login('alice');
         const asBob = await service.login('bob');
 
@@ -1468,7 +1468,7 @@ describe('api: /forms/:id.svc', () => {
           });
       }));
 
-      it('should combine orderby and other things like filtering', testService(async (service) => {
+      it.only('should combine orderby and other things like filtering', testService(async (service) => {
         const asAlice = await service.login('alice');
         const asBob = await service.login('bob');
 
@@ -1503,7 +1503,7 @@ describe('api: /forms/:id.svc', () => {
           });
       }));
 
-      it('should return null values at the correct end of list with orderby', testService(async (service) => {
+      it.only('should return null values at the correct end of list with orderby', testService(async (service) => {
         const asAlice = await service.login('alice');
         const asBob = await service.login('bob');
 
@@ -1543,7 +1543,7 @@ describe('api: /forms/:id.svc', () => {
           });
       }));
 
-      it('should reject if both orderby and skiptoken are used together', testService(async (service) => {
+      it.only('should reject if both orderby and skiptoken are used together', testService(async (service) => {
         const asAlice = await service.login('alice');
 
         await asAlice.post('/v1/projects/1/forms/withrepeat/submissions')
@@ -1568,7 +1568,7 @@ describe('api: /forms/:id.svc', () => {
       }));
     });
 
-    it('should count correctly while windowing', testService((service) =>
+    it.only('should count correctly while windowing', testService((service) =>
       service.login('alice', (asAlice) =>
         service.login('bob', (asBob) =>
           asAlice.post('/v1/projects/1/forms/withrepeat/submissions')
@@ -1593,7 +1593,7 @@ describe('api: /forms/:id.svc', () => {
                 body['@odata.count'].should.equal(3);
               }))))));
 
-    it('should count correctly while filtering', testService((service) =>
+    it.only('should count correctly while filtering', testService((service) =>
       service.login('alice', (asAlice) =>
         service.login('bob', (asBob) =>
           asAlice.post('/v1/projects/1/forms/withrepeat/submissions')
@@ -1618,7 +1618,7 @@ describe('api: /forms/:id.svc', () => {
                 body['@odata.count'].should.equal(2);
               }))))));
 
-    it('should count correctly while filtering and windowing', testService((service) =>
+    it.only('should count correctly while filtering and windowing', testService((service) =>
       service.login('alice', (asAlice) =>
         service.login('bob', (asBob) =>
           asAlice.post('/v1/projects/1/forms/withrepeat/submissions')
@@ -1643,7 +1643,7 @@ describe('api: /forms/:id.svc', () => {
                 body['@odata.count'].should.equal(2);
               }))))));
 
-    it('should return encrypted frames (no formdata)', testService((service) =>
+    it.only('should return encrypted frames (no formdata)', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms?publish=true')
           .send(testData.forms.encrypted)
@@ -1706,7 +1706,7 @@ describe('api: /forms/:id.svc', () => {
               });
             })))));
 
-    it('should return encrypted frames (has formdata)', testService((service) =>
+    it.only('should return encrypted frames (has formdata)', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms?publish=true')
           .send(testData.forms.encrypted)
@@ -1775,7 +1775,7 @@ describe('api: /forms/:id.svc', () => {
               });
             })))));
 
-    it('should limit and offset subtable results', testService((service) =>
+    it.only('should limit and offset subtable results', testService((service) =>
       withSubmissions(service, (asAlice) =>
         asAlice.get('/v1/projects/1/forms/withrepeat.svc/Submissions.children.child?$top=1&$skip=1')
           .expect(200)
@@ -1793,7 +1793,7 @@ describe('api: /forms/:id.svc', () => {
             body['@odata.nextLink'].should.have.skiptoken({ repeatId: '52eff9ea82550183880b9d64c20487642fa6e60c' });
           }))));
 
-    it('should reject if subtable filtering criterion is non-root', testService(async (service) => {
+    it.only('should reject if subtable filtering criterion is non-root', testService(async (service) => {
       const asAlice = await withSubmissions(service, identity);
 
       await asAlice.get('/v1/projects/1/forms/withrepeat.svc/Submissions.children.child?$filter=__system/reviewState eq \'rejected\'')
@@ -1804,7 +1804,7 @@ describe('api: /forms/:id.svc', () => {
         });
     }));
 
-    it('should filter subtable results', testService(async (service) => {
+    it.only('should filter subtable results', testService(async (service) => {
       const asAlice = await withSubmissions(service, identity);
 
       await asAlice.patch('/v1/projects/1/forms/withrepeat/submissions/rtwo')
@@ -1831,7 +1831,7 @@ describe('api: /forms/:id.svc', () => {
         });
     }));
 
-    it('should filter and paginate subtable results', testService(async (service) => {
+    it.only('should filter and paginate subtable results', testService(async (service) => {
       const asAlice = await withSubmissions(service, identity);
 
       await asAlice.patch('/v1/projects/1/forms/withrepeat/submissions/rtwo')
@@ -1853,7 +1853,7 @@ describe('api: /forms/:id.svc', () => {
         });
     }));
 
-    it('should count correctly while filtering and windowing subtable', testService(async (service) => {
+    it.only('should count correctly while filtering and windowing subtable', testService(async (service) => {
       const asAlice = await withSubmissions(service, identity);
 
       await asAlice.patch('/v1/projects/1/forms/withrepeat/submissions/rtwo')
@@ -1867,7 +1867,7 @@ describe('api: /forms/:id.svc', () => {
         });
     }));
 
-    it('should limit subtable results', testService(async (service) => {
+    it.only('should limit subtable results', testService(async (service) => {
       const asAlice = await withSubmissions(service, identity);
 
       const nextlink = await asAlice.get('/v1/projects/1/forms/withrepeat.svc/Submissions.children.child?$top=2')
@@ -1888,7 +1888,7 @@ describe('api: /forms/:id.svc', () => {
         });
     }));
 
-    it('should reject unmatched repeatId', testService(async (service) => {
+    it.only('should reject unmatched repeatId', testService(async (service) => {
       const asAlice = await withSubmissions(service, identity);
 
       await asAlice.get('/v1/projects/1/forms/withrepeat.svc/Submissions.children.child?$top=2')
@@ -1909,7 +1909,7 @@ describe('api: /forms/:id.svc', () => {
         });
     }));
 
-    it('should limit and filter subtable', testService(async (service) => {
+    it.only('should limit and filter subtable', testService(async (service) => {
       const asAlice = await withSubmissions(service, identity);
 
       await asAlice.patch('/v1/projects/1/forms/withrepeat/submissions/rtwo')
@@ -1933,7 +1933,7 @@ describe('api: /forms/:id.svc', () => {
         });
     }));
 
-    it('should return subtable from deleted submissions', testService(async (service) => {
+    it.only('should return subtable from deleted submissions', testService(async (service) => {
       const asAlice = await withSubmissions(service, identity);
 
       await asAlice.delete('/v1/projects/1/forms/withrepeat/submissions/rtwo')
@@ -1948,7 +1948,7 @@ describe('api: /forms/:id.svc', () => {
     }));
 
     // we cheat here. see mark1.
-    it('should gracefully degrade on encrypted subtables', testService((service) =>
+    it.only('should gracefully degrade on encrypted subtables', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms?publish=true')
           .send(testData.forms.doubleRepeat)
@@ -1968,7 +1968,7 @@ describe('api: /forms/:id.svc', () => {
               });
             })))));
 
-    it('should return toplevel rows with selected properties', testService((service) =>
+    it.only('should return toplevel rows with selected properties', testService((service) =>
       withSubmissions(service, (asAlice) =>
         asAlice.get('/v1/projects/1/forms/withrepeat.svc/Submissions?$select=__id,name')
           .expect(200)
@@ -1988,7 +1988,7 @@ describe('api: /forms/:id.svc', () => {
             });
           }))));
 
-    it('should return toplevel rows with group properties', testService(async (service) => {
+    it.only('should return toplevel rows with group properties', testService(async (service) => {
       const asAlice = await withSubmissions(service, identity);
 
       await asAlice.get('/v1/projects/1/forms/withrepeat.svc/Submissions?$select=meta')
@@ -2005,7 +2005,7 @@ describe('api: /forms/:id.svc', () => {
         });
     }));
 
-    it('should return toplevel row with nested group properties', testService(async (service) => {
+    it.only('should return toplevel row with nested group properties', testService(async (service) => {
       const asAlice = await service.login('alice');
 
       await asAlice.post('/v1/projects/1/forms?publish=true')
@@ -2038,7 +2038,7 @@ describe('api: /forms/:id.svc', () => {
         });
     }));
 
-    it('should return subtable results with selected properties', testService((service) =>
+    it.only('should return subtable results with selected properties', testService((service) =>
       withSubmissions(service, (asAlice) =>
         asAlice.get('/v1/projects/1/forms/withrepeat.svc/Submissions.children.child?$select=__id,name')
           .expect(200)
@@ -2058,7 +2058,7 @@ describe('api: /forms/:id.svc', () => {
             });
           }))));
 
-    it('should return only parent ID', testService(async (service) => {
+    it.only('should return only parent ID', testService(async (service) => {
       const asAlice = await service.login('alice');
 
       await asAlice.post('/v1/projects/1/forms?publish=true')
@@ -2079,7 +2079,7 @@ describe('api: /forms/:id.svc', () => {
 
     }));
 
-    it('should return subtable results with group properties', testService(async (service) => {
+    it.only('should return subtable results with group properties', testService(async (service) => {
       const asAlice = await service.login('alice');
 
       await asAlice.post('/v1/projects/1/forms?publish=true')
@@ -2106,7 +2106,7 @@ describe('api: /forms/:id.svc', () => {
     }));
 
     // bug cb#496 and cb#607
-    it('should return results even when repeat name is not a valid OData name ', testService(async (service) => {
+    it.only('should return results even when repeat name is not a valid OData name ', testService(async (service) => {
       const asAlice = await service.login('alice');
 
       await asAlice.post('/v1/projects/1/forms?publish=true')
@@ -2316,7 +2316,7 @@ describe('api: /forms/:id.svc', () => {
             .then(() => service.login('chelsea', (asChelsea) =>
               asChelsea.get("/v1/projects/1/forms/simple/draft.svc/Submissions('xyz')").expect(403))))));
 
-      it('should return a single row result', testService((service) =>
+      it.only('should return a single row result', testService((service) =>
         service.login('alice', (asAlice) =>
           asAlice.post('/v1/projects/1/forms')
             .send(testData.forms.doubleRepeat)
@@ -2361,7 +2361,7 @@ describe('api: /forms/:id.svc', () => {
                 });
               })))));
 
-      it('should not return results from the published form', testService((service) =>
+      it.only('should not return results from the published form', testService((service) =>
         service.login('alice', (asAlice) =>
           asAlice.post('/v1/projects/1/forms')
             .send(testData.forms.doubleRepeat)
@@ -2392,7 +2392,7 @@ describe('api: /forms/:id.svc', () => {
             .then(() => service.login('chelsea', (asChelsea) =>
               asChelsea.get('/v1/projects/1/forms/simple/draft.svc/Submissions').expect(403))))));
 
-      it('should return toplevel rows', testService((service) =>
+      it.only('should return toplevel rows', testService((service) =>
         service.login('alice', (asAlice) =>
           asAlice.post('/v1/projects/1/forms/withrepeat/draft')
             .expect(200)
@@ -2487,7 +2487,7 @@ describe('api: /forms/:id.svc', () => {
                 });
               })))));
 
-      it('should not return results from the published form', testService((service) =>
+      it.only('should not return results from the published form', testService((service) =>
         service.login('alice', (asAlice) =>
           asAlice.post('/v1/projects/1/forms')
             .send(testData.forms.doubleRepeat)

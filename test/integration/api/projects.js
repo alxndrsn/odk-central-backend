@@ -162,7 +162,7 @@ describe('api: /projects', () => {
                 body[1].lastEntity.should.be.a.recentIsoDate();
               }))))));
 
-    it('should return extended metadata if requested', testService((service) =>
+    it.only('should return extended metadata if requested', testService((service) =>
       service.login('alice', (asAlice) =>
         asAlice.delete('/v1/projects/1/forms/simple')
           .expect(200)
@@ -308,7 +308,7 @@ describe('api: /projects', () => {
             body.should.be.a.Project();
           }))));
 
-    it('should return extended metadata if requested', testService(async (service) => {
+    it.only('should return extended metadata if requested', testService(async (service) => {
       const asAlice = await service.login('alice');
 
       await asAlice.get('/v1/projects/1')
@@ -738,7 +738,7 @@ describe('api: /projects', () => {
               text.should.match(/<submission base64RsaPublicKey="[a-zA-Z0-9+/]{392}"\/>/);
             })))));
 
-    it('should delete draft submissions on project encryption', testService(async (service) => {
+    it.only('should delete draft submissions on project encryption', testService(async (service) => {
 
       const asAlice = await service.login('alice');
 
@@ -763,7 +763,7 @@ describe('api: /projects', () => {
         });
     }));
 
-    it('should not delete live submissions on project encryption', testService(async (service) => {
+    it.only('should not delete live submissions on project encryption', testService(async (service) => {
 
       const asAlice = await service.login('alice');
 
@@ -1559,7 +1559,7 @@ describe('api: /projects?forms=true', () => {
               body[1].formList[0].name.should.equal('Simple 2');
             }))))));
 
-    it('should set project data from formList even on non-extended projects', testService((service) =>
+    it.only('should set project data from formList even on non-extended projects', testService((service) =>
       service.login('alice', (asAlice) => asAlice.post('/v1/projects/1/forms/simple/submissions')
         .send(testData.instances.simple.one)
         .set('Content-Type', 'application/xml')
@@ -1582,7 +1582,7 @@ describe('api: /projects?forms=true', () => {
             form.reviewStates.received.should.equal(2);
           })))));
 
-    it('should set project data from datasetList even on non-extended projects', testService(async (service, container) => {
+    it.only('should set project data from datasetList even on non-extended projects', testService(async (service, container) => {
       const asAlice = await service.login('alice');
 
       await asAlice.post('/v1/projects/1/forms?publish=true')

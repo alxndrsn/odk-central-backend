@@ -127,7 +127,7 @@ describe('analytics task queries', function () {
     }));
 
     // eslint-disable-next-line no-multi-spaces
-    it('should count encrypted projects', testService(async (service, container) => {
+    it.only('should count encrypted projects', testService(async (service, container) => {
       // encrypted project that has recent activity
       await submitToForm(service, 'alice', 1, 'simple', testData.instances.simple.one);
 
@@ -222,7 +222,7 @@ describe('analytics task queries', function () {
     }));
 
     describe('counting client audits', () => {
-      it('should count the total number of client audit submission attachments', testService(async (service, { Analytics }) => {
+      it.only('should count the total number of client audit submission attachments', testService(async (service, { Analytics }) => {
         const asAlice = await service.login('alice');
         await asAlice.post('/v1/projects/1/forms?publish=true')
           .set('Content-Type', 'application/xml')
@@ -257,7 +257,7 @@ describe('analytics task queries', function () {
         res.should.equal(1);
       }));
 
-      it('should count client audit attachments that failed processing', testService(async (service, container) => {
+      it.only('should count client audit attachments that failed processing', testService(async (service, container) => {
         const asAlice = await service.login('alice');
 
         // encrypt default project and send one encrypted client audit attachment
@@ -332,7 +332,7 @@ describe('analytics task queries', function () {
           });
       }));
 
-      it('should count the number of rows extracted from client audit attachments', testService(async (service, container) => {
+      it.only('should count the number of rows extracted from client audit attachments', testService(async (service, container) => {
         const asAlice = await service.login('alice');
         await asAlice.post('/v1/projects/1/forms?publish=true')
           .set('Content-Type', 'application/xml')
@@ -360,7 +360,7 @@ describe('analytics task queries', function () {
           .then((res) => res.should.equal(8));
       }));
 
-      it('should count rows from client audit attachments uploaded to s3', testService(async (service, container) => {
+      it.only('should count rows from client audit attachments uploaded to s3', testService(async (service, container) => {
         global.s3.enableMock();
 
         const asAlice = await service.login('alice');
@@ -392,7 +392,7 @@ describe('analytics task queries', function () {
       }));
     });
 
-    it('should count failed audits', testService(async (service, container) => {
+    it.only('should count failed audits', testService(async (service, container) => {
       const asAlice = await service.login('alice');
       await asAlice.post('/v1/projects/1/forms?publish=true')
         .set('Content-Type', 'application/xml')
@@ -470,7 +470,7 @@ describe('analytics task queries', function () {
       xmlOnlyFormDefs.should.equal(3);
     }));
 
-    it('should count the number of binary blob files total and uploaded to external store', testService(async (service, container) => {
+    it.only('should count the number of binary blob files total and uploaded to external store', testService(async (service, container) => {
       const asAlice = await service.login('alice');
 
       await asAlice.post('/v1/projects/1/forms?publish=true')
@@ -500,7 +500,7 @@ describe('analytics task queries', function () {
       blobs.should.eql({ total_blobs: 3, uploaded_blobs: 2 });
     }));
 
-    it('should count number of reset failed blob uploads', testService(async (service, container) => {
+    it.only('should count number of reset failed blob uploads', testService(async (service, container) => {
       const asAlice = await service.login('alice');
 
       await asAlice.post('/v1/projects/1/forms?publish=true')
@@ -620,7 +620,7 @@ describe('analytics task queries', function () {
       projects['1'].formfill.recent.should.equal(1);
     }));
 
-    it('should calculate number of app user per project', testService(async (service, container) => {
+    it.only('should calculate number of app user per project', testService(async (service, container) => {
       // an app user that will make a submission
       const token = await createAppUser(service, 1, 'simple');
       // another non-recent app user
@@ -637,7 +637,7 @@ describe('analytics task queries', function () {
       res[0].recent.should.equal(1);
     }));
 
-    it('should calculate unique device ids per project', testService(async (service, container) => {
+    it.only('should calculate unique device ids per project', testService(async (service, container) => {
       await submitToForm(service, 'alice', 1, 'simple', testData.instances.simple.one, 'device1');
       await submitToForm(service, 'alice', 1, 'simple', testData.instances.simple.two, 'device2');
       // make all submissions so far in the distant past
@@ -649,7 +649,7 @@ describe('analytics task queries', function () {
       res[0].recent.should.equal(1);
     }));
 
-    it('should calculate public links per project', testService(async (service, container) => {
+    it.only('should calculate public links per project', testService(async (service, container) => {
       const publicLink = await createPublicLink(service, 1, 'simple');
       await service.post(`/v1/key/${publicLink}/projects/1/forms/simple/submissions`)
         .send(testData.instances.simple.one)
@@ -666,7 +666,7 @@ describe('analytics task queries', function () {
   });
 
   describe('form metrics', () => {
-    it('should calculate forms per project', testService(async (service, container) => {
+    it.only('should calculate forms per project', testService(async (service, container) => {
       const projId = await createTestProject(service, container, 'New Proj');
       const xmlFormId = await createTestForm(service, container, testData.forms.simple, projId);
       await submitToForm(service, 'alice', projId, xmlFormId, testData.instances.simple.one);
@@ -698,7 +698,7 @@ describe('analytics task queries', function () {
       res[0].repeat_recent.should.equal(0);
     }));
 
-    it('should calculate forms with audits', testService(async (service, container) => {
+    it.only('should calculate forms with audits', testService(async (service, container) => {
       const projId = await createTestProject(service, container, 'New Proj');
       await createTestForm(service, container, testData.forms.clientAudits, projId);
       await service.login('alice', (asAlice) =>
@@ -724,7 +724,7 @@ describe('analytics task queries', function () {
       projects[projId].recent.should.equal(1);
     }));
 
-    it('should calculate forms with geospatial elements', testService(async (service, container) => {
+    it.only('should calculate forms with geospatial elements', testService(async (service, container) => {
       const xmlFormId = await createTestForm(service, container, geoForm, 1);
       await submitToForm(service, 'alice', 1, xmlFormId, geoSubmission('one'));
       const res = await container.Analytics.countFormFieldTypes();
@@ -743,7 +743,7 @@ describe('analytics task queries', function () {
       projects['1'].recent.should.equal(1);
     }));
 
-    it('should count encrypted forms per project', testService(async (service, container) => {
+    it.only('should count encrypted forms per project', testService(async (service, container) => {
       const projId = await createTestProject(service, container, 'New Proj');
       const encryptedFormId = await createTestForm(service, container, testData.forms.encrypted, projId);
       await submitToForm(service, 'alice', projId, encryptedFormId, testData.instances.encrypted.one);
@@ -765,7 +765,7 @@ describe('analytics task queries', function () {
       projects[projId].recent.should.equal(0);
     }));
 
-    it('should calculate forms in each form state per project', testService(async (service, container) => {
+    it.only('should calculate forms in each form state per project', testService(async (service, container) => {
       const projId = await createTestProject(service, container, 'New Proj');
       const xmlFormId = await createTestForm(service, container, testData.forms.simple, projId);
       await submitToForm(service, 'alice', projId, xmlFormId, testData.instances.simple.one);
@@ -877,7 +877,7 @@ describe('analytics task queries', function () {
   });
 
   describe('submission metrics', () => {
-    it('should calculate submissions', testService(async (service, container) => {
+    it.only('should calculate submissions', testService(async (service, container) => {
       await submitToForm(service, 'alice', 1, 'simple', testData.instances.simple.one);
       await submitToForm(service, 'alice', 1, 'simple', testData.instances.simple.two);
       // make all submissions so far in the distant past
@@ -889,7 +889,7 @@ describe('analytics task queries', function () {
       res[0].recent.should.equal(1);
     }));
 
-    it('should calculate submissions by review state: approved', testService(async (service, container) => {
+    it.only('should calculate submissions by review state: approved', testService(async (service, container) => {
       await submitToForm(service, 'alice', 1, 'simple', simpleInstance('aaa'));
       await service.login('alice', (asAlice) =>
         asAlice.patch('/v1/projects/1/forms/simple/submissions/aaa')
@@ -919,7 +919,7 @@ describe('analytics task queries', function () {
     }));
 
 
-    it('should calculate submissions by review state: rejected', testService(async (service, container) => {
+    it.only('should calculate submissions by review state: rejected', testService(async (service, container) => {
       await submitToForm(service, 'alice', 1, 'simple', simpleInstance('aaa'));
       await service.login('alice', (asAlice) =>
         asAlice.patch('/v1/projects/1/forms/simple/submissions/aaa')
@@ -948,7 +948,7 @@ describe('analytics task queries', function () {
       projects['1'].rejected.total.should.equal(2);
     }));
 
-    it('should calculate submissions by review state: hasIssues', testService(async (service, container) => {
+    it.only('should calculate submissions by review state: hasIssues', testService(async (service, container) => {
       await submitToForm(service, 'alice', 1, 'simple', simpleInstance('aaa'));
       await service.login('alice', (asAlice) =>
         asAlice.patch('/v1/projects/1/forms/simple/submissions/aaa')
@@ -977,7 +977,7 @@ describe('analytics task queries', function () {
       projects['1'].hasIssues.total.should.equal(2);
     }));
 
-    it('should calculate submissions by review state: edited', testService(async (service, container) => {
+    it.only('should calculate submissions by review state: edited', testService(async (service, container) => {
       await submitToForm(service, 'alice', 1, 'simple', simpleInstance('aaa'));
       await service.login('alice', (asAlice) =>
         asAlice.patch('/v1/projects/1/forms/simple/submissions/aaa')
@@ -1006,7 +1006,7 @@ describe('analytics task queries', function () {
       projects['1'].edited.total.should.equal(2);
     }));
 
-    it('should calculate submissions that have been edited', testService(async (service, container) => {
+    it.only('should calculate submissions that have been edited', testService(async (service, container) => {
       // submissions can be edited (have new versions) while the review state is something else
       await submitToForm(service, 'alice', 1, 'simple', testData.instances.simple.one);
       await service.login('alice', (asAlice) =>
@@ -1030,7 +1030,7 @@ describe('analytics task queries', function () {
       res[0].recent.should.equal(1);
     }));
 
-    it('should calculate submissions that have comments', testService(async (service, container) => {
+    it.only('should calculate submissions that have comments', testService(async (service, container) => {
       await submitToForm(service, 'alice', 1, 'simple', testData.instances.simple.one);
       await service.login('alice', (asAlice) =>
         asAlice.post('/v1/projects/1/forms/simple/submissions/one/comments')
@@ -1049,7 +1049,7 @@ describe('analytics task queries', function () {
       res[0].recent.should.equal(1);
     }));
 
-    it('should calculate submissions by user type', testService(async (service, container) => {
+    it.only('should calculate submissions by user type', testService(async (service, container) => {
       // web user submission
       await submitToForm(service, 'alice', 1, 'simple', testData.instances.simple.one);
 
@@ -1129,7 +1129,7 @@ describe('analytics task queries', function () {
       datasets[0].num_followup_forms.should.be.equal(1);
     }));
 
-    it('should calculate entities', testService(async (service, container) => {
+    it.only('should calculate entities', testService(async (service, container) => {
       const asAlice = await service.login('alice');
 
       await createTestForm(service, container, testData.forms.simpleEntity, 1);
@@ -1151,7 +1151,7 @@ describe('analytics task queries', function () {
       datasets[0].num_entities_recent.should.be.equal(1);
     }));
 
-    it('should calculate failed entities', testService(async (service, container) => {
+    it.only('should calculate failed entities', testService(async (service, container) => {
       await createTestForm(service, container, testData.forms.simpleEntity, 1);
       await submitToForm(service, 'alice', 1, 'simpleEntity', testData.instances.simpleEntity.one);
 
@@ -1171,7 +1171,7 @@ describe('analytics task queries', function () {
       datasets[0].num_failed_entities_recent.should.be.equal(1);
     }));
 
-    it('should calculate entity updates', testService(async (service, container) => {
+    it.only('should calculate entity updates', testService(async (service, container) => {
       const asAlice = await service.login('alice');
 
       await createTestForm(service, container, testData.forms.simpleEntity, 1);
@@ -1201,7 +1201,7 @@ describe('analytics task queries', function () {
       datasets[0].num_entity_updates_recent.should.be.equal(1);
     }));
 
-    it('should calculate entity updates through different sources like API and submission', testService(async (service, container) => {
+    it.only('should calculate entity updates through different sources like API and submission', testService(async (service, container) => {
       const asAlice = await service.login('alice');
 
       await createTestForm(service, container, testData.forms.simpleEntity, 1);
@@ -1243,7 +1243,7 @@ describe('analytics task queries', function () {
       datasets[0].num_entity_updates_recent.should.be.equal(datasets[0].num_entity_updates_api_recent + datasets[0].num_entity_updates_sub_recent);
     }));
 
-    it('should calculate entity creates through different sources (submission, API, bulk', testService(async (service, container) => {
+    it.only('should calculate entity creates through different sources (submission, API, bulk', testService(async (service, container) => {
       const asAlice = await service.login('alice');
       await createTestForm(service, container, testData.forms.simpleEntity, 1);
 
@@ -1296,7 +1296,7 @@ describe('analytics task queries', function () {
       datasets[0].num_entity_create_bulk_recent.should.be.equal(3);
     }));
 
-    it('should calculate number of entities ever updated vs. update actions applied', testService(async (service, container) => {
+    it.only('should calculate number of entities ever updated vs. update actions applied', testService(async (service, container) => {
       const asAlice = await service.login('alice');
 
       await createTestForm(service, container, testData.forms.simpleEntity, 1);
@@ -1349,7 +1349,7 @@ describe('analytics task queries', function () {
       datasets[0].num_entity_updates_recent.should.be.equal(3);
     }));
 
-    it('should calculate number of entities ever with conflict, and which are currently resolved', testService(async (service, container) => {
+    it.only('should calculate number of entities ever with conflict, and which are currently resolved', testService(async (service, container) => {
       const asAlice = await service.login('alice');
 
       await createTestForm(service, container, testData.forms.updateEntity, 1);
@@ -1427,7 +1427,7 @@ describe('analytics task queries', function () {
       datasets2[0].num_entity_conflicts_resolved.should.be.equal(0);
     }));
 
-    it('should return right dataset of each projects', testService(async (service, container) => {
+    it.only('should return right dataset of each projects', testService(async (service, container) => {
 
       const asAlice = await service.login('alice');
 
@@ -1549,7 +1549,7 @@ describe('analytics task queries', function () {
   });
 
   describe('offline entity metrics', () => {
-    it('should count number of offline entity branches (nontrivial branches with >1 update)', testService(async (service, container) => {
+    it.only('should count number of offline entity branches (nontrivial branches with >1 update)', testService(async (service, container) => {
       await createTestForm(service, container, testData.forms.offlineEntity, 1);
 
       const asAlice = await service.login('alice');
@@ -1617,7 +1617,7 @@ describe('analytics task queries', function () {
       countInterruptedBranches.should.equal(0);
     }));
 
-    it('should count number of interrupted branches', testService(async (service, container) => {
+    it.only('should count number of interrupted branches', testService(async (service, container) => {
       await createTestForm(service, container, testData.forms.offlineEntity, 1);
 
       const asAlice = await service.login('alice');
@@ -1797,7 +1797,7 @@ describe('analytics task queries', function () {
       countInterruptedBranches.should.equal(4);
     }));
 
-    it('should count number of submission.backlog.* events (submissions temporarily in the backlog)', testService(async (service, container) => {
+    it.only('should count number of submission.backlog.* events (submissions temporarily in the backlog)', testService(async (service, container) => {
       await createTestForm(service, container, testData.forms.offlineEntity, 1);
 
       const asAlice = await service.login('alice');
@@ -1926,7 +1926,7 @@ describe('analytics task queries', function () {
       });
     }));
 
-    it('should measure time from submission creation to entity version finished processing', testService(async (service, container) => {
+    it.only('should measure time from submission creation to entity version finished processing', testService(async (service, container) => {
       await createTestForm(service, container, testData.forms.offlineEntity, 1);
 
       const asAlice = await service.login('alice');
@@ -1964,7 +1964,7 @@ describe('analytics task queries', function () {
       waitTime.avg_wait.should.be.greaterThan(0);
     }));
 
-    it('should measure max time between first submission on a branch received and last submission on that branch processed', testService(async (service, container) => {
+    it.only('should measure max time between first submission on a branch received and last submission on that branch processed', testService(async (service, container) => {
       await createTestForm(service, container, testData.forms.offlineEntity, 1);
       const asAlice = await service.login('alice');
 
@@ -2027,7 +2027,7 @@ describe('analytics task queries', function () {
       longTime.should.be.equal(86400); // number of seconds in a day
     }));
 
-    it('should not see a delay for submissions processed with approvalRequired flag toggled', testService(async (service, container) => {
+    it.only('should not see a delay for submissions processed with approvalRequired flag toggled', testService(async (service, container) => {
       const asAlice = await service.login('alice');
 
       // Create form, set dataset people to approvalRequired = true
@@ -2075,7 +2075,7 @@ describe('analytics task queries', function () {
       entityTime.avg_wait.should.be.greaterThan(waitTime.avg_wait + 0.1);
     }));
 
-    it('should not see a delay for submissions held in backlog and then force-processed', testService(async (service, container) => {
+    it.only('should not see a delay for submissions held in backlog and then force-processed', testService(async (service, container) => {
       const asAlice = await service.login('alice');
       await createTestForm(service, container, testData.forms.offlineEntity, 1);
 
@@ -2158,7 +2158,7 @@ describe('analytics task queries', function () {
   });
 
   describe('combined analytics', () => {
-    it('should combine system level queries', testService(async (service, container) => {
+    it.only('should combine system level queries', testService(async (service, container) => {
       const asAlice = await service.login('alice');
 
       // creating client audits (before encrypting the project)
@@ -2309,7 +2309,7 @@ describe('analytics task queries', function () {
           : metric.should.be.above(0)));
     }));
 
-    it('should fill in all project.users queries', testService(async (service, container) => {
+    it.only('should fill in all project.users queries', testService(async (service, container) => {
       // create more users
       await createTestUser(service, container, 'Collector1', 'formfill', 1, false);
       await createTestUser(service, container, 'Viewer1', 'viewer', 1, false); // no recent activity
@@ -2335,7 +2335,7 @@ describe('analytics task queries', function () {
       Object.values(res.projects[0].users).forEach((metric) => metric.total.should.be.above(0));
     }));
 
-    it('should fill in all project.forms queries', testService(async (service, container) => {
+    it.only('should fill in all project.forms queries', testService(async (service, container) => {
       // geospatial form
       await createTestForm(service, container, geoForm, 1);
 
@@ -2379,7 +2379,7 @@ describe('analytics task queries', function () {
           : metric.should.be.above(0)));
     }));
 
-    it('should fill in all project.submissions queries', testService(async (service, container) => {
+    it.only('should fill in all project.submissions queries', testService(async (service, container) => {
       // submission states
       for (const state of ['approved', 'rejected', 'hasIssues', 'edited']) {
         // eslint-disable-next-line no-await-in-loop
@@ -2435,7 +2435,7 @@ describe('analytics task queries', function () {
           : metric.should.be.above(0)));
     }));
 
-    it('should be idempotent and not cross-polute project counts', testService(async (service, container) => {
+    it.only('should be idempotent and not cross-polute project counts', testService(async (service, container) => {
       const proj1 = await createTestProject(service, container, 'New Proj 1');
       await createTestForm(service, container, testData.forms.simple, proj1);
 
@@ -2460,7 +2460,7 @@ describe('analytics task queries', function () {
       res.projects[1].submissions.num_submissions_approved.total.should.equal(0);
     }));
 
-    it('should fill in all project.datasets queries', testService(async (service, container) => {
+    it.only('should fill in all project.datasets queries', testService(async (service, container) => {
       const asAlice = await service.login('alice');
 
       // Create first Dataset
