@@ -93,13 +93,13 @@ describe('s3 support', () => {
 
       // given
       await setup(1);
-      await assertNewStatuses({ pending: 13 });
+      await assertNewStatuses({ pending: 14 });
 
       // when
       await cli('upload-pending');
 
       // then
-      await assertNewStatuses({ uploaded: 13 });
+      await assertNewStatuses({ uploaded: 14 });
       // and
       await assertAllRedirect(actualAttachments);
       await assertAllDownloadsMatchOriginal(actualAttachments);
