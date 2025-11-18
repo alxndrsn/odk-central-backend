@@ -29,7 +29,7 @@ describe('managed encryption', () => {
         ])
           .then(([ project, partial ]) => Forms.createNew(partial, project))
           .catch((err) => { error = err; })
-      ); // eslint-disable-line function-paren-newline
+      );
 
       error.problemCode.should.equal(409.5);
     }));
@@ -64,7 +64,7 @@ describe('managed encryption', () => {
         ])
           .then(([ project, partial ]) => Forms.createNew(partial, project))
           .catch((err) => { error = err; })
-      ); // eslint-disable-line function-paren-newline
+      );
 
       // now unblock the managed encryption commit and let it all flush through.
       unblock();

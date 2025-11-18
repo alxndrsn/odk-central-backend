@@ -56,7 +56,7 @@ describe('task: fs', () => {
             decryptFromArchive(filepath, dirpath)
               .should.be.rejected()
               .then(resolve))
-          ), 5); // eslint-disable-line function-paren-newline
+          ), 5);
 
           archive.pipe(createWriteStream(filepath));
           archive.append('some file', { name: 'file.txt' });

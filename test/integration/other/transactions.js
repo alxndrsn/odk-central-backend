@@ -31,7 +31,7 @@ describe('transaction integration', () => {
 
     return endpointBase({ resultWriter: noop })(getContainer())(({ Capybaras }) =>
       Capybaras.create(new Frame({ id: 42 }))
-    )({ method: 'POST' }) // eslint-disable-line function-paren-newline
+    )({ method: 'POST' })
       .then(() => { queryRun.should.equal(true); });
   });
 });

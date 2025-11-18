@@ -78,7 +78,7 @@ describe('form forward versioning', () => {
           .map((name) => FormAttachments.getByFormDefIdAndName(savedForm.def.id, name)
             .then(force)
             .then((attachment) => FormAttachments.update(savedForm, attachment, blobId)))
-        ) // eslint-disable-line function-paren-newline
+        )
           .then(() => Form.fromXml(withAttachmentsMatching))
           // eslint-disable-next-line no-shadow
           .then((partial) => Forms.createVersion(partial, savedForm, true))
@@ -113,7 +113,7 @@ describe('form forward versioning', () => {
           .map((name) => FormAttachments.getByFormDefIdAndName(savedForm.def.id, name)
             .then(force)
             .then((attachment) => FormAttachments.update(savedForm, attachment, blobId)))
-        ) // eslint-disable-line function-paren-newline
+        )
           .then(() => Form.fromXml(withAttachmentsNonmatching))
           .then((partial2) => Forms.createVersion(partial2, savedForm, true))
           // eslint-disable-next-line newline-per-chained-call
