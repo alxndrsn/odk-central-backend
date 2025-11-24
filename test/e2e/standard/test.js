@@ -82,3 +82,45 @@ describe('#1157 - Backend crash when opening hostile-named submission detail', (
     });
   }
 });
+
+describe('entity_stats materialised view', () => {
+  it('should not update when not requested', async () => {
+    // given
+    // TODO demonstrate current view via API
+
+    // when
+    // TODO update is made to table backing entity_stats view
+
+    // then
+    // TODO demonstrate that view has not updated
+  });
+
+  it('should update asynchronously when requested', async () => {
+    // given
+    // TODO demonstrate current view via API
+
+    // when
+    // TODO update is made to table backing entity_stats view
+    // then
+    // TODO demonstrate that view has not updated
+
+    // when
+    // TODO view update is requested
+    // and
+    // TODO wait a tiny bit
+    // then
+    // TODO demonstrate that view has now updated
+  });
+
+  it('should not allow simultaneous updates', async () => {
+    // given
+    // TODO a sufficiently slow update is available
+
+    // when
+    // TODO view update is requested twice simultaneously
+
+    // then
+    // TODO one update should be successful, and
+    // TODO the other update should have thrown/returned false/whatever such that cron is likely to report it if correctly setup to do so
+  });
+});
