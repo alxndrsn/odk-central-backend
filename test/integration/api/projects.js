@@ -139,6 +139,7 @@ describe('api: /projects', () => {
               .expect(200)
           ])
             .then(() => exhaust(container))
+            .then(() => container.run(sql`REFRESH MATERIALIZED VIEW entity_stats`))
             .then(() => asAlice.get('/v1/projects')
               .set('X-Extended-Metadata', 'true')
               .expect(200)
@@ -1620,6 +1621,8 @@ describe('api: /projects?forms=true', () => {
         .expect(200);
 
       await createConflict(asAlice, container);
+
+      await container.run(sql`REFRESH MATERIALIZED VIEW entity_stats`);
 
       await asAlice.get('/v1/projects?datasets=true')
         .expect(200)

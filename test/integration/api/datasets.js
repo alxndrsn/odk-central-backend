@@ -603,6 +603,7 @@ describe('datasets and entities', () => {
           .expect(200);
 
         await exhaust(container);
+        await container.run(sql`REFRESH MATERIALIZED VIEW entity_stats`);
 
         await asAlice.get('/v1/projects/1/datasets')
           .set('X-Extended-Metadata', 'true')
@@ -685,6 +686,8 @@ describe('datasets and entities', () => {
           })
           .expect(200);
 
+        await container.run(sql`REFRESH MATERIALIZED VIEW entity_stats`);
+
         await asAlice.get('/v1/projects/1/datasets')
           .set('X-Extended-Metadata', 'true')
           .expect(200)
@@ -745,6 +748,8 @@ describe('datasets and entities', () => {
 
         await exhaust(container);
 
+        await container.run(sql`REFRESH MATERIALIZED VIEW entity_stats`);
+
         await asAlice.get('/v1/projects/1/datasets')
           .set('X-Extended-Metadata', 'true')
           .expect(200)
@@ -756,7 +761,7 @@ describe('datasets and entities', () => {
           });
       }));
 
-      it('should exclude deleted entities', testService(async (service) => {
+      it('should exclude deleted entities', testService(async (service, container) => {
         const asAlice = await service.login('alice');
         await asAlice.post('/v1/projects/1/forms?publish=true')
           .send(testData.forms.simpleEntity)
@@ -768,6 +773,7 @@ describe('datasets and entities', () => {
             label: 'Johnny Doe'
           })
           .expect(200);
+        await container.run(sql`REFRESH MATERIALIZED VIEW entity_stats`);
         await asAlice.get('/v1/projects/1/datasets')
           .set('X-Extended-Metadata', 'true')
           .expect(200)
@@ -778,6 +784,7 @@ describe('datasets and entities', () => {
           });
         await asAlice.delete('/v1/projects/1/datasets/people/entities/12345678-1234-4123-8234-123456789abc')
           .expect(200);
+        await container.run(sql`REFRESH MATERIALIZED VIEW entity_stats`);
         await asAlice.get('/v1/projects/1/datasets')
           .set('X-Extended-Metadata', 'true')
           .expect(200)
@@ -837,6 +844,7 @@ describe('datasets and entities', () => {
           .expect(200);
 
         await exhaust(container);
+        await container.run(sql`REFRESH MATERIALIZED VIEW entity_stats`);
 
         await asAlice.get('/v1/projects/1/datasets')
           .set('X-Extended-Metadata', 'true')
@@ -1459,7 +1467,7 @@ describe('datasets and entities', () => {
 
       }));
 
-      it('should return the extended metadata of the dataset', testService(async (service) => {
+      it('should return the extended metadata of the dataset', testService(async (service, container) => {
         const asAlice = await service.login('alice');
 
         await asAlice.post('/v1/projects/1/forms?publish=true')
@@ -1479,6 +1487,8 @@ describe('datasets and entities', () => {
             label: 'Johnny Doe - updated'
           })
           .expect(200);
+
+        await container.run(sql`REFRESH MATERIALIZED VIEW entity_stats`);
 
         await asAlice.get('/v1/projects/1/datasets/people')
           .set('X-Extended-Metadata', 'true')
