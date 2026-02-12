@@ -34,4 +34,4 @@ jobs:
     - run: node lib/bin/create-docker-databases.js
     - run: make base
     - run: npm install mocha
-    - run: node_modules/.bin/mocha --exit --slow 1000 --bail test/assertions.js test/integration/task/regression.js
+    - run: node_modules/.bin/mocha --exit --slow 1000 --bail test/assertions.js test/integration/task/fs.js
