@@ -55,6 +55,9 @@ describe.only('task: fs', () => {
         const extractedDir = await promisify(tmp.dir)(); // eslint-disable-line no-await-in-loop
         await decryptFromArchive(zipfile, extractedDir, 'super secure'); // eslint-disable-line no-await-in-loop
 
+        // hack!
+        await new Promise(resolve => setTimeout(resolve, 100));
+
         // then
         assert.deepEqual(fileSizes(extractedDir), originalSizes); // eslint-disable-line no-use-before-define
       }
