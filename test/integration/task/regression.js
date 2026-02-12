@@ -1,3 +1,4 @@
+const assert = require('node:assert/strict');
 const appRoot = require('app-root-path');
 const { promisify } = require('util');
 const { join } = require('path');
@@ -9,34 +10,41 @@ const { spawnSync } = require('node:child_process');
 
 
 describe.only('task: fs', () => {
-
   describe('encrypted archives', () => {
-
-    const generateTestArchive = async (passphrase) => {
-      const dirpath = await promisify(tmp.dir)();
-      const filepath = await promisify(tmp.file)();
+    const generateTestArchive = async passphrase => {
+      const originalDir = await promisify(tmp.dir)();
+      const zipfile = await promisify(tmp.file)();
       // unpack the known-problematic data (69 MB uncompressed)
       console.log('unpacking data...');
-      spawnSync('tar', ['xf', join(__dirname, '../../data/problematic-data-for-issue-9000.tar.xz'), '-C', dirpath]);
-      const fileSizes = Object.fromEntries(readdirSync(dirpath).map((fname) => [fname, statSync(join(dirpath, fname)).size]));
+      spawnSync('tar', ['xf', join(__dirname, '../../data/problematic-data-for-issue-9000.tar.xz'), '-C', originalDir]);
+      const initialSizes = fileSizes(originalDir);
       const keys = await generateManagedKey(passphrase);
-      await encryptToArchive(dirpath, filepath, keys);
-      return [filepath, fileSizes];
+      await encryptToArchive(originalDir, zipfile, keys);
+      return [zipfile, initialSizes];
     };
 
-    it('should round-trip successfully @slow', function() {
+    it('should round-trip successfully @slow', async function() {
+      // given
       this.timeout(300_000);
-      return generateTestArchive('super secure')
-        .then(([zipfile, originalFileSizes]) => promisify(tmp.dir)()
-          .then(dirpath => decryptFromArchive(zipfile, dirpath, 'super secure')
-            .then(() => {
-              const extractedFileSizes = Object.fromEntries(readdirSync(dirpath).map((fname) => [fname, statSync(join(dirpath, fname)).size]));
-              extractedFileSizes.should.equal(originalFileSizes);
-            })
-          )
-        );
-    });
+      const [zipfile, originalFileSizes] = await generateTestArchive('super secure')
+      // and
+      const extractedDir = await promisify(tmp.dir)();
 
+      // when
+      console.log('zipfile:', zipfile);
+      console.log('extractedDir:', extractedDir);
+      await decryptFromArchive(zipfile, extractedDir, 'super secure')
+      await new Promise(resolve => setTimeout(resolve, 3000));
+
+      // then
+      assert.deepEqual(fileSizes(extractedDir), originalFileSizes);
+    });
   });
 });
 
+function fileSizes(dir) {
+  return Object.fromEntries(
+    readdirSync(dir)
+        .map(f => [ f, statSync(`${dir}/${f}`).size] ),
+  );
+}
