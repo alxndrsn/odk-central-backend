@@ -10,13 +10,13 @@ const { execSync } = require('node:child_process');
 
 
 describe.only('task: fs', () => {
+  const passphrase = 'super secure';
+
   describe('encrypted archives', () => {
-    const generateTestArchive = async passphrase => {
+    const generateTestArchive = async bytes => {
       const originalDir = await promisify(tmp.dir)();
       const zipfile = await promisify(tmp.file)();
-      // unpack the known-problematic data (69 MB uncompressed)
-      console.log('unpacking data...');
-      execSync(`truncate -s 70019276 ${originalDir}/a-file`);
+      execSync(`truncate -s ${bytes} ${originalDir}/a-file`);
       const initialSizes = fileSizes(originalDir);
       const keys = await generateManagedKey(passphrase);
       await encryptToArchive(originalDir, zipfile, keys);
@@ -24,19 +24,19 @@ describe.only('task: fs', () => {
     };
 
     it('should round-trip successfully @slow', async function() {
-      // given
-      this.timeout(30_000);
-      const [zipfile, originalFileSizes] = await generateTestArchive('super secure')
-      // and
-      const extractedDir = await promisify(tmp.dir)();
+      this.timeout(300_000);
 
-      // when
-      console.log('zipfile:', zipfile);
-      console.log('extractedDir:', extractedDir);
-      await decryptFromArchive(zipfile, extractedDir, 'super secure')
+      for(let bytes=16; bytes<18; ++bytes) {
+        // given
+        const [zipfile, originalFileSizes] = await generateTestArchive(bytes)
+        const extractedDir = await promisify(tmp.dir)();
 
-      // then
-      assert.deepEqual(fileSizes(extractedDir), originalFileSizes);
+        // when
+        await decryptFromArchive(zipfile, extractedDir, 'super secure')
+
+        // then
+        assert.deepEqual(fileSizes(extractedDir), originalFileSizes);
+      }
     });
   });
 });
