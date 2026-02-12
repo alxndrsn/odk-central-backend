@@ -1,6 +1,8 @@
+const assert = require('node:assert/strict');
+const { execSync } = require('node:child_process');
 const appRoot = require('app-root-path');
 const { promisify } = require('util');
-const { readdir, readFile, writeFile, createWriteStream } = require('fs');
+const { readdir, readdirSync, readFile, statSync, writeFile, createWriteStream } = require('fs');
 const { join } = require('path');
 const tmp = require('tmp');
 const archiver = require('archiver');
@@ -32,6 +34,29 @@ describe.only('task: fs', () => {
       (await promisify(readFile)(join(dirpath, 'one'))).toString('utf8').should.equal('test file one');
       (await promisify(readFile)(join(dirpath, 'two'))).toString('utf8').should.equal('test file two');
     }));
+
+    it('should round-trip (issue #????)', async () => {
+      // given
+      const passphrase = 'super secure';
+      const originalDir = await promisify(tmp.dir)();
+      const zipfile = await promisify(tmp.file)();
+      const keys = await generateManagedKey(passphrase);
+
+      for (let bytes=0; bytes<256; ++bytes) { // eslint-disable-line no-plusplus
+        // given
+        execSync(`truncate -s ${bytes} ${originalDir}/a-file`);
+        const originalSizes = fileSizes(originalDir); // eslint-disable-line no-use-before-define
+
+        // when
+        await encryptToArchive(originalDir, zipfile, keys); // eslint-disable-line no-await-in-loop
+        // and
+        const extractedDir = await promisify(tmp.dir)(); // eslint-disable-line no-await-in-loop
+        await decryptFromArchive(zipfile, extractedDir, 'super secure'); // eslint-disable-line no-await-in-loop
+
+        // then
+        assert.deepEqual(fileSizes(extractedDir), originalSizes); // eslint-disable-line no-use-before-define
+      }
+    });
 
     it('should fail gracefully given an incorrect passphrase', testTask(async () => {
       const zipfile = await generateTestArchive('super secure');
@@ -70,3 +95,9 @@ describe.only('task: fs', () => {
   });
 });
 
+function fileSizes(dir) {
+  return Object.fromEntries(
+    readdirSync(dir)
+      .map(f => [ f, statSync(`${dir}/${f}`).size]),
+  );
+}
