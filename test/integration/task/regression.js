@@ -25,7 +25,7 @@ describe.only('task: fs', () => {
 
     it('should round-trip successfully @slow', async function() {
       // given
-      this.timeout(300_000);
+      this.timeout(30_000);
       const [zipfile, originalFileSizes] = await generateTestArchive('super secure')
       // and
       const extractedDir = await promisify(tmp.dir)();
@@ -34,7 +34,6 @@ describe.only('task: fs', () => {
       console.log('zipfile:', zipfile);
       console.log('extractedDir:', extractedDir);
       await decryptFromArchive(zipfile, extractedDir, 'super secure')
-      await new Promise(resolve => setTimeout(resolve, 3000));
 
       // then
       assert.deepEqual(fileSizes(extractedDir), originalFileSizes);

@@ -8,7 +8,7 @@ const { testTask } = require('../setup');
 const { generateManagedKey } = require(appRoot + '/lib/util/crypto');
 const { encryptToArchive, decryptFromArchive } = require(appRoot + '/lib/task/fs');
 
-describe('task: fs', () => {
+describe.only('task: fs', () => {
   describe('encrypted archives', () => {
     // helper that creates a tmpdir, drops some test files into it, generates a
     // keyset with the given passphrase and runs the encryption to a tmpfile,
@@ -50,7 +50,7 @@ describe('task: fs', () => {
       tmp.dir((_, dirpath) =>
         // eslint-disable-next-line no-shadow
         tmp.file((_, filepath) => {
-          const archive = archiver('zip', { zlib: { level: -1 } });
+          const archive = archiver('zip', { zlib: { level: 0 } });
 
           archive.on('end', () => setTimeout((() =>
             decryptFromArchive(filepath, dirpath)
