@@ -28,7 +28,8 @@ describe('task: fs', () => {
       return generateTestArchive('super secure')
         .then(([zipfile, originalFileSizes]) => promisify(tmp.dir)()
           .then(dirpath => decryptFromArchive(zipfile, dirpath, 'super secure')
-            .then(() => {
+            .then(async () => {
+              await new Promise(resolve => setTimeout(resolve, 3000));
               const extractedFileSizes = Object.fromEntries(readdirSync(dirpath).map((fname) => [fname, statSync(join(dirpath, fname)).size]));
               extractedFileSizes.should.equal(originalFileSizes);
             })
