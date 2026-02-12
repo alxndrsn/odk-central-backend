@@ -8,7 +8,7 @@ const { statSync, readdirSync } = require('node:fs');
 const { spawnSync } = require('node:child_process');
 
 
-describe('task: fs', () => {
+describe.only('task: fs', () => {
 
   describe('encrypted archives', () => {
 
@@ -16,6 +16,7 @@ describe('task: fs', () => {
       const dirpath = await promisify(tmp.dir)();
       const filepath = await promisify(tmp.file)();
       // unpack the known-problematic data (69 MB uncompressed)
+      console.log('unpacking data...');
       spawnSync('tar', ['xf', join(__dirname, '../../data/problematic-data-for-issue-9000.tar.xz'), '-C', dirpath]);
       const fileSizes = Object.fromEntries(readdirSync(dirpath).map((fname) => [fname, statSync(join(dirpath, fname)).size]));
       const keys = await generateManagedKey(passphrase);
