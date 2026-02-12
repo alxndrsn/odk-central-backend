@@ -51,11 +51,12 @@ describe.only('task: fs', () => {
 
         // when
         await encryptToArchive(originalDir, zipfile, keys); // eslint-disable-line no-await-in-loop
+        // hack 1!
+        await new Promise(resolve => setTimeout(resolve, 100));
         // and
         const extractedDir = await promisify(tmp.dir)(); // eslint-disable-line no-await-in-loop
         await decryptFromArchive(zipfile, extractedDir, 'super secure'); // eslint-disable-line no-await-in-loop
-
-        // hack!
+        // hack 2!
         await new Promise(resolve => setTimeout(resolve, 100));
 
         // then
