@@ -95,7 +95,8 @@ before(function() {
   this.timeout(0);
   return initialize();
 });
-after(async () => {
+after(async function() => {
+  this.timeout(10_000);
   await db.end();
 });
 
