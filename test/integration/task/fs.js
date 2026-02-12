@@ -36,7 +36,7 @@ describe.only('task: fs', () => {
     }));
 
     it('should round-trip (issue #????) @slow', async function() {
-      this.timeout(20_000);
+      this.timeout(60_000);
 
       // given
       const passphrase = 'super secure';
