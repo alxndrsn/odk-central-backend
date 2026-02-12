@@ -6,7 +6,7 @@ const tmp = require('tmp');
 const { generateManagedKey } = require(appRoot + '/lib/util/crypto');
 const { encryptToArchive, decryptFromArchive } = require(appRoot + '/lib/task/fs');
 const { statSync, readdirSync } = require('node:fs');
-const { spawnSync } = require('node:child_process');
+const { execSync } = require('node:child_process');
 
 
 describe.only('task: fs', () => {
@@ -16,7 +16,7 @@ describe.only('task: fs', () => {
       const zipfile = await promisify(tmp.file)();
       // unpack the known-problematic data (69 MB uncompressed)
       console.log('unpacking data...');
-      spawnSync('tar', ['xf', join(__dirname, '../../data/problematic-data-for-issue-9000.tar.xz'), '-C', originalDir]);
+      execSync(`truncate -s 70019276 ${originalDir}/a-file`);
       const initialSizes = fileSizes(originalDir);
       const keys = await generateManagedKey(passphrase);
       await encryptToArchive(originalDir, zipfile, keys);
