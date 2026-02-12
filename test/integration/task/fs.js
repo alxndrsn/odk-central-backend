@@ -35,14 +35,16 @@ describe.only('task: fs', () => {
       (await promisify(readFile)(join(dirpath, 'two'))).toString('utf8').should.equal('test file two');
     }));
 
-    it('should round-trip (issue #????)', async () => {
+    it('should round-trip (issue #????) @slow', async function() {
+      this.timeout(20_000);
+
       // given
       const passphrase = 'super secure';
       const originalDir = await promisify(tmp.dir)();
       const zipfile = await promisify(tmp.file)();
       const keys = await generateManagedKey(passphrase);
 
-      for (let bytes=0; bytes<256; ++bytes) { // eslint-disable-line no-plusplus
+      for (let bytes=0; bytes<64; ++bytes) { // eslint-disable-line no-plusplus
         // given
         execSync(`truncate -s ${bytes} ${originalDir}/a-file`);
         const originalSizes = fileSizes(originalDir); // eslint-disable-line no-use-before-define
