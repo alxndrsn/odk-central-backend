@@ -41,12 +41,12 @@ describe.only('task: fs', () => {
 
         // given
         const passphrase = 'super secure';
-        const originalDir = await promisify(tmp.dir)();
-        const zipfile = await promisify(tmp.file)();
-        const keys = await generateManagedKey(passphrase);
 
         for (let bytes=0; bytes<64; ++bytes) { // eslint-disable-line no-plusplus
           // given
+          const originalDir = await promisify(tmp.dir)();
+          const zipfile = await promisify(tmp.file)();
+          const keys = await generateManagedKey(passphrase);
           execSync(`truncate -s ${bytes} ${originalDir}/a-file`);
           const originalSizes = fileSizes(originalDir); // eslint-disable-line no-use-before-define
 
