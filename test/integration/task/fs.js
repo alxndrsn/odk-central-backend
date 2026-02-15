@@ -35,32 +35,34 @@ describe.only('task: fs', () => {
       (await promisify(readFile)(join(dirpath, 'two'))).toString('utf8').should.equal('test file two');
     }));
 
-    it('should round-trip (issue #????) @slow', async function() {
-      this.timeout(60_000);
+    for(let i=0; i<10; ++i) {
+      it(`should round-trip (issue #????) @slow #${i}`, async function() {
+        this.timeout(60_000);
 
-      // given
-      const passphrase = 'super secure';
-      const originalDir = await promisify(tmp.dir)();
-      const zipfile = await promisify(tmp.file)();
-      const keys = await generateManagedKey(passphrase);
-
-      for (let bytes=0; bytes<64; ++bytes) { // eslint-disable-line no-plusplus
         // given
-        execSync(`truncate -s ${bytes} ${originalDir}/a-file`);
-        const originalSizes = fileSizes(originalDir); // eslint-disable-line no-use-before-define
+        const passphrase = 'super secure';
+        const originalDir = await promisify(tmp.dir)();
+        const zipfile = await promisify(tmp.file)();
+        const keys = await generateManagedKey(passphrase);
 
-        // when
-        await encryptToArchive(originalDir, zipfile, keys); // eslint-disable-line no-await-in-loop
-        console.log('encryptToArchive() returned OK');
-        // and
-        const extractedDir = await promisify(tmp.dir)(); // eslint-disable-line no-await-in-loop
-        await decryptFromArchive(zipfile, extractedDir, 'super secure'); // eslint-disable-line no-await-in-loop
-        console.log('decryptFromArchive() returned OK');
+        for (let bytes=0; bytes<64; ++bytes) { // eslint-disable-line no-plusplus
+          // given
+          execSync(`truncate -s ${bytes} ${originalDir}/a-file`);
+          const originalSizes = fileSizes(originalDir); // eslint-disable-line no-use-before-define
 
-        // then
-        assert.deepEqual(fileSizes(extractedDir), originalSizes); // eslint-disable-line no-use-before-define
-      }
-    });
+          // when
+          await encryptToArchive(originalDir, zipfile, keys); // eslint-disable-line no-await-in-loop
+          console.log('encryptToArchive() returned OK');
+          // and
+          const extractedDir = await promisify(tmp.dir)(); // eslint-disable-line no-await-in-loop
+          await decryptFromArchive(zipfile, extractedDir, 'super secure'); // eslint-disable-line no-await-in-loop
+          console.log('decryptFromArchive() returned OK');
+
+          // then
+          assert.deepEqual(fileSizes(extractedDir), originalSizes); // eslint-disable-line no-use-before-define
+        }
+      });
+    }
 
     it('should fail gracefully given an incorrect passphrase', testTask(async () => {
       const zipfile = await generateTestArchive('super secure');
