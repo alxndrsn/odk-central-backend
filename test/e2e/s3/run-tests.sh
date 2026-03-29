@@ -56,7 +56,11 @@ log "Waiting for fake-s3-server to start..."
 wait-for-it localhost:9000 --strict --timeout=10 -- echo '[test/e2e/s3/run-tests] fake-s3-server is UP!'
 
 NODE_CONFIG_ENV=s3-dev node lib/bin/s3-create-bucket.js
-NODE_CONFIG_ENV=s3-dev /usr/bin/time -f "@@@ peak mem: %M KB" make run &
+while true; do
+  free -m | awk 'NR==2{printf "Memory Usage: %s/%sMB (%.2f%%)\n", $3,$2,$3*100/$2 }'
+  sleep 5
+done &
+NODE_CONFIG_ENV=s3-dev make run &
 serverPid=$!
 
 log 'Waiting for backend to start...'
