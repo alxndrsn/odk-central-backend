@@ -58,7 +58,7 @@ wait-for-it localhost:9000 --strict --timeout=10 -- echo '[test/e2e/s3/run-tests
 NODE_CONFIG_ENV=s3-dev node lib/bin/s3-create-bucket.js
 while true; do
   free -m | awk 'NR==2{printf "Memory Usage: %s/%sMB (%.2f%%)\n", $3,$2,$3*100/$2 }'
-  sleep 5
+  sleep 1
 done &
 NODE_CONFIG_ENV=s3-dev make run &
 serverPid=$!
