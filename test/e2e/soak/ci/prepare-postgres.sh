@@ -9,6 +9,7 @@ pg_exec() {
       --username=postgres \
       --quiet \
       --tuples-only \
+      --no-align \
       --command="$1"
 }
 
