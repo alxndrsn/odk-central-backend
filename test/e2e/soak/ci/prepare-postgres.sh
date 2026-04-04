@@ -2,7 +2,8 @@
 set -o pipefail
 
 logPrefix="[test/e2e/soak/$(basename "$0" .sh)]"
-log() { echo >&2 "$logPrefix $*"; }
+log()  { echo    >&2 "$logPrefix $*"; }
+loge() { echo -e >&2 "$logPrefix $*"; }
 
 pg_exec() {
   PGPASSWORD=odktest \
@@ -24,7 +25,7 @@ pg_exec "ALTER SYSTEM SET track_activity_query_size = 16384"
 
 # Postgres must be restarted to apply change to track_activity_query_size
 # See: https://www.postgresql.org/docs/14/runtime-config-statistics.html#GUC-TRACK-ACTIVITY-QUERY-SIZE
-log -e "  Restarting postgres...\n$logPrefix     "
+loge "  Restarting postgres...\n$logPrefix     "
 pgImg="$(docker ps -q --filter name=postgres)"
 docker restart "$pgImg" >/dev/null
 timeout 10 bash -c "while ! docker exec $pgImg pg_isready --timeout=1; do sleep 1; done"
