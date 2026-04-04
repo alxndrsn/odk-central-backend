@@ -2,7 +2,6 @@ name: Soak Test
 
 on:
   push:
-    branches: master
 
 jobs:
   soak-test:
@@ -31,7 +30,7 @@ jobs:
         node-version-file: package.json
         cache: 'npm'
     - run: npm ci
-    - run: node lib/bin/create-docker-databases.js
+    - run: node lib/bin/create-docker-databases.js --big-stats
     - name: Soak Test
       timeout-minutes: 10
       run: ./test/e2e/soak/ci

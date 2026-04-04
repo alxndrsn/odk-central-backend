@@ -38,6 +38,8 @@ log "[postgres]   restarted OK."
 log "[postgres]   track_activity_query_size: $(pg_exec 'SHOW track_activity_query_size')"
 log "[postgres]   DONE."
 
+exit
+
 make base
 
 echo "$userPassword" | node ./lib/bin/cli.js user-create  -u "$userEmail"
