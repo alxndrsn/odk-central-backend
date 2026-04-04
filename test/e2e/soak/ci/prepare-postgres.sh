@@ -1,7 +1,7 @@
 #!/bin/bash -eu
 set -o pipefail
 
-log() { echo >&2 "[test/e2e/soak/$(basename "$0")] $*"; }
+log() { echo >&2 "[test/e2e/soak/$(basename "$0" .sh)] $*"; }
 
 pg_exec() {
   PGPASSWORD=odktest \
@@ -30,7 +30,7 @@ log "Restarted OK."
 finalQuerySize="$(pg_exec 'SHOW track_activity_query_size')"
 log "track_activity_query_size: $finalQuerySize"
 
-expectedFinalQuerySize=16kb
+expectedFinalQuerySize=16kB
 if [[ $finalQuerySize != $expectedFinalQuerySize ]]; then
   log "!!!"
   log "!!! Failed to set final query size."
