@@ -3,13 +3,7 @@ set -o pipefail
 
 log() { echo >&2 "[test/e2e/soak/$(basename "$0")] $*"; }
 
-fail_job() {
-  log 'Job failed.'
-  exit 1
-}
-
 pg_exec() {
-  [[ $# = 1 ]] || fail_job
   PGPASSWORD=odktest psql \
       --host=localhost \
       --username=postgres \
