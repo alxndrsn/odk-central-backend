@@ -44,5 +44,3 @@ if [[ $finalQuerySize != $expectedFinalQuerySize ]]; then
 fi
 
 log "DONE."
-
-exit 1
