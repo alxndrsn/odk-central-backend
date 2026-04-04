@@ -1,7 +1,9 @@
 #!/bin/bash -eu
 set -o pipefail
 
-log() { echo >&2 "[test/e2e/soak/$(basename "$0" .sh)] $*"; }
+logPrefix="[test/e2e/soak/$(basename "$0" .sh)]"
+log()  { echo   >&2 "$logPrefix $*"; }
+logf() { printf >&2 "$logPrefix $*"; }
 
 pg_exec() {
   PGPASSWORD=odktest \
@@ -26,6 +28,7 @@ pg_exec "ALTER SYSTEM SET track_activity_query_size = 16384"
 log "  Restarting postgres..."
 pgImg="$(docker ps -q --filter name=postgres)"
 docker restart "$pgImg" >/dev/null
+logf "    "
 timeout 10 bash -c "while ! docker exec $pgImg pg_isready --timeout=1; do sleep 1; done"
 log "  Restarted OK."
 
