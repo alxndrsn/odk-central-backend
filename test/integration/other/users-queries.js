@@ -35,7 +35,7 @@ describe.only('Users', () => {
 
       // expect
       await Users.updatePassword(insertedUser, newPassword)
-        .should.be.rejectedWith(Problem, { problemCode: 999.9 })
+        .should.be.rejectedWith(Problem, { problemCode: 400.44, message: 'This is a very common password' })
     }));
   });
 });
