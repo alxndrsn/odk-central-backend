@@ -2,6 +2,7 @@ const should = require('should');
 const { v4: uuid } = require('uuid');
 const { testService } = require('../setup');
 const { sleep } = require('../../util/util');
+const { password4alice, password4bob, password4chelsea } = require('../../util/passwords');
 
 const newpassword = uuid();
 
