@@ -724,7 +724,7 @@ describe('api: /users', () => {
         it('should reject if the user does not exist', testService((service) =>
           service.login('alice', (asAlice) =>
             asAlice.put('/v1/users/9999/password')
-              .send({ old: password4alice, new: 'password4chelsea' })
+              .send({ old: password4alice, new: password4chelsea })
               .expect(404))));
 
         it('should reject if the old password is not correct', testService((service) =>
