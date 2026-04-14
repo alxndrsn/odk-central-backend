@@ -5,7 +5,7 @@ const { verifyPassword } = require(appRoot + '/lib/util/crypto');
 const { createUser, promoteUser, setUserPassword } = require(appRoot + '/lib/task/account');
 const { User } = require(appRoot + '/lib/model/frames');
 
-describe.only('task: accounts', () => {
+describe('task: accounts', () => {
   describe('createUser', () => {
     it('should create a user account with a password', testTask(({ Users }) =>
       createUser('testuser@getodk.org', 'aoeuidhtns')
