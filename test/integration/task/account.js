@@ -5,7 +5,7 @@ const { verifyPassword } = require(appRoot + '/lib/util/crypto');
 const { createUser, promoteUser, setUserPassword } = require(appRoot + '/lib/task/account');
 const { User } = require(appRoot + '/lib/model/frames');
 
-describe('task: accounts', () => {
+describe.only('task: accounts', () => {
   describe('createUser', () => {
     it('should create a user account with a password', testTask(({ Users }) =>
       createUser('testuser@getodk.org', 'aoeuidhtns')
@@ -52,6 +52,14 @@ describe('task: accounts', () => {
     it('should complain if the password is too short', testTask(() =>
       createUser('testuser@getodk.org', 'short')
         .catch((problem) => problem.problemCode.should.equal(400.21))));
+
+    it('should complain if the password is too long', testTask(() =>
+      createUser('testuser@getodk.org', 'longggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg')
+        .catch((problem) => problem.problemCode.should.equal(400.21))));
+
+    it('should complain if the password is too weak', testTask(() =>
+      createUser('testuser@getodk.org', 'hunter2')
+        .catch((problem) => problem.problemCode.should.equal(400.999))));
   });
 
   describe('promoteUser', () => {
@@ -97,6 +105,16 @@ describe('task: accounts', () => {
       Users.create(User.fromApi({ email: 'testuser@getodk.org', displayName: 'test user' }))
         .then(() => setUserPassword('testuser@getodk.org', 'aoeu'))
         .catch((problem) => problem.problemCode.should.equal(400.21))));
+
+    it('should complain about a password that is too long', testTask(({ Users }) =>
+      Users.create(User.fromApi({ email: 'testuser@getodk.org', displayName: 'test user' }))
+        .then(() => setUserPassword('testuser@getodk.org', 'longggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg'))
+        .catch((problem) => problem.problemCode.should.equal(400.21))));
+
+    it('should complain about a password that is too weak', testTask(({ Users }) =>
+      Users.create(User.fromApi({ email: 'testuser@getodk.org', displayName: 'test user' }))
+        .then(() => setUserPassword('testuser@getodk.org', 'hunter2'))
+        .catch((problem) => problem.problemCode.should.equal(400.999))));
 
     it('should delete sessions', testTask(async ({ Sessions, Users }) => {
       const user = await Users.create(User.fromApi({
