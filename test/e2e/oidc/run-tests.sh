@@ -43,12 +43,13 @@ if ! [[ ${CREATE_USERS-} = false ]]; then
 fi
 
 cd test/e2e/oidc/playwright-tests
-log "Playwright: $(npx playwright --version)"
+playwright=../../../../node_modules/playwright/cli.js
+log "Playwright: $($playwright --version)"
 if [[ ${INSTALL_PLAYWRIGHT_DEPS-} = true ]]; then
   log "Installing playwright deps..."
-  npx playwright install --with-deps
+  $playwright install --with-deps
 fi
 log "Running playwright tests..."
-npx playwright test
+$playwright test
 
 log "Tests completed OK!"

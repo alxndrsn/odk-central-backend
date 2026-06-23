@@ -29,7 +29,7 @@ timeout 30 bash -c "while ! curl -s -o /dev/null $serverUrl; do sleep 1; done"
 log "Backend started!"
 
 cd test/e2e/standard
-npx mocha test.js
+node ../../../node_modules/mocha/bin/mocha.js test.js
 
 if ! curl -s -o /dev/null "$serverUrl"; then
   log "Backend died."
