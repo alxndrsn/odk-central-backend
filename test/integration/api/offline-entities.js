@@ -1935,42 +1935,229 @@ describe('Offline Entities', () => {
         .expect(200);
       await exhaust(container);
 
-      // Set up the race condition.
-      const race = async () => {
-        const entityUuid = uuid();
+      const entityUuid = uuid();
+
+      const fireSubmission = async (id) => {
+        const start = Date.now();
+
         await asAlice.post('/v1/projects/1/forms/offlineEntity/submissions')
           .send(testData.instances.offlineEntity.two
             .replace('two', uuid())
             .replace('12345678-1234-4123-8234-123456789ddd', entityUuid))
           .set('Content-Type', 'application/xml')
           .expect(200);
-        await asAlice.post('/v1/projects/1/forms/offlineEntity/submissions')
-          .send(testData.instances.offlineEntity.two
-            .replace('two', uuid())
-            .replace('12345678-1234-4123-8234-123456789ddd', entityUuid)
-            .replace('create="1"', 'update="1"')
-            .replace('branchId=""', `branchId="${uuid()}"`)
-            .replace('baseVersion=""', 'baseVersion="1"'))
-          .set('Content-Type', 'application/xml')
-          .expect(200);
-        await exhaustParallel(container);
 
-        const { body: entity } = await asAlice.get(`/v1/projects/1/datasets/people/entities/${entityUuid}`)
-          .expect(200);
-        const backlogCount = await container.oneFirst(sql`select count(*) from entity_submission_backlog`);
-        return entity.currentVersion.version === 2 && backlogCount === 0;
+        const duration = Date.now() - start;
+        console.log(`Submission #${id} finished in ${duration}ms`);
+        return duration;
       };
-      // Run the race condition 50 times. If I remove locking in
-      // Entities._processSubmissionEvent(), then successCount < 10. With
-      // locking in place, successCount === 50. It's because it's often the case
-      // that successCount > 0 even without locking that we run the race
-      // condition multiple times.
-      let successCount = 0;
-      for (let i = 0; i < 50; i += 1) {
-        // eslint-disable-next-line no-await-in-loop
-        if (await race()) successCount += 1;
-      }
-      successCount.should.equal(50);
+
+      // Fire 5 requests exactly at the same time
+      console.log('Launching concurrent requests...');
+      await Promise.all([
+        fireSubmission(0),
+        fireSubmission(1),
+        fireSubmission(2),
+        fireSubmission(3),
+        fireSubmission(4),
+        fireSubmission(5),
+        fireSubmission(6),
+        fireSubmission(7),
+        fireSubmission(8),
+        fireSubmission(9),
+        fireSubmission(10),
+        fireSubmission(11),
+        fireSubmission(12),
+        fireSubmission(13),
+        fireSubmission(14),
+        fireSubmission(15),
+        fireSubmission(16),
+        fireSubmission(17),
+        fireSubmission(18),
+        fireSubmission(19),
+        fireSubmission(20),
+        fireSubmission(21),
+        fireSubmission(22),
+        fireSubmission(23),
+        fireSubmission(24),
+        fireSubmission(25),
+        fireSubmission(26),
+        fireSubmission(27),
+        fireSubmission(28),
+        fireSubmission(29),
+        fireSubmission(30),
+        fireSubmission(31),
+        fireSubmission(32),
+        fireSubmission(33),
+        fireSubmission(34),
+        fireSubmission(35),
+        fireSubmission(36),
+        fireSubmission(37),
+        fireSubmission(38),
+        fireSubmission(39),
+        fireSubmission(40),
+        fireSubmission(41),
+        fireSubmission(42),
+        fireSubmission(43),
+        fireSubmission(44),
+        fireSubmission(45),
+        fireSubmission(46),
+        fireSubmission(47),
+        fireSubmission(48),
+        fireSubmission(49),
+        fireSubmission(50),
+        fireSubmission(51),
+        fireSubmission(52),
+        fireSubmission(53),
+        fireSubmission(54),
+        fireSubmission(55),
+        fireSubmission(56),
+        fireSubmission(57),
+        fireSubmission(58),
+        fireSubmission(59),
+        fireSubmission(60),
+        fireSubmission(61),
+        fireSubmission(62),
+        fireSubmission(63),
+        fireSubmission(64),
+        fireSubmission(65),
+        fireSubmission(66),
+        fireSubmission(67),
+        fireSubmission(68),
+        fireSubmission(69),
+        fireSubmission(70),
+        fireSubmission(71),
+        fireSubmission(72),
+        fireSubmission(73),
+        fireSubmission(74),
+        fireSubmission(75),
+        fireSubmission(76),
+        fireSubmission(77),
+        fireSubmission(78),
+        fireSubmission(79),
+        fireSubmission(80),
+        fireSubmission(81),
+        fireSubmission(82),
+        fireSubmission(83),
+        fireSubmission(84),
+        fireSubmission(85),
+        fireSubmission(86),
+        fireSubmission(87),
+        fireSubmission(88),
+        fireSubmission(89),
+        fireSubmission(90),
+        fireSubmission(91),
+        fireSubmission(92),
+        fireSubmission(93),
+        fireSubmission(94),
+        fireSubmission(95),
+        fireSubmission(96),
+        fireSubmission(97),
+        fireSubmission(98),
+        fireSubmission(99),
+        fireSubmission(100),
+        fireSubmission(101),
+        fireSubmission(102),
+        fireSubmission(103),
+        fireSubmission(104),
+        fireSubmission(105),
+        fireSubmission(106),
+        fireSubmission(107),
+        fireSubmission(108),
+        fireSubmission(109),
+        fireSubmission(110),
+        fireSubmission(111),
+        fireSubmission(112),
+        fireSubmission(113),
+        fireSubmission(114),
+        fireSubmission(115),
+        fireSubmission(116),
+        fireSubmission(117),
+        fireSubmission(118),
+        fireSubmission(119),
+        fireSubmission(120),
+        fireSubmission(121),
+        fireSubmission(122),
+        fireSubmission(123),
+        fireSubmission(124),
+        fireSubmission(125),
+        fireSubmission(126),
+        fireSubmission(127),
+        fireSubmission(128),
+        fireSubmission(129),
+        fireSubmission(130),
+        fireSubmission(131),
+        fireSubmission(132),
+        fireSubmission(133),
+        fireSubmission(134),
+        fireSubmission(135),
+        fireSubmission(136),
+        fireSubmission(137),
+        fireSubmission(138),
+        fireSubmission(139),
+        fireSubmission(140),
+        fireSubmission(141),
+        fireSubmission(142),
+        fireSubmission(143),
+        fireSubmission(144),
+        fireSubmission(145),
+        fireSubmission(146),
+        fireSubmission(147),
+        fireSubmission(148),
+        fireSubmission(149),
+        fireSubmission(150),
+        fireSubmission(151),
+        fireSubmission(152),
+        fireSubmission(153),
+        fireSubmission(154),
+        fireSubmission(155),
+        fireSubmission(156),
+        fireSubmission(157),
+        fireSubmission(158),
+        fireSubmission(159),
+        fireSubmission(160),
+        fireSubmission(161),
+        fireSubmission(162),
+        fireSubmission(163),
+        fireSubmission(164),
+        fireSubmission(165),
+        fireSubmission(166),
+        fireSubmission(167),
+        fireSubmission(168),
+        fireSubmission(169),
+        fireSubmission(170),
+        fireSubmission(171),
+        fireSubmission(172),
+        fireSubmission(173),
+        fireSubmission(174),
+        fireSubmission(175),
+        fireSubmission(176),
+        fireSubmission(177),
+        fireSubmission(178),
+        fireSubmission(179),
+        fireSubmission(180),
+        fireSubmission(181),
+        fireSubmission(182),
+        fireSubmission(183),
+        fireSubmission(184),
+        fireSubmission(185),
+        fireSubmission(186),
+        fireSubmission(187),
+        fireSubmission(188),
+        fireSubmission(189),
+        fireSubmission(190),
+        fireSubmission(191),
+        fireSubmission(192),
+        fireSubmission(193),
+        fireSubmission(194),
+        fireSubmission(195),
+        fireSubmission(196),
+        fireSubmission(197),
+        fireSubmission(198),
+        fireSubmission(199),
+      ]);
+
+      await exhaustParallel(container);
     }));
   });
 
