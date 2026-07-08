@@ -162,6 +162,16 @@ const testService = (test) => function() {
   });
 };
 
+// called to get a service context per request, with additional ExpressJS routes.
+const testServiceWithAdditionalResources = (additionalResources, test) => function() {
+  return new Promise((resolve, reject) => {
+    baseContainer.transacting((container) => {
+      const rollback = (f) => (x) => container.run(sql`rollback`).then(() => f(x));
+      return test.call(this, augment(request(service(container, additionalResources))), container).then(rollback(resolve), rollback(reject));
+    });//.catch(Promise.resolve.bind(Promise)); // TODO/SL probably restore
+  });
+};
+
 // for some tests we explicitly need to make concurrent requests, in which case
 // the transaction butchering we do for testService will not work. for these cases,
 // we offer testServiceFullTrx:
@@ -236,4 +246,4 @@ const withClosedForm = (f) => async (service) => {
   return f(service);
 };
 
-module.exports = { testService, testServiceFullTrx, testContainer, testContainerFullTrx, testTask, testTaskFullTrx, withClosedForm };
+module.exports = { testService, testServiceWithAdditionalResources, testServiceFullTrx, testContainer, testContainerFullTrx, testTask, testTaskFullTrx, withClosedForm };
