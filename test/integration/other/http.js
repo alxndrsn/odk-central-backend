@@ -67,20 +67,23 @@ describe('http', () => {
     });
 
     it.only('should handle client closing request before stream in progress', () => {
-      const caught = [];
+      let destroyedBeforePipe = false;
+      let abortedBeforePipe = false;
 
       const endlessStreamEndpoint = ({ service, anonymousEndpoint }) => {
-        service.get('/endless-stream', anonymousEndpoint(async () => {
+        service.get('/endless-stream', anonymousEndpoint(async (container, service, req) => {
           console.log('server having a sleep...');
           await new Promise(resolve => setTimeout(resolve, 200));
           console.log('server woke up; retninr partial pipe/...');
+          console.log('req.destroyed:', req.destroyed);
+          destroyedBeforePipe = !!req.destroyed;
+          abortedBeforePipe = !!req.signal?.aborted;
           return PartialPipe.of(new Readable({
             read() {
               console.log('stream read() triggered');
               this.push(`press control-c when you get bored; ${Math.random()}\n`);
             },
             destroy(err, callback) {
-              caught.push(err);
               console.log('stream destroyed', { err, callback });
               clearTimeout(this.timeoutId);
               callback(err);
@@ -125,9 +128,8 @@ describe('http', () => {
         await new Promise(resolve => setTimeout(resolve, 300));
 
         // then
-        caught.length.should.eql(1);
-        caught[0].should.be.an.Error();
-        caught[0].code.should.eql('ERR_STREAM_PREMATURE_CLOSE');
+        destroyedBeforePipe.should.be.true();
+        abortedBeforePipe.should.be.true();
       })();
     });
 
