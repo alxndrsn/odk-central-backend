@@ -72,10 +72,13 @@ describe('http', () => {
 
       const endlessStreamEndpoint = ({ service, anonymousEndpoint }) => {
         service.get('/endless-stream', anonymousEndpoint(async (container, service, req) => {
+          console.log('req.destroyed:', req.destroyed);
+          console.log('req.signal:', req.signal);
           console.log('server having a sleep...');
           await new Promise(resolve => setTimeout(resolve, 200));
           console.log('server woke up; retninr partial pipe/...');
           console.log('req.destroyed:', req.destroyed);
+          console.log('req.signal:', req.signal);
           destroyedBeforePipe = !!req.destroyed;
           abortedBeforePipe = !!req.signal?.aborted;
           return PartialPipe.of(new Readable({
