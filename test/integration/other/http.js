@@ -141,15 +141,6 @@ describe('http', () => {
         try {
           console.log('welcome to the actual test body');
           const req = service.get('/v1/endless-db-stream').buffer(false);
-          //req.catch(err => console.log(`
-          //  @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-          //  @
-          //  @
-          //  @ supertest error: ${err}
-          //  @
-          //  @
-          //  @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-          //`));
           console.log('reading pipe...');
           readPipe(req);
           await untilDataReceived();
