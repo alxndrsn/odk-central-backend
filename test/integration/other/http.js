@@ -76,7 +76,16 @@ describe('http', () => {
 
       console.log('welcome to the test.');
 
+      let dataReceived = false;
       let streamAborted = false;
+
+      async function untilDataReceived() {
+        while(true) {
+          if(dataReceived) return;
+          await new Promise(resolve => setTimeout(resolve, 100));
+          console.log('sleeping...');
+        }
+      }
 
       const endlessStreamDbResource = ({ service, anonymousEndpoint }) => {
         console.log('initialising resource...');
@@ -96,7 +105,8 @@ describe('http', () => {
                 AS series (idx)
           `)
           .then(stream.map(row => {
-            console.log('stream.map()', 'req.aborted:', req.signal, 'row:', row);
+            //console.log('stream.map()', 'req.aborted:', req.signal, 'row:', row);
+            process.stdout.write('.')
             return JSON.stringify(row);
           }));
           console.log('str:', str);
@@ -110,15 +120,18 @@ describe('http', () => {
 
       const readPipe = req => {
       req.on('response', (res) => {
-      res.on('error', (err) => {
-      if (err.message === 'aborted') return;
-      });
+        res.on('error', (err) => {
+          console.log('req.onresponse.onerror', err);
+          if(err.message === 'aborted') return;
+        });
       });
         req.on('error', err => { console.log('req error:', err); });
         req.on('end', err => { throw new Error('req ended.  is that ok?', err); });
         req.pipe(new Writable({
           write(chunk, encoding, callback) {
-            console.log('read chunk:', chunk.toString());
+            //console.log('read chunk:', chunk.toString());
+            process.stdout.write('x');
+            dataReceived = true;
             callback();
           },
         }));
@@ -146,9 +159,7 @@ describe('http', () => {
           //`));
           console.log('reading pipe...');
           readPipe(req);
-          console.log('sleep #1...');
-          await new Promise(resolve => setTimeout(resolve, 2000));
-          console.log('woke up #1');
+          await untilDataReceived();
 
           // when
           req.on('error', err => console.log('req: expected error:', err));
@@ -157,7 +168,7 @@ describe('http', () => {
           });
           req.req.destroy();
           console.log('sleep #2...');
-          await new Promise(resolve => setTimeout(resolve, 2000));
+          await new Promise(resolve => setTimeout(resolve, 50));
           console.log('woke up #2');
 
           // then
