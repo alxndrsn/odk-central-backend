@@ -140,13 +140,6 @@ describe('http', () => {
       return testServiceWithAdditionalResources([endlessStreamDbResource], async service => {
         try {
           console.log('welcome to the actual test body');
-          process.on('unhandledRejection', (reason) => {
-            console.log('expected rejection abort?', reason);
-          });
-          process.on('uncaughtException', (reason) => {
-            console.log('expected abort?', reason);
-            return;
-          });
           const req = service.get('/v1/endless-db-stream').buffer(false);
           //req.catch(err => console.log(`
           //  @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
