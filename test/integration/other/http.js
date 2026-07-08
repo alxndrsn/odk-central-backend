@@ -28,7 +28,7 @@ describe('http', () => {
   });
 
   describe.only('stream error handling', () => {
-    it('should handle piping a closed stream', () => {
+    it('should handle piping to a destroyed response', () => {
       const caught = [];
 
       const deadPipeEndpoint = ({ service, anonymousEndpoint }) => {
@@ -66,11 +66,11 @@ describe('http', () => {
       })();
     });
 
-    it('should handle client closing stream', () => {
+    it('should handle client closing request while stream in progress', () => {
       const caught = [];
 
       const endlessStreamEndpoint = ({ service, anonymousEndpoint }) => {
-        service.get('/ERR_STREAM_PREMATURE_CLOSE', anonymousEndpoint(() =>
+        service.get('/endless-stream', anonymousEndpoint(() =>
           PartialPipe.of(new Readable({
             read() {
               if (this.pushInProgress) return;
@@ -124,7 +124,7 @@ describe('http', () => {
       return testServiceWithAdditionalResources([endlessStreamEndpoint], async service => {
         // given
         console.log('making request...');
-        const req = service.get('/v1/ERR_STREAM_PREMATURE_CLOSE').buffer(false);
+        const req = service.get('/v1/endless-stream').buffer(false);
 
         // when
         console.log('reading then destroying...');
@@ -136,6 +136,8 @@ describe('http', () => {
         caught.length.should.eql(1);
         caught[0].should.be.an.Error();
         caught[0].code.should.eql('ERR_STREAM_PREMATURE_CLOSE');
+
+        req.abort();
       })();
     });
   });
