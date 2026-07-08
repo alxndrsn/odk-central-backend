@@ -1,6 +1,8 @@
 const assert = require('node:assert/strict');
 const { Readable, Writable } = require('node:stream');
 
+const { sql } = require('slonik');
+
 const { PartialPipe } = require('../../../lib/util/stream');
 const { testService, testServiceWithAdditionalResources } = require('../setup');
 
@@ -66,7 +68,71 @@ describe('http', () => {
       })();
     });
 
-    it.only('should handle client closing request before stream in progress', () => {
+    it('should transparently abort fetch() if client closes request while fetch() in progress', () => {
+    });
+
+    it.only('should transparently abort db.stream() if client closes request while db.stream() in progress', () => {
+      console.log('welcome to the test.');
+
+      const endlessStreamDbResource = ({ service, anonymousEndpoint }) => {
+        console.log('initialising resource...');
+        service.get('/endless-db-stream', anonymousEndpoint(async (container, context, req) => {
+          console.log('req.destroyed:', req.destroyed);
+          console.log('req.signal:', req.signal);
+          console.log('server having a sleep...');
+
+          console.log('starting db stream...');
+          const { stream } = container;
+          console.log({ stream });
+          const str = stream(sql`
+            SELECT idx
+                 , MD5(idx::TEXT)
+                 , PG_SLEEP(0.005)
+              FROM GENERATE_SERIES(1, 100000)
+                AS series (idx)
+          `)
+          .then(stream.map(row => {
+            console.log('stream.map()', 'row:', row);
+            return JSON.stringify(row);
+          }));
+          console.log('str:', str);
+          const wrappedStream = await str;
+          console.log('wrappedStream:', wrappedStream);
+          return PartialPipe.of(wrappedStream);
+        }));
+      };
+
+      const readPipe = req => {
+        req.on('error', err => { console.log('req error:', err); });
+        req.on('end', err => { throw new Error('req ended.  is that ok?', err); });
+        req.pipe(new Writable({
+          write(chunk, encoding, callback) {
+            console.log('read chunk:', chunk.toString());
+            callback();
+          },
+        }));
+      };
+
+      return testServiceWithAdditionalResources([endlessStreamDbResource], async service => {
+        console.log('welcome to the actual test body');
+        const req = service.get('/v1/endless-db-stream').buffer(false);
+        console.log('reading pipe...');
+        readPipe(req);
+        console.log('sleep #1...');
+        await new Promise(resolve => setTimeout(resolve, 5000));
+        console.log('woke up');
+
+        //// when
+        //req.req.destroy();
+        //console.log('sleep #2...');
+        //await new Promise(resolve => setTimeout(resolve, 300));
+
+        //// then
+        //streamAborted.should.be.true();
+      })();
+    });
+
+    it('should handle client closing request before stream in progress', () => {
       let destroyedBeforePipe = false;
       let abortedBeforePipe = false;
 
