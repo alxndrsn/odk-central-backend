@@ -101,13 +101,18 @@ describe('http', () => {
           }));
           console.log('str:', str);
           const wrappedStream = await str;
-          //wrappedStream.on('end', () => { streamAborted = true; });
+    wrappedStream.on('close', () => { streamAborted = true; });
           console.log('wrappedStream:', wrappedStream);
           return PartialPipe.of(wrappedStream);
         }));
       };
 
       const readPipe = req => {
+      req.on('response', (res) => {
+      res.on('error', (err) => {
+      if (err.message === 'aborted') return;
+      });
+      });
         req.on('error', err => { console.log('req error:', err); });
         req.on('end', err => { throw new Error('req ended.  is that ok?', err); });
         req.pipe(new Writable({
@@ -119,21 +124,47 @@ describe('http', () => {
       };
 
       return testServiceWithAdditionalResources([endlessStreamDbResource], async service => {
-        console.log('welcome to the actual test body');
-        const req = service.get('/v1/endless-db-stream').buffer(false);
-        console.log('reading pipe...');
-        readPipe(req);
-        console.log('sleep #1...');
-        await new Promise(resolve => setTimeout(resolve, 5000));
-        console.log('woke up');
+        try {
+          console.log('welcome to the actual test body');
+          process.on('unhandledRejection', (reason) => {
+            console.log('expected rejection abort?', reason);
+          });
+          process.on('uncaughtException', (reason) => {
+            console.log('expected abort?', reason);
+            return;
+          });
+          const req = service.get('/v1/endless-db-stream').buffer(false);
+          //req.catch(err => console.log(`
+          //  @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+          //  @
+          //  @
+          //  @ supertest error: ${err}
+          //  @
+          //  @
+          //  @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+          //`));
+          console.log('reading pipe...');
+          readPipe(req);
+          console.log('sleep #1...');
+          await new Promise(resolve => setTimeout(resolve, 2000));
+          console.log('woke up #1');
 
-        // when
-        req.req.destroy();
-        console.log('sleep #2...');
-        await new Promise(resolve => setTimeout(resolve, 5000));
+          // when
+          req.on('error', err => console.log('req: expected error:', err));
+          req.req.on('error', err => {
+            console.log('req.req: expected error:', err);
+          });
+          req.req.destroy();
+          console.log('sleep #2...');
+          await new Promise(resolve => setTimeout(resolve, 2000));
+          console.log('woke up #2');
 
-        // then
-        streamAborted.should.be.true();
+          // then
+          streamAborted.should.be.true();
+        } catch(err) {
+          console.log('caught in test:', err);
+          throw err;
+        }
       })();
     });
 
