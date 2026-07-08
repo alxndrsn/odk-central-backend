@@ -66,6 +66,71 @@ describe('http', () => {
       })();
     });
 
+    it.only('should handle client closing request before stream in progress', () => {
+      const caught = [];
+
+      const endlessStreamEndpoint = ({ service, anonymousEndpoint }) => {
+        service.get('/endless-stream', anonymousEndpoint(async () => {
+          console.log('server having a sleep...');
+          await new Promise(resolve => setTimeout(resolve, 200));
+          console.log('server woke up; retninr partial pipe/...');
+          return PartialPipe.of(new Readable({
+            read() {
+              console.log('stream read() triggered');
+              this.push(`press control-c when you get bored; ${Math.random()}\n`);
+            },
+            destroy(err, callback) {
+              caught.push(err);
+              console.log('stream destroyed', { err, callback });
+              clearTimeout(this.timeoutId);
+              callback(err);
+            },
+          }));
+        }));
+      };
+
+      const readPipe = req => {
+        const handleErrors = emitter => {
+          emitter.on('error', err => reject(err));
+        };
+
+        req.on('end', () => { throw new Error('req ended.  is that ok?'); });
+
+        req.on('request', nativeReq => {
+          nativeReq.on('response', res => {
+            handleErrors(res);
+          });
+        });
+
+        req.pipe(new Writable({
+          write(chunk, encoding, callback) {
+            console.log('read chunk:', chunk.toString());
+          },
+        }));
+      };
+
+      return testServiceWithAdditionalResources([endlessStreamEndpoint], async service => {
+        // given
+        console.log('making request...');
+        const req = service.get('/v1/endless-stream').buffer(false);
+
+        // when
+        console.log('reading then destroying...');
+        readPipe(req);
+        console.log('started reading; having a sleep...');
+        await new Promise(resolve => setTimeout(resolve, 50));
+        console.log('destroying req.req ...');
+        req.req.destroy();
+        console.log('having a sleep so things can clear up n the server');
+        await new Promise(resolve => setTimeout(resolve, 300));
+
+        // then
+        caught.length.should.eql(1);
+        caught[0].should.be.an.Error();
+        caught[0].code.should.eql('ERR_STREAM_PREMATURE_CLOSE');
+      })();
+    });
+
     it('should handle client closing request while stream in progress', () => {
       const caught = [];
 
@@ -73,14 +138,8 @@ describe('http', () => {
         service.get('/endless-stream', anonymousEndpoint(() =>
           PartialPipe.of(new Readable({
             read() {
-              if (this.pushInProgress) return;
-              this.pushInProgress = true;
-
-              this.timeoutId = setTimeout(() => {
-                console.log('stream read() triggered in background');
-                this.push(`press control-c when you get bored; ${Math.random()}\n`);
-                this.pushInProgress = false;
-              }, 333);
+              console.log('stream read() triggered');
+              this.push(`press control-c when you get bored; ${Math.random()}\n`);
             },
             destroy(err, callback) {
               caught.push(err);
