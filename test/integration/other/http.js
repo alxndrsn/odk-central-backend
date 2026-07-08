@@ -92,7 +92,7 @@ describe('http', () => {
             SELECT idx
                  , MD5(idx::TEXT)
                  , PG_SLEEP(0.005)
-              FROM GENERATE_SERIES(1, 100000)
+              FROM GENERATE_SERIES(1, 10000000)
                 AS series (idx)
           `)
           .then(stream.map(row => {
@@ -101,7 +101,7 @@ describe('http', () => {
           }));
           console.log('str:', str);
           const wrappedStream = await str;
-    wrappedStream.streams.at(-1).once('close', () => { streamAborted = true; });
+          wrappedStream.streams.at(-1).once('close', () => { streamAborted = true; });
           console.log('wrappedStream:', wrappedStream);
           //return PartialPipe.of(wrappedStream);
           return wrappedStream;
