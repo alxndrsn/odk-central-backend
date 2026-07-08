@@ -71,8 +71,12 @@ describe('http', () => {
     it('should transparently abort fetch() if client closes request while fetch() in progress', () => {
     });
 
-    it.only('should transparently abort db.stream() if client closes request while db.stream() in progress', () => {
+    it.only('should transparently abort db.stream() if client closes request while db.stream() in progress', function() {
+      this.timeout(20_000);
+
       console.log('welcome to the test.');
+
+      let streamAborted = false;
 
       const endlessStreamDbResource = ({ service, anonymousEndpoint }) => {
         console.log('initialising resource...');
@@ -92,11 +96,12 @@ describe('http', () => {
                 AS series (idx)
           `)
           .then(stream.map(row => {
-            console.log('stream.map()', 'row:', row);
+            console.log('stream.map()', 'req.aborted:', req.signal, 'row:', row);
             return JSON.stringify(row);
           }));
           console.log('str:', str);
           const wrappedStream = await str;
+          //wrappedStream.on('end', () => { streamAborted = true; });
           console.log('wrappedStream:', wrappedStream);
           return PartialPipe.of(wrappedStream);
         }));
@@ -122,13 +127,13 @@ describe('http', () => {
         await new Promise(resolve => setTimeout(resolve, 5000));
         console.log('woke up');
 
-        //// when
-        //req.req.destroy();
-        //console.log('sleep #2...');
-        //await new Promise(resolve => setTimeout(resolve, 300));
+        // when
+        req.req.destroy();
+        console.log('sleep #2...');
+        await new Promise(resolve => setTimeout(resolve, 5000));
 
-        //// then
-        //streamAborted.should.be.true();
+        // then
+        streamAborted.should.be.true();
       })();
     });
 
