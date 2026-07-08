@@ -101,9 +101,10 @@ describe('http', () => {
           }));
           console.log('str:', str);
           const wrappedStream = await str;
-    wrappedStream.on('close', () => { streamAborted = true; });
+    wrappedStream.streams.at(-1).once('close', () => { streamAborted = true; });
           console.log('wrappedStream:', wrappedStream);
-          return PartialPipe.of(wrappedStream);
+          //return PartialPipe.of(wrappedStream);
+          return wrappedStream;
         }));
       };
 
