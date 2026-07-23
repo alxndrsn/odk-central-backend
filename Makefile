@@ -135,7 +135,7 @@ run-docker-postgres: stop-docker-postgres
 	docker start odk-postgres14 || (\
 		docker run -d \
 			--name odk-postgres14 \
-			--publish 127.0.0.1:5432:5432 \
+			--network host \
 			--env POSTGRES_PASSWORD=odktest \
 			postgres:14.20-alpine \
 		&& sleep 2 \
