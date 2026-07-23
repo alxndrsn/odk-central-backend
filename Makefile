@@ -139,7 +139,12 @@ run-docker-postgres: stop-docker-postgres
 			--env POSTGRES_PASSWORD=odktest \
 			--tmpfs /var/lib/postgresql/data \
 			postgres:14.20 \
-			postgres -c fsync=off -c synchronous_commit=off -c full_page_writes=off \
+			postgres \
+				-c fsync=off \
+				-c full_page_writes=off \
+				-c shared_buffers=256MB \
+				-c synchronous_commit=off \
+				-c work_mem=64MB \
 		&& sleep 2 \
 		&& docker exec odk-postgres14 pg_isready --username=postgres --timeout=10 \
 		&& node lib/bin/create-docker-databases.js $(if $(CI),,--log) \
