@@ -138,6 +138,7 @@ run-docker-postgres: stop-docker-postgres
 			--network host \
 			--env POSTGRES_PASSWORD=odktest \
 			postgres:14.20-alpine \
+			postgres -c fsync=off -c synchronous_commit=off -c full_page_writes=off \
 		&& sleep 2 \
 		&& docker exec odk-postgres14 pg_isready --username=postgres --timeout=10 \
 		&& node lib/bin/create-docker-databases.js $(if $(CI),,--log) \
