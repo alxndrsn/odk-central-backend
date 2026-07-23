@@ -137,6 +137,7 @@ run-docker-postgres: stop-docker-postgres
 			--name odk-postgres14 \
 			--network host \
 			--env POSTGRES_PASSWORD=odktest \
+			--tmpfs /var/lib/postgresql/data \
 			postgres:14.20 \
 			postgres -c fsync=off -c synchronous_commit=off -c full_page_writes=off \
 		&& sleep 2 \
