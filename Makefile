@@ -141,8 +141,8 @@ run-docker-postgres: stop-docker-postgres
 			postgres:14.20 \
 			postgres \
 				-c autovacuum=off \
-				-c checkpoint_timeout=1h
-				-c max_wal_size=2GB
+				-c checkpoint_timeout=1h \
+				-c max_wal_size=2GB \
 				-c fsync=off \
 				-c full_page_writes=off \
 				-c shared_buffers=256MB \
