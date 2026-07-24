@@ -43,7 +43,7 @@
     "ramda": "^0.32.0",
     "sanitize-filename": "^1.6.4",
     "semver": "^7.7.4",
-    "slonik": "npm:@getodk/slonik@23.6.2-4",
+    "slonik": "github:alxndrsn/getodk-legacy-slonik#master",
     "tmp-promise": "~3",
     "uuid": "^13.0.0",
     "yauzl": "^3.2.0"
