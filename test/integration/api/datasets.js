@@ -83,7 +83,7 @@ const setupDatasetsAndProperties = async (asAlice) => {
 describe.only('datasets and entities', () => {
 
   describe('creating datasets and properties via the API', () => {
-    describe.only('projects/:id/datasets POST', () => {
+    describe('projects/:id/datasets POST', () => {
       it('should reject if user cannot create datasets', testService(async (service) => {
         const asChelsea = await service.login('chelsea');
 
@@ -275,7 +275,7 @@ describe.only('datasets and entities', () => {
         }));
       });
 
-      it.only('should add label-only entity to dataset, all via API', testServiceFullTrx(async (service) => {
+      it('should add label-only entity to dataset, all via API', testServiceFullTrx(async (service) => {
         const asAlice = await service.login('alice');
 
         await asAlice.post('/v1/projects/1/datasets')
