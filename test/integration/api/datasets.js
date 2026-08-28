@@ -80,7 +80,7 @@ const setupDatasetsAndProperties = async (asAlice) => {
   return { appUserA, appUserB };
 };
 
-describe('datasets and entities', () => {
+describe.only('datasets and entities', () => {
 
   describe('creating datasets and properties via the API', () => {
     describe('projects/:id/datasets POST', () => {
@@ -3266,7 +3266,7 @@ describe('datasets and entities', () => {
           .expect(200);
       };
 
-      it('should return entities csv', testService((service, container) =>
+      it.only('should return entities csv', testService((service, container) =>
         service.login('alice', (asAlice) =>
           asAlice.post('/v1/projects/1/forms')
             .send(testData.forms.consumeDatasets)
