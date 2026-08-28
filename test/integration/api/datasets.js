@@ -8528,7 +8528,7 @@ describe.only('datasets and entities', () => {
         (await getHashAppUser(service, appUser.token)).should.not.equal(originalHashWithFilter);
       }));
 
-      it('changes hash in property-filtered after a dataset property is deleted @slow', testServiceFullTrx(async (service) => {
+      it.only('changes hash in property-filtered after a dataset property is deleted @slow', testServiceFullTrx(async (service) => {
         const { asAlice, appUser } = await setupPeopleDatasetWithAppUser(service);
 
         // Set up actor properties, assign region 'north' to the app user, and apply filter
