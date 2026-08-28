@@ -3268,7 +3268,7 @@ describe.only('datasets and entities', () => {
           .expect(200);
       };
 
-      it.only('should return entities csv', testServiceFullTrx((service, container) =>
+      it('should return entities csv', testServiceFullTrx((service, container) =>
         service.login('alice', (asAlice) =>
           asAlice.post('/v1/projects/1/forms')
             .send(testData.forms.consumeDatasets)
