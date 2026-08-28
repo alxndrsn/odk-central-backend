@@ -301,6 +301,8 @@ describe.only('datasets and entities', () => {
           .expect(200)
           .then(r => r.text);
 
+        console.log('result:', result);
+
         const isoRegex = /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z/g;
 
         result.match(isoRegex).should.have.length(1);
