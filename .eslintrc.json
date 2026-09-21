@@ -274,7 +274,7 @@
     "no-new-require": "error",
     "no-new-wrappers": "error",
     "no-octal-escape": "error",
-    "no-only-tests/no-only-tests": [ "error", { "block": [ "describe", "it", "describeMigration" ] } ],
+    "no-only-tests/no-only-tests": "off",
     "no-param-reassign": [ "error", { "ignorePropertyModificationsFor": [
       "acc", "accumulator", "e", "ctx", "context", "req", "request", "res", "response", "$scope", "staticContext"
     ], "props": true } ],

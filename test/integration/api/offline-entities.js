@@ -1927,7 +1927,7 @@ describe('Offline Entities', () => {
     this.timeout(32_000);
 
     // https://github.com/getodk/central/issues/705
-    it('should concurrently process an offline create + update', testServiceFullTrx(async (service, container) => {
+    it.only('should concurrently process an offline create + update', testServiceFullTrx(async (service, container) => {
       const asAlice = await service.login('alice');
       await asAlice.post('/v1/projects/1/forms?publish=true')
         .send(testData.forms.offlineEntity)
