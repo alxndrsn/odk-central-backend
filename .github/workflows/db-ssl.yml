@@ -22,6 +22,8 @@ jobs:
         node-version-file: package.json
         cache: 'npm'
     - run: npm ci --no-audit
+    - run: pg_dump --version
+    - run: pg_restore --version
     - run: make run-docker-postgres-ssl
       env:
         PG_VERSION: ${{ matrix.postgres-version }}
